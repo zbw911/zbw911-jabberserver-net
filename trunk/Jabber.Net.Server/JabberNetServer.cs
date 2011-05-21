@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Configuration;
 using Jabber.Net.Server.Configuration;
+using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Listeners;
-using Jabber.Net.Server.Streams;
 
 namespace Jabber.Net.Server
 {
     public class JabberNetServer
     {
-        public XmppListenersManager ListenersManager
+        public XmppListenerManager ListenerManager
         {
             get;
             private set;
         }
 
-        public XmppStreamsManager StreamsManager
+        public XmppConnectionManager ConnectionManager
         {
             get;
             private set;
@@ -23,8 +23,8 @@ namespace Jabber.Net.Server
 
         public JabberNetServer()
         {
-            StreamsManager = new XmppStreamsManager();
-            ListenersManager = new XmppListenersManager(StreamsManager);
+            ConnectionManager = new XmppConnectionManager();
+            ListenerManager = new XmppListenerManager(ConnectionManager);
         }
 
 
@@ -58,7 +58,7 @@ namespace Jabber.Net.Server
                 listener.MaxReceivedMessageSize = e.MaxReceivedMessageSize;
                 listener.Configure(e.UnrecognizedAttributes);
 
-                ListenersManager.AddListener(listener);
+                ListenerManager.AddListener(listener);
             }
         }
     }
