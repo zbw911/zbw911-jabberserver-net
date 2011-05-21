@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jabber.Net.Server.Streams;
+using Jabber.Net.Server.Connections;
 
 namespace Jabber.Net.Server.Listeners
 {
-    public class XmppListenersManager
+    public class XmppListenerManager
     {
         private readonly IDictionary<Uri, IXmppListener> listeners = new Dictionary<Uri, IXmppListener>();
-        private readonly XmppStreamsManager streamsManager;
+        private readonly XmppConnectionManager connectionManager;
 
 
         public bool IsListen
@@ -17,24 +17,26 @@ namespace Jabber.Net.Server.Listeners
         }
 
 
-        public XmppListenersManager(XmppStreamsManager streamsManager)
+        public XmppListenerManager(XmppConnectionManager connectionManager)
         {
-            this.streamsManager = streamsManager;
+            if (connectionManager == null) throw new ArgumentNullException("connectionManager");
+
+            this.connectionManager = connectionManager;
         }
 
 
         public void AddListener(IXmppListener listener)
         {
-            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
             if (listener == null) throw new ArgumentNullException("listener");
+            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
 
             listeners[listener.ListenUri] = listener;
         }
 
         public void RemoveListener(Uri listenUri)
         {
-            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
             if (listenUri == null) throw new ArgumentNullException("listenUri");
+            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
 
             listeners.Remove(listenUri);
         }
@@ -45,9 +47,8 @@ namespace Jabber.Net.Server.Listeners
 
             foreach (var l in listeners.Values)
             {
-                l.StartListen(Accept);
+                l.StartListen(connectionManager);
             }
-
             IsListen = true;
         }
 
@@ -59,14 +60,7 @@ namespace Jabber.Net.Server.Listeners
             {
                 l.StopListen();
             }
-
             IsListen = false;
-        }
-
-
-        private void Accept(XmppStream stream)
-        {
-
         }
     }
 }

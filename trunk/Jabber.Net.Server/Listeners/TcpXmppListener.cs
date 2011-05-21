@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Jabber.Net.Server.Streams;
-using System.Collections.Generic;
+using Jabber.Net.Server.Connections;
 
 namespace Jabber.Net.Server.Listeners
 {
     class TcpXmppListener : IXmppListener
     {
         private TcpListener listener;
-        private Action<XmppStream> accept;
+        private XmppConnectionManager connectionManager;
 
 
         public Uri ListenUri
@@ -31,11 +31,11 @@ namespace Jabber.Net.Server.Listeners
         }
 
 
-        public void StartListen(Action<XmppStream> accept)
+        public void StartListen(XmppConnectionManager connectionManager)
         {
             if (listener == null)
             {
-                this.accept = accept;
+                this.connectionManager = connectionManager;
                 listener = new TcpListener(new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port))
                 {
                     ExclusiveAddressUse = true,
@@ -51,7 +51,7 @@ namespace Jabber.Net.Server.Listeners
             {
                 listener.Stop();
                 listener = null;
-                accept = null;
+                connectionManager = null;
             }
         }
 
@@ -63,8 +63,7 @@ namespace Jabber.Net.Server.Listeners
                 var listener = (TcpListener)ar.AsyncState;
                 listener.BeginAcceptTcpClient(OnAccept, listener);
 
-                var client = listener.EndAcceptTcpClient(ar);
-                accept(null);
+                connectionManager.AddConnection(new TcpXmppConnection(listener.EndAcceptTcpClient(ar)));
             }
             catch (ObjectDisposedException)
             {
