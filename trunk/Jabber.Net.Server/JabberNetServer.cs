@@ -3,6 +3,7 @@ using System.Configuration;
 using Jabber.Net.Server.Configuration;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Listeners;
+using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server
 {
@@ -20,10 +21,17 @@ namespace Jabber.Net.Server
             private set;
         }
 
+        public XmppHandlerManager HandlerManager
+        {
+            get;
+            set;
+        }
+
 
         public JabberNetServer()
         {
-            ConnectionManager = new XmppConnectionManager();
+            HandlerManager = new XmppHandlerManager();
+            ConnectionManager = new XmppConnectionManager(HandlerManager);
             ListenerManager = new XmppListenerManager(ConnectionManager);
         }
 

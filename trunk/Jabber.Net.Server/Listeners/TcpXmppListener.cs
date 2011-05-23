@@ -63,7 +63,8 @@ namespace Jabber.Net.Server.Listeners
                 var listener = (TcpListener)ar.AsyncState;
                 listener.BeginAcceptTcpClient(OnAccept, listener);
 
-                connectionManager.AddConnection(new TcpXmppConnection(listener.EndAcceptTcpClient(ar)));
+                var tcpClient = listener.EndAcceptTcpClient(ar);
+                connectionManager.AddConnection(new TcpXmppConnection(tcpClient));
             }
             catch (ObjectDisposedException)
             {
