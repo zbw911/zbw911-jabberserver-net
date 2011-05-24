@@ -1,15 +1,24 @@
-﻿using Jabber.Net.Server.Handlers;
-using System;
+﻿using System;
 
 namespace Jabber.Net.Server.Connections
 {
-    public interface IXmppConnection : IDisposable
+    public interface IXmppConnection
     {
         Guid Id
         {
             get;
         }
 
-        void BeginRecieve(XmppHandlerManager handlerManager);
+
+        event EventHandler<XmppConnectionRecieveArgs> Recieved;
+
+        event EventHandler<XmppConnectionCloseArgs> Closed;
+
+
+        void StartRecieve();
+
+        void Send(byte[] buffer);
+
+        void Close();
     }
 }

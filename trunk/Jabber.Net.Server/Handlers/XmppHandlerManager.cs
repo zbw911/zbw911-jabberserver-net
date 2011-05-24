@@ -8,7 +8,7 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        public XmppHandlerResult HandleXmppElement(XObject xmpp, XmppHandlerContext ctx)
+        public XmppHandlerResult HandleXmppElement(XObject xmpp)
         {
             return null;
         }

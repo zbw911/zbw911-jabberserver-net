@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Jabber.Net.Server.Connections;
 
-namespace Jabber.Net.Server.Listeners
+namespace Jabber.Net.Server.Connections
 {
     class TcpXmppListener : IXmppListener
     {
@@ -22,12 +20,6 @@ namespace Jabber.Net.Server.Listeners
         {
             get;
             set;
-        }
-
-
-        public void Configure(IDictionary<string, string> properties)
-        {
-
         }
 
 
