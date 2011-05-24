@@ -8,7 +8,12 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        public XmppHandlerResult HandleXmppElement(XObject xmpp)
+        public XmppHandlerResult HandleXmppElement(Guid connectionId, XObject xmpp)
+        {
+            return null;
+        }
+
+        public XmppHandlerResult HandleError(Guid connectionId, Exception error)
         {
             return null;
         }

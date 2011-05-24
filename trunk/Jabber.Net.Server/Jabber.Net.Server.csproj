@@ -61,9 +61,12 @@
     <Compile Include="Connections\XmppConnectionCloseArgs.cs" />
     <Compile Include="Connections\XmppConnectionManager.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
+    <Compile Include="Connections\XmppStreamParseErrorArgs.cs" />
+    <Compile Include="Connections\XmppStreamParsedArgs.cs" />
     <Compile Include="Handlers\XmppHandlerContext.cs" />
     <Compile Include="Handlers\XmppHandlerManager.cs" />
     <Compile Include="Handlers\XmppHandlerResult.cs" />
+    <Compile Include="Connections\XmppStreamParser.cs" />
     <Compile Include="JabberNetServer.cs" />
     <Compile Include="Connections\IXmppListener.cs" />
     <Compile Include="Connections\TcpXmppListener.cs" />

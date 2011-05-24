@@ -8,18 +8,22 @@ namespace Jabber.Net.Server.Connections
     {
         private readonly XmppHandlerManager handlerManager;
         private readonly IDictionary<Guid, IXmppConnection> connections;
+        private readonly XmppStreamParser parser;
 
 
         public XmppConnectionManager(XmppHandlerManager handlerManager)
         {
-            this.handlerManager = handlerManager;
             this.connections = new Dictionary<Guid, IXmppConnection>(1000);
+            this.handlerManager = handlerManager;
+            this.parser = new XmppStreamParser();
+            this.parser.Parsed += ParserParsed;
+            this.parser.Error += ParserError;
         }
 
 
         public void AddConnection(IXmppConnection connection)
         {
-            lock (connection)
+            lock (connections)
             {
                 connections.Add(connection.Id, connection);
             }
@@ -27,7 +31,17 @@ namespace Jabber.Net.Server.Connections
             connection.Recieved += ConnectionRecieved;
             connection.StartRecieve();
         }
-        
+
+        public void CloseConnection(Guid connectionId)
+        {
+            IXmppConnection connection;
+            lock (connections)
+            {
+                connections.TryGetValue(connectionId, out connection);
+            }
+            if (connection != null) connection.Close();
+        }
+
 
         private void ConnectionClosed(object sender, XmppConnectionCloseArgs e)
         {
@@ -36,6 +50,7 @@ namespace Jabber.Net.Server.Connections
             {
                 connection.Closed -= ConnectionClosed;
                 connection.Recieved -= ConnectionRecieved;
+                parser.Reset(e.ConnectionId);
             }
             finally
             {
@@ -48,7 +63,17 @@ namespace Jabber.Net.Server.Connections
 
         private void ConnectionRecieved(object sender, XmppConnectionRecieveArgs e)
         {
+            parser.Parse(e.ConnectionId, e.Buffer);
+        }
 
+        private void ParserParsed(object sender, XmppStreamParsedArgs e)
+        {
+            handlerManager.HandleXmppElement(e.ConnectionId, e.Xmpp);
+        }
+
+        private void ParserError(object sender, XmppStreamParseErrorArgs e)
+        {
+            handlerManager.HandleXmppElement(e.ConnectionId, e.Error);
         }
     }
 }
