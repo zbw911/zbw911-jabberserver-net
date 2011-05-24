@@ -1,3 +1,4 @@
+#if DEBUG
 using System;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -30,4 +31,4 @@ namespace Jabber.Net.Server
 		}
 	}
 }
-
+#endif

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jabber.Net.Server.Connections;
 
-namespace Jabber.Net.Server.Listeners
+namespace Jabber.Net.Server.Connections
 {
     public class XmppListenerManager
     {

@@ -1,10 +1,8 @@
 ﻿using System;
-using Jabber.Net.Server.Configuration;
-using Jabber.Net.Server.Connections;
 
-namespace Jabber.Net.Server.Listeners
+namespace Jabber.Net.Server.Connections
 {
-    public interface IXmppListener : IConfigurable
+    public interface IXmppListener
     {
         Uri ListenUri
         {

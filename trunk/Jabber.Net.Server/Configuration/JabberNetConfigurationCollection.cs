@@ -1,8 +1,10 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace Jabber.Net.Server.Configuration
 {
-    class JabberNetConfigurationCollection<TElement> : ConfigurationElementCollection where TElement : JabberNetConfigurationElement, new()
+    class JabberNetConfigurationCollection<TElement> : ConfigurationElementCollection, IEnumerable<TElement> where TElement : JabberNetConfigurationElement, new()
     {
         protected override ConfigurationElement CreateNewElement()
         {
@@ -11,7 +13,12 @@ namespace Jabber.Net.Server.Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((JabberNetConfigurationElement)element).Key;
+            return ((TElement)element).Key;
+        }
+
+        public new IEnumerator<TElement> GetEnumerator()
+        {
+            return this.Cast<TElement>().GetEnumerator();
         }
     }
 }
