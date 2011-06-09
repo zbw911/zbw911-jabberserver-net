@@ -25,6 +25,8 @@ namespace Jabber.Net.Server.Connections
 
         public void StartListen(XmppConnectionManager connectionManager)
         {
+            if (connectionManager == null) throw new ArgumentNullException("connectionManager");
+
             if (listener == null)
             {
                 this.connectionManager = connectionManager;

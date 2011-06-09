@@ -5,12 +5,6 @@ namespace Jabber.Net.Server.Connections
 {
     public class XmppStreamParsedArgs : EventArgs
     {
-        public Guid ConnectionId
-        {
-            get;
-            private set;
-        }
-
         public XObject Xmpp
         {
             get;
@@ -18,9 +12,8 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public XmppStreamParsedArgs(Guid connectionId, XObject xmpp)
+        public XmppStreamParsedArgs(XObject xmpp)
         {
-            ConnectionId = connectionId;
             Xmpp = xmpp;
         }
     }

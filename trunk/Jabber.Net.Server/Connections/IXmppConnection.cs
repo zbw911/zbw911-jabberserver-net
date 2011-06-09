@@ -10,12 +10,7 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        event EventHandler<XmppConnectionRecieveArgs> Recieved;
-
-        event EventHandler<XmppConnectionCloseArgs> Closed;
-
-
-        void StartRecieve();
+        void StartRecieve(IXmppReciever reciever);
 
         void Send(byte[] buffer);
 

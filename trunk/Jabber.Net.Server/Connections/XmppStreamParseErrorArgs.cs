@@ -4,12 +4,6 @@ namespace Jabber.Net.Server.Connections
 {
     public class XmppStreamParseErrorArgs : EventArgs
     {
-        public Guid ConnectionId
-        {
-            get;
-            private set;
-        }
-
         public Exception Error
         {
             get;
@@ -17,9 +11,8 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public XmppStreamParseErrorArgs(Guid connectionId, Exception error)
+        public XmppStreamParseErrorArgs(Exception error)
         {
-            ConnectionId = connectionId;
             Error = error;
         }
     }
