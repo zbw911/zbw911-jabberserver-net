@@ -29,7 +29,7 @@ namespace Jabber.Net.Server.Connections
             if (listener == null) throw new ArgumentNullException("listener");
             if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
 
-            listeners[listener.ListenUri] = listener;
+            listeners.Add(listener.ListenUri, listener);
         }
 
         public void RemoveListener(Uri listenUri)
@@ -42,7 +42,7 @@ namespace Jabber.Net.Server.Connections
 
         public void StartListen()
         {
-            if (IsListen) return;
+            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
 
             foreach (var l in listeners.Values)
             {
@@ -53,7 +53,7 @@ namespace Jabber.Net.Server.Connections
 
         public void StopListen()
         {
-            if (!IsListen) return;
+            if (IsListen) throw new InvalidOperationException("ListenerManager not in listen state.");
 
             foreach (var l in listeners.Values)
             {

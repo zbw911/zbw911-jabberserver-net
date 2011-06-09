@@ -13,18 +13,15 @@ namespace Jabber.Net.Server.Connections
         private byte[] readBuffer;
         private List<byte[]> notSended;
 
+        private IXmppReciever reciever;
+
 
         public Guid Id
         {
             get;
             private set;
         }
-
-
-        public event EventHandler<XmppConnectionCloseArgs> Closed;
-
-        public event EventHandler<XmppConnectionRecieveArgs> Recieved;
-
+        
 
         public TcpXmppConnection(TcpClient tcpClient)
         {
@@ -34,13 +31,14 @@ namespace Jabber.Net.Server.Connections
             this.stream = tcpClient.GetStream();
 
             this.readBuffer = new byte[tcpClient.ReceiveBufferSize];
-            this.notSended = new List<byte[]>(2);
+            this.notSended = new List<byte[]>(5);
         }
 
-        public void StartRecieve()
+        public void StartRecieve(IXmppReciever reciever)
         {
             if (closed) throw new ObjectDisposedException(GetType().FullName);
 
+            this.reciever = reciever;
             stream.BeginRead(readBuffer, 0, readBuffer.Length, ReadCallback, null);
         }
 
@@ -59,21 +57,23 @@ namespace Jabber.Net.Server.Connections
             try
             {
                 tcpClient.Close();
+                tcpClient = null;
             }
             catch { }
             try
             {
                 stream.Close();
+                stream = null;
             }
             catch { }
 
-            var ev = Closed;
-            if (ev != null)
+            byte[][] buffer = null;
+            lock (notSended)
             {
-                byte[][] buffer = null;
-                lock (notSended) buffer = notSended.ToArray();
-                ev(this, new XmppConnectionCloseArgs(Id, buffer));
+                buffer = notSended.ToArray();
+                notSended.Clear();
             }
+            reciever.OnClose(buffer);
         }
 
 
@@ -88,8 +88,7 @@ namespace Jabber.Net.Server.Connections
                     var buffer = new byte[readed];
                     Array.Copy(readBuffer, buffer, readed);
 
-                    var ev = Recieved;
-                    if (ev != null) ev(this, new XmppConnectionRecieveArgs(Id, buffer));
+                    reciever.OnRecive(buffer);
 
                     stream.BeginRead(readBuffer, 0, readBuffer.Length, ReadCallback, null);
                 }
@@ -112,7 +111,10 @@ namespace Jabber.Net.Server.Connections
             }
             catch (Exception)
             {
-                lock (notSended) notSended.Add((byte[])ar.AsyncState);
+                lock (notSended)
+                {
+                    notSended.Add((byte[])ar.AsyncState);
+                }
                 Close();
             }
         }
