@@ -48,7 +48,7 @@ namespace Jabber.Net.Server
                 var listener = (IXmppListener)Activator.CreateInstance(e.ListenerType);
                 listener.ListenUri = e.ListenUri;
                 listener.MaxReceivedMessageSize = e.MaxReceivedMessageSize;
-                if (listener is IConfigurable) ((IConfigurable)listener).Configure(e.UnrecognizedAttributes);
+                ConfigureConfigurable(listener as IConfigurable, e);
 
                 ListenerManager.AddListener(listener);
             }
@@ -63,6 +63,15 @@ namespace Jabber.Net.Server
         public void Stop()
         {
             ListenerManager.StopListen();
+        }
+
+
+        private void ConfigureConfigurable(IConfigurable configurable, JabberNetConfigurationElement element)
+        {
+            if (configurable != null)
+            {
+                configurable.Configure(element.UnrecognizedAttributes);
+            }
         }
     }
 }
