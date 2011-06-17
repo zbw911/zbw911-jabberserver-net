@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
+using Jabber.Net.Server.Connections;
 
 namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        public XmppHandlerResult HandleXmppElement(Guid connectionId, XObject xmpp)
+        public XmppHandlerResult HandleXmppElement(IXmppConnection connection, XObject xmpp)
         {
             return null;
         }
 
-        public XmppHandlerResult HandleError(Guid connectionId, Exception error)
+        public XmppHandlerResult HandleError(IXmppConnection connection, Exception error)
         {
             return null;
         }

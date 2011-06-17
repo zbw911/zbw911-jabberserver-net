@@ -30,10 +30,9 @@ namespace Jabber.Net.Server.Connections
             if (listener == null)
             {
                 this.connectionManager = connectionManager;
-                listener = new TcpListener(new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port))
-                {
-                    ExclusiveAddressUse = true,
-                };
+                
+                var p = new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port);
+                listener = new TcpListener(p) { ExclusiveAddressUse = true, };                
                 listener.Start();
                 listener.BeginAcceptTcpClient(OnAccept, listener);
             }

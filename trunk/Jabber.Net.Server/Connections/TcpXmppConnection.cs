@@ -25,6 +25,8 @@ namespace Jabber.Net.Server.Connections
 
         public TcpXmppConnection(TcpClient tcpClient)
         {
+            if (tcpClient == null) throw new ArgumentNullException("tcpClient");
+
             Id = Guid.NewGuid();
 
             this.tcpClient = tcpClient;
@@ -34,9 +36,11 @@ namespace Jabber.Net.Server.Connections
             this.notSended = new List<byte[]>(5);
         }
 
+
         public void StartRecieve(IXmppReciever reciever)
         {
             if (closed) throw new ObjectDisposedException(GetType().FullName);
+            if (reciever == null) throw new ArgumentNullException("reciever");
 
             this.reciever = reciever;
             stream.BeginRead(readBuffer, 0, readBuffer.Length, ReadCallback, null);
@@ -45,8 +49,12 @@ namespace Jabber.Net.Server.Connections
         public void Send(byte[] buffer)
         {
             if (closed) throw new ObjectDisposedException(GetType().FullName);
+            if (buffer == null) throw new ArgumentNullException("buffer");
 
-            stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, buffer);
+            if (0 < buffer.Length)
+            {
+                stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, buffer);
+            }
         }
 
         public void Close()
@@ -56,14 +64,20 @@ namespace Jabber.Net.Server.Connections
 
             try
             {
-                tcpClient.Close();
-                tcpClient = null;
+                if (tcpClient != null)
+                {
+                    tcpClient.Close();
+                    tcpClient = null;
+                }
             }
             catch { }
             try
             {
-                stream.Close();
-                stream = null;
+                if (stream != null)
+                {
+                    stream.Close();
+                    stream = null;
+                }
             }
             catch { }
 

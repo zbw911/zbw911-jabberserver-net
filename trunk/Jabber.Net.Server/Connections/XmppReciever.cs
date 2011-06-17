@@ -38,12 +38,12 @@ namespace Jabber.Net.Server.Connections
 
         private void Parsed(object sender, XmppStreamParsedArgs e)
         {
-            handlerManager.HandleXmppElement(connection.Id, e.Xmpp);
+            handlerManager.HandleXmppElement(connection, e.Xmpp);
         }
 
         private void Error(object sender, XmppStreamParseErrorArgs e)
         {
-            handlerManager.HandleError(connection.Id, e.Error);
+            handlerManager.HandleError(connection, e.Error);
         }
     }
 }
