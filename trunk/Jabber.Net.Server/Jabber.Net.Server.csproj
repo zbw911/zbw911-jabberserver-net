@@ -6,12 +6,14 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Jabber.Net.Server</RootNamespace>
     <AssemblyName>Jabber.Net.Server</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <StartupObject>Jabber.Net.Server.Program</StartupObject>
+    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,18 +63,19 @@
     <Compile Include="Connections\XmppConnectionManager.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
     <Compile Include="Connections\XmppReciever.cs" />
-    <Compile Include="Connections\XmppStreamParseErrorArgs.cs" />
-    <Compile Include="Connections\XmppStreamParsedArgs.cs" />
     <Compile Include="ContractException.cs" />
+    <Compile Include="Handlers\IXmppHandler.cs" />
     <Compile Include="Handlers\XmppHandlerContext.cs" />
     <Compile Include="Handlers\XmppHandlerManager.cs" />
     <Compile Include="Handlers\XmppHandlerResult.cs" />
-    <Compile Include="Connections\XmppStreamParser.cs" />
     <Compile Include="JabberNetServer.cs" />
     <Compile Include="Connections\IXmppListener.cs" />
     <Compile Include="Connections\TcpXmppListener.cs" />
     <Compile Include="Connections\XmppListenerManager.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IXmppService.cs" />
+    <Compile Include="Services\XmppServiceManager.cs" />
     <Compile Include="Tests\TcpXmppListernerTest.cs" />
     <Compile Include="Tests\TmpTest.cs" />
     <Compile Include="Tests\XTest.cs" />
@@ -81,6 +84,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jabber.Net\Jabber.Net.csproj">
+      <Project>{1226980A-3AF2-4DD6-985B-2FE7A5D47A2E}</Project>
+      <Name>Jabber.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Jabber\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

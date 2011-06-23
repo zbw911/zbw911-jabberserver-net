@@ -4,13 +4,18 @@ namespace Jabber.Net.Server.Connections
 {
     public interface IXmppConnection
     {
-        Guid Id
+        string Id
+        {
+            get;
+        }
+
+        bool Closed
         {
             get;
         }
 
 
-        void StartRecieve(IXmppReciever reciever);
+        void Recieve(IXmppReciever reciever);
 
         void Send(byte[] buffer);
 

@@ -17,9 +17,9 @@ namespace Jabber.Net.Server.Configuration
         }
 
         [ConfigurationProperty(JabberNetConfigurationScheme.LISTENER_TYPE, IsRequired = true)]
-        public Type ListenerType
+        public string ListenerType
         {
-            get { return (Type)this[JabberNetConfigurationScheme.LISTENER_TYPE]; }
+            get { return (string)this[JabberNetConfigurationScheme.LISTENER_TYPE]; }
         }
 
         [ConfigurationProperty(JabberNetConfigurationScheme.MAX_RECEIVED_MESSAGE_SIZE, DefaultValue = (int)UInt16.MaxValue)]
