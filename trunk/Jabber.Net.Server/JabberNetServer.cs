@@ -55,7 +55,6 @@ namespace Jabber.Net.Server
             {
                 var listener = (IXmppListener)Activator.CreateInstance(Type.GetType(e.ListenerType, true));
                 listener.ListenUri = e.ListenUri;
-                listener.MaxReceivedMessageSize = e.MaxReceivedMessageSize;
                 ConfigureConfigurable(listener as IConfigurable, e);
 
                 ListenerManager.AddListener(listener);

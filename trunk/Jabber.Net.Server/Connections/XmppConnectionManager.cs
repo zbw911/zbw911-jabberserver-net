@@ -23,7 +23,9 @@ namespace Jabber.Net.Server.Connections
             {
                 connections.Add(connection.Id, connection);
             }
-            connection.Recieve(new XmppReciever(connection, this, handlerManager));
+
+            var reciever = new XmppReciever(connection, this, handlerManager);
+            connection.Recieve(reciever);
         }
 
         public void CloseConnection(string connectionId)

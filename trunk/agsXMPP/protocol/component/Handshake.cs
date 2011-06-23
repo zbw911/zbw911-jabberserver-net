@@ -15,7 +15,7 @@ namespace agsXMPP.protocol.component
 	/// <summary>
 	/// Handshake Element
 	/// </summary>
-	public class Handshake : Stanza
+	public class Handshake : Element
 	{
 		public Handshake()
 		{

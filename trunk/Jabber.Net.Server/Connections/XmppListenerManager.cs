@@ -53,7 +53,7 @@ namespace Jabber.Net.Server.Connections
 
         public void StopListen()
         {
-            if (IsListen) throw new InvalidOperationException("ListenerManager not in listen state.");
+            if (!IsListen) throw new InvalidOperationException("ListenerManager not in listen state.");
 
             foreach (var l in listeners.Values)
             {

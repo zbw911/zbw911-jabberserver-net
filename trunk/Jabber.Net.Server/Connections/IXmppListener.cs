@@ -10,12 +10,6 @@ namespace Jabber.Net.Server.Connections
             set;
         }
 
-        int MaxReceivedMessageSize
-        {
-            get;
-            set;
-        }
-
 
         void StartListen(XmppConnectionManager connectionManager);
 

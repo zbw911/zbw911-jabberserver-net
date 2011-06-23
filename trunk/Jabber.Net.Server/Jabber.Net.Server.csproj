@@ -86,6 +86,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\agsXMPP\agsXMPP.csproj">
+      <Project>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</Project>
+      <Name>agsXMPP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jabber.Net\Jabber.Net.csproj">
       <Project>{1226980A-3AF2-4DD6-985B-2FE7A5D47A2E}</Project>
       <Name>Jabber.Net</Name>
