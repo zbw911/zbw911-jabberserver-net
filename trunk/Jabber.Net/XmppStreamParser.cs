@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
+using agsXMPP.protocol;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
-using agsXMPP.protocol;
 
 namespace Jabber.Net
 {
