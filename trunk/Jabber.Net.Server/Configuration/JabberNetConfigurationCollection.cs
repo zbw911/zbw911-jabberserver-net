@@ -18,7 +18,11 @@ namespace Jabber.Net.Server.Configuration
 
         public new IEnumerator<TElement> GetEnumerator()
         {
-            return this.Cast<TElement>().GetEnumerator();
+            var enumerator = base.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                yield return (TElement)enumerator.Current;
+            }
         }
     }
 }

@@ -16,18 +16,23 @@ namespace Jabber.Net.Server.Connections
         private IXmppReciever reciever;
 
 
-        public Guid Id
+        public string Id
         {
             get;
             private set;
         }
-        
+
+        public bool Closed
+        {
+            get { return closed; }
+        }
+
 
         public TcpXmppConnection(TcpClient tcpClient)
         {
             if (tcpClient == null) throw new ArgumentNullException("tcpClient");
 
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString("N");
 
             this.tcpClient = tcpClient;
             this.stream = tcpClient.GetStream();
@@ -37,7 +42,7 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public void StartRecieve(IXmppReciever reciever)
+        public void Recieve(IXmppReciever reciever)
         {
             if (closed) throw new ObjectDisposedException(GetType().FullName);
             if (reciever == null) throw new ArgumentNullException("reciever");

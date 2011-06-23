@@ -2,6 +2,7 @@
 using Jabber.Net.Server.Configuration;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Handlers;
+using Jabber.Net.Server.Services;
 
 namespace Jabber.Net.Server
 {
@@ -22,7 +23,13 @@ namespace Jabber.Net.Server
         public XmppHandlerManager HandlerManager
         {
             get;
-            set;
+            private set;
+        }
+
+        public XmppServiceManager ServiceManager
+        {
+            get;
+            private set;
         }
 
 
@@ -31,6 +38,7 @@ namespace Jabber.Net.Server
             HandlerManager = new XmppHandlerManager();
             ConnectionManager = new XmppConnectionManager(HandlerManager);
             ListenerManager = new XmppListenerManager(ConnectionManager);
+            ServiceManager = new XmppServiceManager(HandlerManager);
         }
 
 
@@ -45,7 +53,7 @@ namespace Jabber.Net.Server
 
             foreach (var e in jabberSection.Listeners)
             {
-                var listener = (IXmppListener)Activator.CreateInstance(e.ListenerType);
+                var listener = (IXmppListener)Activator.CreateInstance(Type.GetType(e.ListenerType, true));
                 listener.ListenUri = e.ListenUri;
                 listener.MaxReceivedMessageSize = e.MaxReceivedMessageSize;
                 ConfigureConfigurable(listener as IConfigurable, e);

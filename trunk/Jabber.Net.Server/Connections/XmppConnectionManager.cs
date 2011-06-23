@@ -7,12 +7,12 @@ namespace Jabber.Net.Server.Connections
     public class XmppConnectionManager
     {
         private readonly XmppHandlerManager handlerManager;
-        private readonly IDictionary<Guid, IXmppConnection> connections;
+        private readonly IDictionary<string, IXmppConnection> connections;
 
 
         public XmppConnectionManager(XmppHandlerManager handlerManager)
         {
-            this.connections = new Dictionary<Guid, IXmppConnection>(1000);
+            this.connections = new Dictionary<string, IXmppConnection>(1000);
             this.handlerManager = handlerManager;
         }
 
@@ -23,10 +23,10 @@ namespace Jabber.Net.Server.Connections
             {
                 connections.Add(connection.Id, connection);
             }
-            connection.StartRecieve(new XmppReciever(connection, handlerManager));
+            connection.Recieve(new XmppReciever(connection, this, handlerManager));
         }
 
-        public void CloseConnection(Guid connectionId)
+        public void CloseConnection(string connectionId)
         {
             IXmppConnection connection;
             lock (connections)
@@ -35,10 +35,19 @@ namespace Jabber.Net.Server.Connections
             }
             if (connection != null)
             {
-                connection.Close();
-                lock (connections)
+                try
                 {
-                    connections.Remove(connectionId);
+                    if (!connection.Closed)
+                    {
+                        connection.Close();
+                    }
+                }
+                finally
+                {
+                    lock (connections)
+                    {
+                        connections.Remove(connectionId);
+                    }
                 }
             }
         }
