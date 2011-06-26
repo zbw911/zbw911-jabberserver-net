@@ -1,38 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Jabber.Net.Server.Connections;
-using agsXMPP.protocol.client;
 
 namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
+        private readonly List<IXmppStreamHandler> streamHandlers;
+
+
+        public XmppHandlerManager()
+        {
+            streamHandlers = new List<IXmppStreamHandler>(10);
+        }
+
+
+        public void AddHandler(IXmppStreamHandler handler)
+        {
+            Contract.Requires<ArgumentNullException>(handler != null, "handler");
+
+            streamHandlers.Add(handler);
+        }
+
+        public void RemoveHandler(IXmppStreamHandler handler)
+        {
+            Contract.Requires<ArgumentNullException>(handler != null, "handler");
+
+            streamHandlers.Remove(handler);
+        }
+
+
         public void ProcessElement(IXmppConnection connection, XmppElement e)
         {
-            if (e.Node is IQ || e.Node is Message || e.Node is Presence)
+            if (e.IsStanza)
             {
-                ProcessStanza(connection, e);
+                
             }
             else
             {
+                foreach (var h in streamHandlers)
+                {
+                    if (e.Node.Namespace == h.Namespace)
+                    {
+                        var copy = (XmppElement)e.Clone();
+                        h.ProcessElement(connection, e);
+                    }
+                }
+            }
+        }
 
+        public void ProcessClose(IXmppConnection connection, IEnumerable<XmppElement> notSended)
+        {
+            foreach (var h in streamHandlers)
+            {
+                h.ProcessClose(connection, notSended);
             }
         }
 
         public void ProcessError(IXmppConnection connection, Exception error)
         {
-
-        }
-
-        public void ProcessClose(IXmppConnection connection, IEnumerable<XmppElement> notSended)
-        {
-
-        }
-
-
-        private void ProcessStanza(IXmppConnection connection, XmppElement e)
-        {
-
+            connection.Close();
         }
     }
 }
