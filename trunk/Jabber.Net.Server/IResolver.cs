@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Jabber.Net.Server.Handlers
+namespace Jabber.Net.Server
 {
-    public interface IXmppHandler
+    public interface IResolver
     {
+        T Resolve<T>();
     }
 }

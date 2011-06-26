@@ -7,6 +7,7 @@ namespace Jabber.Net.Server.Services
         string Jid
         {
             get;
+            set;
         }
 
         void Register(XmppHandlerManager handlerManager);
