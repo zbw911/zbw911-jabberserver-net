@@ -39,10 +39,7 @@ namespace Jabber.Net.Server.Connections
             {
                 try
                 {
-                    if (!connection.Closed)
-                    {
-                        connection.Close();
-                    }
+                    connection.Close();
                 }
                 finally
                 {

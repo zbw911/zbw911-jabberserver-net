@@ -9,12 +9,6 @@ namespace Jabber.Net.Server.Connections
             get;
         }
 
-        bool Closed
-        {
-            get;
-        }
-
-
         void Recieve(IXmppReciever reciever);
 
         void Send(byte[] buffer);
