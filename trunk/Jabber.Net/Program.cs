@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using Jabber.Net.Server.Connections;
 
 namespace Jabber.Net.Server
 {
@@ -12,7 +15,7 @@ namespace Jabber.Net.Server
             try
             {
                 var server = new JabberNetServer();
-                server.Configure();
+                server.Configure(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
                 server.Start();
 
                 Console.ReadKey();

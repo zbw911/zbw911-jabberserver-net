@@ -1,18 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.IO;
 
 namespace Jabber.Net.Server.Connections
 {
     class TcpXmppConnection : IXmppConnection
     {
-        private TcpClient tcpClient;
-        private NetworkStream stream;
-
-        private volatile bool closed;
-        private byte[] readBuffer;
-        private List<byte[]> notSended;
-
+        private readonly List<byte[]> notSended = new List<byte[]>(5);
+        private volatile bool closed = false;
+        private TcpClient client;
         private IXmppReciever reciever;
 
 
@@ -22,44 +20,35 @@ namespace Jabber.Net.Server.Connections
             private set;
         }
 
-        public bool Closed
-        {
-            get { return closed; }
-        }
-
 
         public TcpXmppConnection(TcpClient tcpClient)
         {
-            if (tcpClient == null) throw new ArgumentNullException("tcpClient");
+            Args.NotNull(tcpClient, "tcpClient");
 
             Id = Guid.NewGuid().ToString("N");
-
-            this.tcpClient = tcpClient;
-            this.stream = tcpClient.GetStream();
-
-            this.readBuffer = new byte[tcpClient.ReceiveBufferSize];
-            this.notSended = new List<byte[]>(5);
+            client = tcpClient;
         }
 
 
         public void Recieve(IXmppReciever reciever)
         {
-            if (closed) throw new ObjectDisposedException(GetType().FullName);
-            if (reciever == null) throw new ArgumentNullException("reciever");
+            RequiresNotClosed();
+            Args.NotNull(reciever, "reciever");
 
             this.reciever = reciever;
-            stream.BeginRead(readBuffer, 0, readBuffer.Length, ReadCallback, null);
+
+            var stream = client.GetStream();
+            var buffer = new byte[client.ReceiveBufferSize];
+            stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, new AsyncState(stream, buffer));
         }
 
         public void Send(byte[] buffer)
         {
-            if (closed) throw new ObjectDisposedException(GetType().FullName);
-            if (buffer == null) throw new ArgumentNullException("buffer");
+            RequiresNotClosed();
+            Args.NotNull(buffer, "buffer");
 
-            if (0 < buffer.Length)
-            {
-                stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, buffer);
-            }
+            var stream = client.GetStream();
+            stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, new AsyncState(stream, buffer));
         }
 
         public void Close()
@@ -69,19 +58,10 @@ namespace Jabber.Net.Server.Connections
 
             try
             {
-                if (tcpClient != null)
+                if (client != null)
                 {
-                    tcpClient.Close();
-                    tcpClient = null;
-                }
-            }
-            catch { }
-            try
-            {
-                if (stream != null)
-                {
-                    stream.Close();
-                    stream = null;
+                    client.Close();
+                    client = null;
                 }
             }
             catch { }
@@ -93,23 +73,25 @@ namespace Jabber.Net.Server.Connections
                 notSended.Clear();
             }
             reciever.OnClose(buffer);
+            reciever = null;
         }
 
 
         private void ReadCallback(IAsyncResult ar)
         {
             if (closed) return;
+
+            var state = (AsyncState)ar.AsyncState;
+            var stream = state.Stream;
+            var buffer = state.Buffer;
+            
             try
             {
                 var readed = stream.EndRead(ar);
                 if (0 < readed)
                 {
-                    var buffer = new byte[readed];
-                    Array.Copy(readBuffer, buffer, readed);
-
-                    reciever.OnRecive(buffer);
-
-                    stream.BeginRead(readBuffer, 0, readBuffer.Length, ReadCallback, null);
+                    reciever.OnRecive(buffer.Take(readed).ToArray());
+                    stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, state);
                 }
                 else
                 {
@@ -124,6 +106,10 @@ namespace Jabber.Net.Server.Connections
 
         private void SendCallback(IAsyncResult ar)
         {
+            var state = (AsyncState)ar.AsyncState;
+            var stream = state.Stream;
+            var buffer = state.Buffer;
+
             try
             {
                 stream.EndWrite(ar);
@@ -132,9 +118,28 @@ namespace Jabber.Net.Server.Connections
             {
                 lock (notSended)
                 {
-                    notSended.Add((byte[])ar.AsyncState);
+                    notSended.Add(buffer);
                 }
                 Close();
+            }
+        }
+
+        private void RequiresNotClosed()
+        {
+            Args.Requires<ObjectDisposedException>(!closed, GetType().FullName);
+        }
+
+
+        private class AsyncState
+        {
+            public readonly Stream Stream;
+            public readonly byte[] Buffer;
+
+
+            public AsyncState(Stream stream, byte[] buffer)
+            {
+                Stream = stream;
+                Buffer = buffer;
             }
         }
     }

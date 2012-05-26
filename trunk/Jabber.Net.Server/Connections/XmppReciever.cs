@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using Jabber.Net.Server.Handlers;
 
@@ -16,9 +15,9 @@ namespace Jabber.Net.Server.Connections
 
         public XmppReciever(IXmppConnection connection, XmppConnectionManager connectionManager, XmppHandlerManager handlerManager)
         {
-            Contract.Requires<ArgumentNullException>(connection != null, "connection");
-            Contract.Requires<ArgumentNullException>(connectionManager != null, "connectionManager");
-            Contract.Requires<ArgumentNullException>(handlerManager != null, "handlerManager");
+            Args.NotNull(connection, "connection");
+            Args.NotNull(connectionManager, "connectionManager");
+            Args.NotNull(handlerManager, "handlerManager");
 
             this.connection = connection;
             this.connectionManager = connectionManager;

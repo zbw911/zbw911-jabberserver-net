@@ -19,17 +19,18 @@ namespace Jabber.Net.Server.Connections
 
         public void StartListen(XmppConnectionManager connectionManager)
         {
-            if (connectionManager == null) throw new ArgumentNullException("connectionManager");
+            Args.NotNull(connectionManager, "connectionManager");
 
-            if (listener == null)
+            this.connectionManager = connectionManager;
+
+            var endpoint = new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port);
+            listener = new TcpListener(endpoint)
             {
-                this.connectionManager = connectionManager;
-                
-                var p = new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port);
-                listener = new TcpListener(p) { ExclusiveAddressUse = true, };                
-                listener.Start();
-                listener.BeginAcceptTcpClient(OnAccept, listener);
-            }
+                ExclusiveAddressUse = true,
+            };
+
+            listener.Start();
+            BeginAcceptTcpClient(true);
         }
 
         public void StopListen()
@@ -45,17 +46,45 @@ namespace Jabber.Net.Server.Connections
 
         private void OnAccept(IAsyncResult ar)
         {
+            var continueAccept = true;
             try
             {
                 var listener = (TcpListener)ar.AsyncState;
-                listener.BeginAcceptTcpClient(OnAccept, listener);
-
                 var tcpClient = listener.EndAcceptTcpClient(ar);
                 connectionManager.AddConnection(new TcpXmppConnection(tcpClient));
             }
             catch (ObjectDisposedException)
             {
-                return;
+                //ignore
+                continueAccept = false;
+            }
+            catch (Exception error)
+            {
+                Log.Error(error);
+            }
+            finally
+            {
+                if (continueAccept)
+                {
+                    BeginAcceptTcpClient(false);
+                }
+            }
+        }
+
+        private void BeginAcceptTcpClient(bool throwerror)
+        {
+            try
+            {
+                listener.BeginAcceptTcpClient(OnAccept, listener);
+            }
+            catch (ObjectDisposedException)
+            {
+                //ignore
+            }
+            catch (Exception error)
+            {
+                if (throwerror) throw;
+                else Log.Error(error);
             }
         }
     }

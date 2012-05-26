@@ -3,3 +3,4 @@ syntax: glob
 */obj/*
 *.suo
 *.user
+code.google
