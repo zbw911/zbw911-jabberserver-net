@@ -116,6 +116,7 @@
     <Compile Include="Tests\TmpTest.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
+    <Compile Include="Utils\IdGenerator.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="XmppElement.cs" />
     <Compile Include="XmppStreamParser.cs" />
