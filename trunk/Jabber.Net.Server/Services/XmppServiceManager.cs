@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server.Services
@@ -13,7 +12,7 @@ namespace Jabber.Net.Server.Services
 
         public XmppServiceManager(XmppHandlerManager handlerManager)
         {
-            Contract.Requires<ArgumentNullException>(handlerManager != null, "handlerManager");
+            Args.NotNull(handlerManager, "handlerManager");
 
             services = new Dictionary<string, IXmppService>(10);
             this.handlerManager = handlerManager;
@@ -22,7 +21,7 @@ namespace Jabber.Net.Server.Services
 
         public void RegisterService(IXmppService service)
         {
-            Contract.Requires<ArgumentNullException>(service != null, "service");
+            Args.NotNull(service, "service");
 
             services.Add(service.Jid, service);
             service.Register(handlerManager);
@@ -30,7 +29,7 @@ namespace Jabber.Net.Server.Services
 
         public void UnregisterService(string jid)
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(jid), "jid");
+            Args.Requires<ArgumentNullException>(!string.IsNullOrEmpty(jid), "jid");
 
             if (services.ContainsKey(jid))
             {

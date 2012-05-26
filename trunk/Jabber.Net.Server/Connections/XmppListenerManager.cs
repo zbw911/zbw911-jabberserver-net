@@ -5,61 +5,69 @@ namespace Jabber.Net.Server.Connections
 {
     public class XmppListenerManager
     {
-        private readonly IDictionary<Uri, IXmppListener> listeners = new Dictionary<Uri, IXmppListener>();
-        private readonly XmppConnectionManager connectionManager;
-
-
-        public bool IsListen
-        {
-            get;
-            private set;
-        }
-
-
-        public XmppListenerManager(XmppConnectionManager connectionManager)
-        {
-            if (connectionManager == null) throw new ArgumentNullException("connectionManager");
-
-            this.connectionManager = connectionManager;
-        }
+        private readonly IList<IXmppListener> listeners = new List<IXmppListener>();
+        private bool listen = false;
 
 
         public void AddListener(IXmppListener listener)
         {
-            if (listener == null) throw new ArgumentNullException("listener");
-            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
+            Args.NotNull(listener, "listener");
+            RequiresNotListen();
 
-            listeners.Add(listener.ListenUri, listener);
+            listeners.Add(listener);
         }
 
-        public void RemoveListener(Uri listenUri)
+        public void RemoveListener(IXmppListener listener)
         {
-            if (listenUri == null) throw new ArgumentNullException("listenUri");
-            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
+            Args.NotNull(listener, "listener");
+            RequiresNotListen();
 
-            listeners.Remove(listenUri);
+            listeners.Remove(listener);
         }
 
-        public void StartListen()
-        {
-            if (IsListen) throw new InvalidOperationException("ListenerManager in listen state.");
 
-            foreach (var l in listeners.Values)
+        public void StartListen(XmppConnectionManager connectionManager)
+        {
+            Args.NotNull(connectionManager, "connectionManager");
+            RequiresNotListen();
+
+            foreach (var listener in listeners)
             {
-                l.StartListen(connectionManager);
+                try
+                {
+                    listener.StartListen(connectionManager);
+                }
+                catch (Exception error)
+                {
+                    Log.Error(error);
+                }
             }
-            IsListen = true;
+            listen = true;
         }
 
         public void StopListen()
         {
-            if (!IsListen) throw new InvalidOperationException("ListenerManager not in listen state.");
-
-            foreach (var l in listeners.Values)
+            if (listen)
             {
-                l.StopListen();
+                foreach (var listener in listeners)
+                {
+                    try
+                    {
+                        listener.StopListen();
+                    }
+                    catch (Exception error)
+                    {
+                        Log.Error(error);
+                    }
+                }
+                listen = false;
             }
-            IsListen = false;
+        }
+
+
+        private void RequiresNotListen()
+        {
+            Args.Requires<InvalidOperationException>(!listen, "ListenerManager in listen state.");
         }
     }
 }

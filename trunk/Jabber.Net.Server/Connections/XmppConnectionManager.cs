@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Jabber.Net.Server.Handlers;
+﻿using System.Collections.Generic;
 
 namespace Jabber.Net.Server.Connections
 {
     public class XmppConnectionManager
     {
-        private readonly XmppHandlerManager handlerManager;
         private readonly IDictionary<string, IXmppConnection> connections;
 
 
-        public XmppConnectionManager(XmppHandlerManager handlerManager)
+        public XmppConnectionManager()
         {
             this.connections = new Dictionary<string, IXmppConnection>(1000);
-            this.handlerManager = handlerManager;
         }
 
 
@@ -24,8 +20,8 @@ namespace Jabber.Net.Server.Connections
                 connections.Add(connection.Id, connection);
             }
 
-            var reciever = new XmppReciever(connection, this, handlerManager);
-            connection.Recieve(reciever);
+            //var reciever = new XmppReciever(connection, this, handlerManager);
+            //connection.Recieve(reciever);
         }
 
         public void CloseConnection(string connectionId)

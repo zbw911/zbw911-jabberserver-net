@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Jabber.Net.Server.Connections;
 
 namespace Jabber.Net.Server.Handlers
@@ -18,14 +17,14 @@ namespace Jabber.Net.Server.Handlers
 
         public void AddHandler(IXmppStreamHandler handler)
         {
-            Contract.Requires<ArgumentNullException>(handler != null, "handler");
+            if (handler == null) throw new ArgumentNullException("handler");
 
             streamHandlers.Add(handler);
         }
 
         public void RemoveHandler(IXmppStreamHandler handler)
         {
-            Contract.Requires<ArgumentNullException>(handler != null, "handler");
+            if (handler == null) throw new ArgumentNullException("handler");
 
             streamHandlers.Remove(handler);
         }

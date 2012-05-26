@@ -1,8 +1,7 @@
-﻿using System;
-using Jabber.Net.Server.Configuration;
+﻿using System.Configuration;
 using Jabber.Net.Server.Connections;
-using Jabber.Net.Server.Handlers;
-using Jabber.Net.Server.Services;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
 
 namespace Jabber.Net.Server
 {
@@ -11,74 +10,37 @@ namespace Jabber.Net.Server
         public XmppListenerManager ListenerManager
         {
             get;
-            private set;
+            set;
         }
 
         public XmppConnectionManager ConnectionManager
         {
             get;
-            private set;
-        }
-
-        public XmppHandlerManager HandlerManager
-        {
-            get;
-            private set;
-        }
-
-        public XmppServiceManager ServiceManager
-        {
-            get;
-            private set;
+            set;
         }
 
 
-        public JabberNetServer()
+        public void Configure(string file)
         {
-            HandlerManager = new XmppHandlerManager();
-            ConnectionManager = new XmppConnectionManager(HandlerManager);
-            ListenerManager = new XmppListenerManager(ConnectionManager);
-            ServiceManager = new XmppServiceManager(HandlerManager);
-        }
+            var map = new ExeConfigurationFileMap { ExeConfigFilename = file };
+            var configuration = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
 
+            var unityContainer = new UnityContainer()
+                .LoadConfiguration((UnityConfigurationSection)configuration.GetSection("unity"), "Jabber");
 
-        public void Configure()
-        {
-            Configure(null);
-        }
-
-        public void Configure(string configfile)
-        {
-            var jabberSection = JabberNetConfigurationSection.Load(configfile);
-
-            foreach (var e in jabberSection.Listeners)
-            {
-                var listener = (IXmppListener)Activator.CreateInstance(Type.GetType(e.ListenerType, true));
-                listener.ListenUri = e.ListenUri;
-                ConfigureConfigurable(listener as IConfigurable, e);
-
-                ListenerManager.AddListener(listener);
-            }
+            ListenerManager = unityContainer.Resolve<XmppListenerManager>();
+            ConnectionManager = unityContainer.Resolve<XmppConnectionManager>();
         }
 
 
         public void Start()
         {
-            ListenerManager.StartListen();
+            ListenerManager.StartListen(ConnectionManager);
         }
 
         public void Stop()
         {
             ListenerManager.StopListen();
-        }
-
-
-        private void ConfigureConfigurable(IConfigurable configurable, JabberNetConfigurationElement element)
-        {
-            if (configurable != null)
-            {
-                configurable.Configure(element.UnrecognizedAttributes);
-            }
         }
     }
 }
