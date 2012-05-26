@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Connections
 {
@@ -25,7 +26,7 @@ namespace Jabber.Net.Server.Connections
         {
             Args.NotNull(tcpClient, "tcpClient");
 
-            Id = Guid.NewGuid().ToString("N");
+            Id = IdGenerator.NewId();
             client = tcpClient;
         }
 
