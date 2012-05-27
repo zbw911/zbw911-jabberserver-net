@@ -2,6 +2,7 @@
 using Jabber.Net.Server.Connections;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server
 {
@@ -19,6 +20,12 @@ namespace Jabber.Net.Server
             set;
         }
 
+        public XmppHandlerManager HandlerManager
+        {
+            get;
+            set;
+        }
+
 
         public void Configure(string file)
         {
@@ -30,6 +37,7 @@ namespace Jabber.Net.Server
 
             ListenerManager = unityContainer.Resolve<XmppListenerManager>();
             ConnectionManager = unityContainer.Resolve<XmppConnectionManager>();
+            HandlerManager = unityContainer.Resolve<XmppHandlerManager>();
         }
 
 

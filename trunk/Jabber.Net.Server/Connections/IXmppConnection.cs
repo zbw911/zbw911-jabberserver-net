@@ -1,15 +1,8 @@
-﻿using System;
-
-namespace Jabber.Net.Server.Connections
+﻿namespace Jabber.Net.Server.Connections
 {
     public interface IXmppConnection
     {
-        string Id
-        {
-            get;
-        }
-
-        void Recieve(IXmppReciever reciever);
+        void BeginRecieve(IXmppReciever reciever);
 
         void Send(byte[] buffer);
 
