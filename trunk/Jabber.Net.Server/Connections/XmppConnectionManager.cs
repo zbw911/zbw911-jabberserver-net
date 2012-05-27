@@ -1,49 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server.Connections
 {
     public class XmppConnectionManager
     {
-        private readonly IDictionary<string, IXmppConnection> connections;
+        private readonly IDictionary<string, XmppConnection> connections = new Dictionary<string, XmppConnection>(1000);
+        private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        private readonly XmppHandlerManager handlerManager;
 
 
-        public XmppConnectionManager()
+        public XmppConnectionManager(XmppHandlerManager handlerManager)
         {
-            this.connections = new Dictionary<string, IXmppConnection>(1000);
+            Args.NotNull(handlerManager, "handlerManager");
+
+            this.handlerManager = handlerManager;
         }
 
 
         public void AddConnection(IXmppConnection connection)
         {
-            lock (connections)
+            locker.EnterWriteLock();
+            try
             {
-                connections.Add(connection.Id, connection);
+                var wrapper = new XmppConnection(connection, this, handlerManager);
+                connections.Add(wrapper.Id, wrapper);
             }
-
-            //var reciever = new XmppReciever(connection, this, handlerManager);
-            //connection.Recieve(reciever);
+            finally
+            {
+                locker.ExitWriteLock();
+            }
         }
 
-        public void CloseConnection(string connectionId)
+        public void CloseConnection(string id)
         {
-            IXmppConnection connection;
-            lock (connections)
+            XmppConnection connection;
+            locker.EnterWriteLock();
+            try
             {
-                connections.TryGetValue(connectionId, out connection);
+                if (connections.TryGetValue(id, out connection))
+                {
+                    connections.Remove(id);
+                }
+            }
+            finally
+            {
+                locker.ExitWriteLock();
             }
             if (connection != null)
             {
-                try
-                {
-                    connection.Close();
-                }
-                finally
-                {
-                    lock (connections)
-                    {
-                        connections.Remove(connectionId);
-                    }
-                }
+                connection.Close();
             }
         }
     }

@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Jabber.Net.Server.Utils;
 using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server.Connections
 {
-    class XmppReciever : IXmppReciever
+    class XmppConnection : IXmppReciever
     {
         private readonly IXmppConnection connection;
-        private readonly XmppHandlerManager handlerManager;
         private readonly XmppConnectionManager connectionManager;
+        private readonly XmppHandlerManager handlerManager;
         private readonly XmppStreamParser parser;
 
 
-        public XmppReciever(IXmppConnection connection, XmppConnectionManager connectionManager, XmppHandlerManager handlerManager)
+        public string Id
+        {
+            get;
+            private set;
+        }
+
+
+        public XmppConnection(IXmppConnection connection, XmppConnectionManager connectionManager, XmppHandlerManager handlerManager)
         {
             Args.NotNull(connection, "connection");
             Args.NotNull(connectionManager, "connectionManager");
             Args.NotNull(handlerManager, "handlerManager");
 
+            Id = IdGenerator.NewId();
             this.connection = connection;
             this.connectionManager = connectionManager;
             this.handlerManager = handlerManager;
@@ -28,32 +36,31 @@ namespace Jabber.Net.Server.Connections
             parser.Error += Error;
         }
 
+        public void Close()
+        {
+            connection.Close();
+        }
 
-        public void OnRecive(byte[] buffer)
+
+        void IXmppReciever.OnRecive(byte[] buffer)
         {
             parser.ParseAsync(buffer);
         }
 
-        public void OnClose(IEnumerable<byte[]> notSended)
+        void IXmppReciever.OnClose(IEnumerable<byte[]> notsended)
         {
-            try
-            {
-                handlerManager.ProcessClose(connection, notSended.Select(bytes => parser.Parse(bytes)));
-            }
-            finally
-            {
-                connectionManager.CloseConnection(connection.Id);
-            }
+            connectionManager.CloseConnection(Id);
         }
+
 
         private void Parsed(object sender, XmppStreamParser.ParsedArgs e)
         {
-            handlerManager.ProcessElement(connection, e.XmppElement);
+            //handlerManager.ProcessElement(connection, e.XmppElement);
         }
 
         private void Error(object sender, XmppStreamParser.ParseErrorArgs e)
         {
-            handlerManager.ProcessError(connection, e.Error);
+            //handlerManager.ProcessError(connection, e.Error);
         }
     }
 }

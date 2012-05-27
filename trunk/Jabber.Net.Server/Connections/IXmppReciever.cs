@@ -6,6 +6,6 @@ namespace Jabber.Net.Server.Connections
     {
         void OnRecive(byte[] buffer);
 
-        void OnClose(IEnumerable<byte[]> notSended);
+        void OnClose(IEnumerable<byte[]> notsended);
     }
 }

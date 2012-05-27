@@ -3,35 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Connections
 {
     class TcpXmppConnection : IXmppConnection
     {
-        private readonly List<byte[]> notSended = new List<byte[]>(5);
+        private readonly List<byte[]> notsended = new List<byte[]>(5);
         private volatile bool closed = false;
         private TcpClient client;
         private IXmppReciever reciever;
-
-
-        public string Id
-        {
-            get;
-            private set;
-        }
 
 
         public TcpXmppConnection(TcpClient tcpClient)
         {
             Args.NotNull(tcpClient, "tcpClient");
 
-            Id = IdGenerator.NewId();
             client = tcpClient;
         }
 
 
-        public void Recieve(IXmppReciever reciever)
+        public void BeginRecieve(IXmppReciever reciever)
         {
             RequiresNotClosed();
             Args.NotNull(reciever, "reciever");
@@ -57,21 +48,17 @@ namespace Jabber.Net.Server.Connections
             if (closed) return;
             closed = true;
 
-            try
+            if (client != null)
             {
-                if (client != null)
-                {
-                    client.Close();
-                    client = null;
-                }
+                client.Close();
+                client = null;
             }
-            catch { }
 
             byte[][] buffer = null;
-            lock (notSended)
+            lock (notsended)
             {
-                buffer = notSended.ToArray();
-                notSended.Clear();
+                buffer = notsended.ToArray();
+                notsended.Clear();
             }
             reciever.OnClose(buffer);
             reciever = null;
@@ -85,7 +72,7 @@ namespace Jabber.Net.Server.Connections
             var state = (AsyncState)ar.AsyncState;
             var stream = state.Stream;
             var buffer = state.Buffer;
-            
+
             try
             {
                 var readed = stream.EndRead(ar);
@@ -99,8 +86,9 @@ namespace Jabber.Net.Server.Connections
                     Close();
                 }
             }
-            catch (Exception)
+            catch (Exception error)
             {
+                Log.Error(error);
                 Close();
             }
         }
@@ -115,11 +103,12 @@ namespace Jabber.Net.Server.Connections
             {
                 stream.EndWrite(ar);
             }
-            catch (Exception)
+            catch (Exception error)
             {
-                lock (notSended)
+                Log.Error(error);
+                lock (notsended)
                 {
-                    notSended.Add(buffer);
+                    notsended.Add(buffer);
                 }
                 Close();
             }

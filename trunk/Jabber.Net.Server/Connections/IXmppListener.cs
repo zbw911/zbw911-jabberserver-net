@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Jabber.Net.Server.Connections
+﻿namespace Jabber.Net.Server.Connections
 {
     public interface IXmppListener
     {

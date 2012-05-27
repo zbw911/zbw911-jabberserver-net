@@ -4,3 +4,4 @@ syntax: glob
 *.suo
 *.user
 code.google
+trunk/_ReSharper.Jabber.Net/*
