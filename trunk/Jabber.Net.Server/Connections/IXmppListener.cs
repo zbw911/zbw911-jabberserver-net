@@ -1,8 +1,10 @@
-﻿namespace Jabber.Net.Server.Connections
+﻿using System;
+
+namespace Jabber.Net.Server.Connections
 {
     public interface IXmppListener
     {
-        void StartListen(XmppConnectionManager connectionManager);
+        void StartListen(Action<IXmppConnection> newConnection);
 
         void StopListen();
     }

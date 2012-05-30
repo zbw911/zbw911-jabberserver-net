@@ -30,36 +30,17 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public void ProcessElement(IXmppConnection connection, XmppElement e)
+        public void ProcessElement(IXmppSender sender, XmppElement e)
         {
-            if (e.IsStanza)
-            {
-                
-            }
-            else
-            {
-                foreach (var h in streamHandlers)
-                {
-                    if (e.Node.Namespace == h.Namespace)
-                    {
-                        var copy = (XmppElement)e.Clone();
-                        h.ProcessElement(connection, e);
-                    }
-                }
-            }
         }
 
-        public void ProcessClose(IXmppConnection connection, IEnumerable<XmppElement> notSended)
+        public void ProcessClose(IXmppSender sender, IEnumerable<XmppElement> notSended)
         {
-            foreach (var h in streamHandlers)
-            {
-                h.ProcessClose(connection, notSended);
-            }
         }
 
-        public void ProcessError(IXmppConnection connection, Exception error)
+        public void ProcessError(IXmppSender sender, Exception error)
         {
-            connection.Close();
+            sender.Close();
         }
     }
 }

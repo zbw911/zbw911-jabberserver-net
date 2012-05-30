@@ -33,6 +33,11 @@ namespace Jabber.Net
             return new XmppElement(ElementSerializer.DeSerializeElement<Node>(Encoding.UTF8.GetString(buffer)));
         }
 
+        public byte[] ToBytes(XmppElement e)
+        {
+            return Encoding.UTF8.GetBytes(e.ToString());
+        }
+
         public void ParseAsync(byte[] buffer)
         {
             agsParser.Push(buffer, 0, buffer.Length);

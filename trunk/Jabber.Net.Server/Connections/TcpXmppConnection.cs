@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Jabber.Net.Server.Connections
 {
     class TcpXmppConnection : IXmppConnection
     {
+        private readonly object locker = new object();
         private readonly List<byte[]> notsended = new List<byte[]>(5);
-        private volatile bool closed = false;
-        private TcpClient client;
+        private readonly TcpClient client;
+        private bool closed = false;
         private IXmppReciever reciever;
 
 
@@ -45,30 +47,19 @@ namespace Jabber.Net.Server.Connections
 
         public void Close()
         {
-            if (closed) return;
-            closed = true;
-
-            if (client != null)
+            lock (locker)
             {
+                if (closed) return;
+                closed = true;
+
                 client.Close();
-                client = null;
+                reciever.OnClose(notsended.ToArray());
             }
-
-            byte[][] buffer = null;
-            lock (notsended)
-            {
-                buffer = notsended.ToArray();
-                notsended.Clear();
-            }
-            reciever.OnClose(buffer);
-            reciever = null;
         }
 
 
         private void ReadCallback(IAsyncResult ar)
         {
-            if (closed) return;
-
             var state = (AsyncState)ar.AsyncState;
             var stream = state.Stream;
             var buffer = state.Buffer;
@@ -88,7 +79,10 @@ namespace Jabber.Net.Server.Connections
             }
             catch (Exception error)
             {
-                Log.Error(error);
+                if (!(error is ObjectDisposedException))
+                {
+                    Log.Error(error);
+                }
                 Close();
             }
         }
@@ -105,10 +99,20 @@ namespace Jabber.Net.Server.Connections
             }
             catch (Exception error)
             {
-                Log.Error(error);
-                lock (notsended)
+                if (!(error is ObjectDisposedException))
                 {
-                    notsended.Add(buffer);
+                    Log.Error(error);
+                }
+                if (Monitor.TryEnter(locker))
+                {
+                    try
+                    {
+                        notsended.Add(buffer);
+                    }
+                    finally
+                    {
+                        Monitor.Exit(locker);
+                    }
                 }
                 Close();
             }
