@@ -14,12 +14,6 @@ namespace Jabber.Net.Server
             set;
         }
 
-        public XmppConnectionManager ConnectionManager
-        {
-            get;
-            set;
-        }
-
         public XmppHandlerManager HandlerManager
         {
             get;
@@ -36,14 +30,13 @@ namespace Jabber.Net.Server
                 .LoadConfiguration((UnityConfigurationSection)configuration.GetSection("unity"), "Jabber");
 
             ListenerManager = unityContainer.Resolve<XmppListenerManager>();
-            ConnectionManager = unityContainer.Resolve<XmppConnectionManager>();
             HandlerManager = unityContainer.Resolve<XmppHandlerManager>();
         }
 
 
         public void Start()
         {
-            ListenerManager.StartListen(ConnectionManager);
+            ListenerManager.StartListen();
         }
 
         public void Stop()

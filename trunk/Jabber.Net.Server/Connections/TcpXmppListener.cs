@@ -7,7 +7,7 @@ namespace Jabber.Net.Server.Connections
     class TcpXmppListener : IXmppListener
     {
         private TcpListener listener;
-        private XmppConnectionManager connectionManager;
+        private Action<IXmppConnection> newConnection;
 
 
         public Uri ListenUri
@@ -17,11 +17,11 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public void StartListen(XmppConnectionManager connectionManager)
+        public void StartListen(Action<IXmppConnection> newConnection)
         {
-            Args.NotNull(connectionManager, "connectionManager");
+            Args.NotNull(newConnection, "newConnection");
 
-            this.connectionManager = connectionManager;
+            this.newConnection = newConnection;
 
             var endpoint = new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port);
             listener = new TcpListener(endpoint)
@@ -39,7 +39,6 @@ namespace Jabber.Net.Server.Connections
             {
                 listener.Stop();
                 listener = null;
-                connectionManager = null;
             }
         }
 
@@ -51,7 +50,7 @@ namespace Jabber.Net.Server.Connections
             {
                 var listener = (TcpListener)ar.AsyncState;
                 var tcpClient = listener.EndAcceptTcpClient(ar);
-                connectionManager.AddConnection(new TcpXmppConnection(tcpClient));
+                newConnection(new TcpXmppConnection(tcpClient));
             }
             catch (ObjectDisposedException)
             {

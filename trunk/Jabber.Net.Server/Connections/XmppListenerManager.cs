@@ -1,12 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server.Connections
 {
     public class XmppListenerManager
     {
         private readonly IList<IXmppListener> listeners = new List<IXmppListener>();
+        private readonly XmppHandlerManager handlerManager;
         private bool listen = false;
+
+
+        public XmppListenerManager(XmppHandlerManager handlerManager)
+        {
+            Args.NotNull(handlerManager, "handlerManager");
+
+            this.handlerManager = handlerManager;
+        }
 
 
         public void AddListener(IXmppListener listener)
@@ -26,16 +36,15 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public void StartListen(XmppConnectionManager connectionManager)
+        public void StartListen()
         {
-            Args.NotNull(connectionManager, "connectionManager");
             RequiresNotListen();
 
             foreach (var listener in listeners)
             {
                 try
                 {
-                    listener.StartListen(connectionManager);
+                    listener.StartListen(NewConnection);
                 }
                 catch (Exception error)
                 {
@@ -62,6 +71,13 @@ namespace Jabber.Net.Server.Connections
                 }
                 listen = false;
             }
+        }
+
+
+        private void NewConnection(IXmppConnection connection)
+        {
+            var wrapper = new XmppConnection(connection, handlerManager);
+            wrapper.BeginReceive();
         }
 
 
