@@ -32,15 +32,38 @@ namespace Jabber.Net.Server.Handlers
 
         public void ProcessElement(IXmppSender sender, XmppElement e)
         {
+            try
+            {
+
+            }
+            catch (Exception error)
+            {
+                ProcessError(sender, error);
+            }
         }
 
         public void ProcessClose(IXmppSender sender, IEnumerable<XmppElement> notSended)
         {
+            try
+            {
+
+            }
+            catch (Exception error)
+            {
+                Log.Error(error);
+            }
         }
 
         public void ProcessError(IXmppSender sender, Exception error)
         {
-            sender.Close();
+            try
+            {
+
+            }
+            catch (Exception innererror)
+            {
+                Log.Error(innererror);
+            }
         }
     }
 }
