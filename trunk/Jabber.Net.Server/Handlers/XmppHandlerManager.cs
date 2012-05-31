@@ -15,18 +15,14 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public void AddHandler(IXmppStreamHandler handler)
+        public void RegisterStreamHandler()
         {
-            if (handler == null) throw new ArgumentNullException("handler");
 
-            streamHandlers.Add(handler);
         }
 
-        public void RemoveHandler(IXmppStreamHandler handler)
+        public void RegisterErrorHandler()
         {
-            if (handler == null) throw new ArgumentNullException("handler");
 
-            streamHandlers.Remove(handler);
         }
 
 

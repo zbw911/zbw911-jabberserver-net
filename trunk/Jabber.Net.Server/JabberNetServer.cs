@@ -1,8 +1,8 @@
 ﻿using System.Configuration;
 using Jabber.Net.Server.Connections;
+using Jabber.Net.Server.Handlers;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
-using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server
 {
@@ -25,9 +25,9 @@ namespace Jabber.Net.Server
         {
             var map = new ExeConfigurationFileMap { ExeConfigFilename = file };
             var configuration = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
-
+            var unitySection = (UnityConfigurationSection)configuration.GetSection(UnityConfigurationSection.SectionName);
             var unityContainer = new UnityContainer()
-                .LoadConfiguration((UnityConfigurationSection)configuration.GetSection("unity"), "Jabber");
+                .LoadConfiguration(unitySection, "Jabber");
 
             ListenerManager = unityContainer.Resolve<XmppListenerManager>();
             HandlerManager = unityContainer.Resolve<XmppHandlerManager>();
