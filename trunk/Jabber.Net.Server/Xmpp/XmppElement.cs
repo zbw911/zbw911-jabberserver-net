@@ -2,7 +2,7 @@
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
 
-namespace Jabber.Net
+namespace Jabber.Net.Xmpp
 {
     public class XmppElement : ICloneable
     {

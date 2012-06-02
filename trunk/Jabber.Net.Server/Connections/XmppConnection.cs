@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Utils;
+using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Connections
 {
-    class XmppConnection : IXmppReciever, IXmppSender
+    class XmppConnection : IXmppReciever, IXmppEndPoint
     {
         private readonly IXmppConnection connection;
         private readonly XmppHandlerManager handlerManager;
@@ -24,13 +24,12 @@ namespace Jabber.Net.Server.Connections
             Args.NotNull(connection, "connection");
             Args.NotNull(handlerManager, "handlerManager");
 
-            SessionId = IdGenerator.NewId();
             this.connection = connection;
             this.handlerManager = handlerManager;
             this.parser = new XmppStreamParser();
 
-            parser.Parsed += Parsed;
-            parser.Error += Error;
+            parser.Parsed += (s, e) => handlerManager.ProcessXmppElement(this, e.XmppElement);
+            parser.Error += (s, e) => handlerManager.ProcessError(this, e.Error);
         }
 
         public void BeginReceive()
@@ -38,15 +37,9 @@ namespace Jabber.Net.Server.Connections
             connection.BeginRecieve(this);
         }
 
-        public void Send(XmppElement e)
+        public void Send(XmppElement e, Action<XmppElement> error)
         {
-            connection.Send(parser.ToBytes(e));
-        }
-
-        public void SendAndClose(XmppElement e)
-        {
-            Send(e);
-            Close();
+            connection.Send(parser.ToBytes(e), _ => error(e));
         }
 
         public void Close()
@@ -60,19 +53,9 @@ namespace Jabber.Net.Server.Connections
             parser.ParseAsync(buffer);
         }
 
-        void IXmppReciever.OnClose(IEnumerable<byte[]> notsended)
+        void IXmppReciever.OnClose()
         {
-            handlerManager.ProcessClose(this, notsended.Select(e => parser.Parse(e)));
-        }
-        
-        private void Parsed(object sender, XmppStreamParser.ParsedArgs e)
-        {
-            handlerManager.ProcessElement(this, e.XmppElement);
-        }
-
-        private void Error(object sender, XmppStreamParser.ParseErrorArgs e)
-        {
-            handlerManager.ProcessError(this, e.Error);
+            handlerManager.ProcessClose(this);
         }
     }
 }

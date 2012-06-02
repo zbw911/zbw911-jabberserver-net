@@ -2,12 +2,12 @@
 
 namespace Jabber.Net.Server.Utils
 {
-    static class IdGenerator
+    class IncrementalUniqueId : IUniqueId
     {
         private static int counter = 0;
 
 
-        public static string NewId()
+        public string CreateId()
         {
             return Interlocked.Increment(ref counter).ToString();
         }

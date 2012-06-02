@@ -81,9 +81,10 @@ namespace Jabber.Net.Server.Connections
             {
                 wrapper.BeginReceive();
             }
-            finally
+            catch
             {
                 wrapper.Close();
+                throw;
             }
         }
 

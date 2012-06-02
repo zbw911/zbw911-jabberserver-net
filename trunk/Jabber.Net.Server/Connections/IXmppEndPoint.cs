@@ -1,7 +1,9 @@
-﻿
+﻿using System;
+using Jabber.Net.Xmpp;
+
 namespace Jabber.Net.Server.Connections
 {
-    public interface IXmppSender
+    public interface IXmppEndPoint
     {
         string SessionId
         {
@@ -10,9 +12,7 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        void Send(XmppElement e);
-
-        void SendAndClose(XmppElement e);
+        void Send(XmppElement e, Action<XmppElement> error);
 
         void Close();
     }

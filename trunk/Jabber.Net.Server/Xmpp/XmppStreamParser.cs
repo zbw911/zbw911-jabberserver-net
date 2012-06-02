@@ -5,7 +5,7 @@ using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
 
-namespace Jabber.Net
+namespace Jabber.Net.Xmpp
 {
     public class XmppStreamParser
     {

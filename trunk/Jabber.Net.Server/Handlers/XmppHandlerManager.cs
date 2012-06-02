@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Jabber.Net.Server.Connections;
+using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Handlers
 {
@@ -11,19 +11,19 @@ namespace Jabber.Net.Server.Handlers
         }
         
 
-        public void ProcessElement(IXmppSender sender, XmppElement e)
+        public void ProcessXmppElement(IXmppEndPoint endpoint, XmppElement e)
         {
             try
             {
-
+                
             }
             catch (Exception error)
             {
-                ProcessError(sender, error);
+                ProcessError(endpoint, error);
             }
         }
 
-        public void ProcessClose(IXmppSender sender, IEnumerable<XmppElement> notSended)
+        public void ProcessClose(IXmppEndPoint endpoint)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public void ProcessError(IXmppSender sender, Exception error)
+        public void ProcessError(IXmppEndPoint endpoint, Exception error)
         {
             try
             {
