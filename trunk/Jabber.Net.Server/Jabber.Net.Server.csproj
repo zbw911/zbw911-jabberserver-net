@@ -93,7 +93,7 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connections\IXmppSender.cs" />
+    <Compile Include="Connections\IXmppEndPoint.cs" />
     <Compile Include="Connections\IXmppReciever.cs" />
     <Compile Include="Connections\IXmppConnection.cs" />
     <Compile Include="Connections\XmppConnection.cs" />
@@ -111,9 +111,10 @@
     <Compile Include="Tests\TmpTest.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
-    <Compile Include="Utils\IdGenerator.cs" />
-    <Compile Include="XmppElement.cs" />
-    <Compile Include="XmppStreamParser.cs" />
+    <Compile Include="Utils\IUniqueId.cs" />
+    <Compile Include="Utils\IncrementalUniqueId.cs" />
+    <Compile Include="Xmpp\XmppElement.cs" />
+    <Compile Include="Xmpp\XmppStreamParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\agsXMPP\agsXMPP.csproj">
