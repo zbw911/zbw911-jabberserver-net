@@ -6,25 +6,10 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        private readonly List<IXmppStreamHandler> streamHandlers;
-
-
         public XmppHandlerManager()
         {
-            streamHandlers = new List<IXmppStreamHandler>(10);
         }
-
-
-        public void RegisterStreamHandler()
-        {
-
-        }
-
-        public void RegisterErrorHandler()
-        {
-
-        }
-
+        
 
         public void ProcessElement(IXmppSender sender, XmppElement e)
         {
