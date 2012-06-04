@@ -12,16 +12,9 @@ namespace Jabber.Net.Xmpp
             private set;
         }
 
-        public bool IsStanza
-        {
-            get;
-            private set;
-        }
-
         public XmppElement(Node node)
         {
             Node = node;
-            IsStanza = node is IQ || node is Message || node is Presence;
         }
 
         public override string ToString()
