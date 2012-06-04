@@ -3,6 +3,7 @@ using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Handlers;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using agsXMPP.protocol;
 
 namespace Jabber.Net.Server
 {
@@ -31,6 +32,9 @@ namespace Jabber.Net.Server
 
             ListenerManager = unityContainer.Resolve<XmppListenerManager>();
             HandlerManager = unityContainer.Resolve<XmppHandlerManager>();
+
+            var c = new Jabber.Net.Server.S2C.ClientStreamHandler();
+            HandlerManager.RegisterStreamHandler<Stream>(c.ProcessStream);
         }
 
 
