@@ -53,8 +53,6 @@ namespace agsXMPP.Xml
     /// </param>
     /// <param name="e">
     /// </param>
-    public delegate void StreamStartHandler(object sender, Node e, string streamNamespace);
-
     public delegate void StreamHandler(object sender, Node e);
 
     /// <summary>
@@ -71,6 +69,10 @@ namespace agsXMPP.Xml
 
         /// <summary>
         /// </summary>
+        public event StreamHandler OnStreamStart;
+
+        /// <summary>
+        /// </summary>
         public event StreamHandler OnStreamElement;
 
         /// <summary>
@@ -81,10 +83,6 @@ namespace agsXMPP.Xml
         /// Event for XML-Stream errors
         /// </summary>
         public event StreamError OnStreamError;
-
-        /// <summary>
-        /// </summary>
-        public event StreamStartHandler OnStreamStart;
 
         #endregion
 
@@ -401,6 +399,8 @@ namespace agsXMPP.Xml
 
             Element newel = ElementFactory.GetElement(prefix, name, ns);
 
+            newel.DefaultNamespace = m_ns.DefaultNamespace;
+
             foreach (string attrname in ht.Keys)
             {
                 newel.SetAttribute(attrname, (string) ht[attrname]);
@@ -413,7 +413,7 @@ namespace agsXMPP.Xml
                 // FireOnDocumentStart(m_root);
                 if (OnStreamStart != null)
                 {
-                    OnStreamStart(this, m_root, m_ns.DefaultNamespace ?? "");
+                    OnStreamStart(this, m_root);
                 }
             }
             else

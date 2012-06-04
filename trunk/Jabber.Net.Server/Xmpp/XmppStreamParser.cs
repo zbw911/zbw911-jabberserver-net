@@ -20,7 +20,7 @@ namespace Jabber.Net.Xmpp
         public XmppStreamParser()
         {
             agsParser = new StreamParser();
-            agsParser.OnStreamStart += AgsParserOnStreamStart;
+            agsParser.OnStreamStart += AgsParserOnStreamElement;
             agsParser.OnStreamElement += AgsParserOnStreamElement;
             agsParser.OnStreamEnd += AgsParserOnStreamElement;
             agsParser.OnError += AgsParserOnError;
@@ -48,15 +48,6 @@ namespace Jabber.Net.Xmpp
             agsParser.Reset();
         }
 
-
-        private void AgsParserOnStreamStart(object sender, Node e, string streamNamespace)
-        {
-            if (e is Stream)
-            {
-                ((Stream)e).SetAttribute("xmlns", streamNamespace);
-            }
-            AgsParserOnStreamElement(sender, e);
-        }
 
         private void AgsParserOnStreamElement(object sender, Node e)
         {

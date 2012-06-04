@@ -92,7 +92,7 @@ namespace agsXMPP.Xml.Dom
         /// </param>
         /// <param name="e">
         /// </param>
-        private void sp_OnStreamStart(object sender, Node e, string streamNamespace)
+        private void sp_OnStreamStart(object sender, Node e)
         {
             doc.ChildNodes.Add(e);
         }
