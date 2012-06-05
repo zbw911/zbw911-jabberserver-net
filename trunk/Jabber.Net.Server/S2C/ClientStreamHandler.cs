@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Jabber.Net.Server.Handlers;
 using agsXMPP.protocol;
+using Jabber.Net.Server.Handlers;
+using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class ClientStreamHandler
+    class ClientStreamHandler : IXmppHandler
     {
-        public XmppHandlerResult ProcessStream(Stream stream, XmppHandlerContext context)
+        public void Register(XmppHandlerManager handlerManager)
         {
-            return null;
+            
         }
+
+        
+        public XmppHandlerResult ProcessElement(Stream element, XmppSession session, XmppHandlerContext context)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

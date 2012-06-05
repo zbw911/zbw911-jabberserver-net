@@ -6,25 +6,25 @@ namespace Jabber.Net.Xmpp
 {
     public class XmppElement : ICloneable
     {
-        public Node Node
+        public Element Element
         {
             get;
             private set;
         }
 
-        public XmppElement(Node node)
+        public XmppElement(Element element)
         {
-            Node = node;
+            Element = element;
         }
 
         public override string ToString()
         {
-            return Node.ToString();
+            return Element.ToString();
         }
 
         public object Clone()
         {
-            return new XmppElement((Node)Node.Clone());
+            return new XmppElement((Element)Element.Clone());
         }
     }
 }
