@@ -3,36 +3,39 @@ using System.Collections.Generic;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Xmpp;
+using Jabber.Net.Server.Sessions;
+using agsXMPP;
 
 namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        private readonly IDictionary<Type, IList<IInvoker>> streamHandlers = new Dictionary<Type, IList<IInvoker>>();
+        private readonly XmppHandlerRouter router = new XmppHandlerRouter();
 
 
-        public void RegisterStreamHandler<T>(Func<T, XmppHandlerContext, XmppHandlerResult> handler) where T : Element        
+        public void RegisterHandler(IXmppHandler handler)
         {
-            Args.NotNull(handler, "handler");
-
-            var key = typeof(T);
-            var list = streamHandlers.ContainsKey(key) ? streamHandlers[key] : new List<IInvoker>();
-            list.Add(new Invoker<T>(handler));
-            streamHandlers[key] = list;
+            RegisterHandler(new Jid("*"), handler);
         }
 
+        public void RegisterHandler(Jid jid, IXmppHandler handler)
+        {
+            handler.Register(this);
+        }
+
+        public void RegisterHandler<T>(Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler)
+        {
+            //router.RegisterHandler(jid, handler);
+        }
 
         public void ProcessXmppElement(IXmppEndPoint endpoint, XmppElement e)
         {
             try
             {
-                IList<IInvoker> invokers;
-                if (streamHandlers.TryGetValue(e.Node.GetType(), out invokers))
+                var jid = new Jid(e.Element.GetAttribute("to") ?? string.Empty);
+                foreach (var handler in router.GetHandlers(e, jid))
                 {
-                    foreach (var invoker in invokers)
-                    {
-                        var result = invoker.Invoke((XmppElement)e.Clone(), new XmppHandlerContext());
-                    }
+                    var result = handler.ProcessElement(e, null, new XmppHandlerContext());
                 }
             }
             catch (Exception error)
@@ -62,28 +65,6 @@ namespace Jabber.Net.Server.Handlers
             catch (Exception innererror)
             {
                 Log.Error(innererror);
-            }
-        }
-
-
-        private interface IInvoker
-        {
-            XmppHandlerResult Invoke(XmppElement e, XmppHandlerContext context);
-        }
-
-        private class Invoker<T> : IInvoker where T : Element
-        {
-            private readonly Func<T, XmppHandlerContext, XmppHandlerResult> handler;
-
-
-            public Invoker(Func<T, XmppHandlerContext, XmppHandlerResult> handler)
-            {
-                this.handler = handler;
-            }
-
-            public XmppHandlerResult Invoke(XmppElement e, XmppHandlerContext context)
-            {
-                return handler((T)e.Node, context);
             }
         }
     }

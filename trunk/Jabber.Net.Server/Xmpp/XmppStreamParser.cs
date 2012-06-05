@@ -30,7 +30,7 @@ namespace Jabber.Net.Xmpp
 
         public XmppElement Parse(byte[] buffer)
         {
-            return new XmppElement(ElementSerializer.DeSerializeElement<Node>(Encoding.UTF8.GetString(buffer)));
+            return new XmppElement(ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer)));
         }
 
         public byte[] ToBytes(XmppElement e)
@@ -52,9 +52,9 @@ namespace Jabber.Net.Xmpp
         private void AgsParserOnStreamElement(object sender, Node e)
         {
             var ev = Parsed;
-            if (ev != null)
+            if (ev != null && e is Element)
             {
-                ev(this, new ParsedArgs(new XmppElement(e)));
+                ev(this, new ParsedArgs(new XmppElement((Element)e)));
             }
         }
 

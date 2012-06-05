@@ -399,8 +399,6 @@ namespace agsXMPP.Xml
 
             Element newel = ElementFactory.GetElement(prefix, name, ns);
 
-            newel.DefaultNamespace = m_ns.DefaultNamespace;
-
             foreach (string attrname in ht.Keys)
             {
                 newel.SetAttribute(attrname, (string) ht[attrname]);

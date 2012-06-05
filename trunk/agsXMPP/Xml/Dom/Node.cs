@@ -114,10 +114,6 @@ namespace agsXMPP.Xml.Dom
 
         /// <summary>
         /// </summary>
-        public string DefaultNamespace { get; set; }
-
-        /// <summary>
-        /// </summary>
         public NodeType NodeType { get; set; }
 
         /// <summary>
