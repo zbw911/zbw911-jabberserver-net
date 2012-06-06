@@ -3,8 +3,8 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers
 {
-    public interface IXmppHandler
+    public interface IXmppHandler<T> where T : Element
     {
-        void Register(XmppHandlerManager handlerManager);
+        XmppHandlerResult ProcessElement(T element, XmppSession session, XmppHandlerContext context);
     }
 }
