@@ -99,6 +99,7 @@
     <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
     <Compile Include="Handlers\IXmppHandler.cs" />
+    <Compile Include="Handlers\IXmppRegisterHandler.cs" />
     <Compile Include="Handlers\XmppHandlerBase.cs" />
     <Compile Include="Handlers\XmppHandlerContext.cs" />
     <Compile Include="Handlers\XmppHandlerManager.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S2C\ClientStreamHandler.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
+    <Compile Include="Sessions\XmppSessionManager.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
     <Compile Include="Utils\IUniqueId.cs" />
