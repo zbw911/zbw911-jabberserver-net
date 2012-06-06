@@ -5,18 +5,11 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class ClientStreamHandler : IXmppHandler
+    class ClientStreamHandler : IXmppHandler<Stream>
     {
-        public void Register(XmppHandlerManager handlerManager)
-        {
-            
-        }
-
-        
         public XmppHandlerResult ProcessElement(Stream element, XmppSession session, XmppHandlerContext context)
         {
-            throw new NotImplementedException();
+            return null;
         }
-
     }
 }

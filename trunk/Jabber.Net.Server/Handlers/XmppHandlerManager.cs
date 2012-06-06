@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using agsXMPP;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
-using Jabber.Net.Xmpp;
 using Jabber.Net.Server.Sessions;
-using agsXMPP;
+using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Handlers
 {
@@ -13,19 +12,14 @@ namespace Jabber.Net.Server.Handlers
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
 
 
-        public void RegisterHandler(IXmppHandler handler)
+        public void RegisterHandler(Jid jid, object handler)
         {
-            RegisterHandler(new Jid("*"), handler);
+            router.RegisterHandler(jid, handler);
         }
 
-        public void RegisterHandler(Jid jid, IXmppHandler handler)
+        public void RegisterHandler<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler) where T : Element
         {
-            handler.Register(this);
-        }
-
-        public void RegisterHandler<T>(Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler)
-        {
-            //router.RegisterHandler(jid, handler);
+            router.RegisterHandlerGeneric<T>(jid, handler);
         }
 
         public void ProcessXmppElement(IXmppEndPoint endpoint, XmppElement e)
