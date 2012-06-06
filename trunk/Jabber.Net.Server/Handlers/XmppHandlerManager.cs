@@ -10,16 +10,23 @@ namespace Jabber.Net.Server.Handlers
     public class XmppHandlerManager
     {
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
+        private readonly XmppHandlerContext context = new XmppHandlerContext();
 
 
-        public void RegisterHandler(Jid jid, object handler)
+        public string RegisterHandler(Jid jid, object handler)
         {
-            router.RegisterHandler(jid, handler);
+            ProcessRegisterHandler(handler as IXmppRegisterHandler);
+            return router.RegisterHandler(jid, handler);
         }
 
-        public void RegisterHandler<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler) where T : Element
+        public string RegisterHandler<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler) where T : Element
         {
-            router.RegisterHandlerGeneric<T>(jid, handler);
+            return router.RegisterHandler<T>(jid, handler);
+        }
+
+        public void UnregisterHandler(string id)
+        {
+            router.UnregisterHandler(id);
         }
 
         public void ProcessXmppElement(IXmppEndPoint endpoint, XmppElement e)
@@ -59,6 +66,15 @@ namespace Jabber.Net.Server.Handlers
             catch (Exception innererror)
             {
                 Log.Error(innererror);
+            }
+        }
+
+
+        private void ProcessRegisterHandler(IXmppRegisterHandler handler)
+        {
+            if (handler != null)
+            {
+                handler.OnRegister(context);
             }
         }
     }
