@@ -98,6 +98,8 @@
     <Compile Include="Connections\IXmppConnection.cs" />
     <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
+    <Compile Include="Handlers\IXmppErrorHandler.cs" />
+    <Compile Include="Handlers\IXmppCloseHandler.cs" />
     <Compile Include="Handlers\IXmppHandler.cs" />
     <Compile Include="Handlers\IXmppRegisterHandler.cs" />
     <Compile Include="Handlers\XmppHandlerBase.cs" />

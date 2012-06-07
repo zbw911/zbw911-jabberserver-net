@@ -9,7 +9,15 @@ namespace Jabber.Net.Server.Handlers
     public class XmppHandlerManager
     {
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
-        private readonly XmppHandlerContext context = new XmppHandlerContext();
+        private readonly XmppSessionManager sessionManager;
+
+
+        public XmppHandlerManager(XmppSessionManager sessionManager)
+        {
+            Args.NotNull(sessionManager, "sessionManager");
+
+            this.sessionManager = sessionManager;
+        }
 
 
         public string RegisterHandler(Jid jid, object handler)
@@ -23,6 +31,18 @@ namespace Jabber.Net.Server.Handlers
             return router.RegisterHandler<T>(jid, handler);
         }
 
+        public string RegisterHandler(IXmppErrorHandler handler)
+        {
+            ProcessRegisterHandler(handler as IXmppRegisterHandler);
+            return router.RegisterHandler(handler);
+        }
+
+        public string RegisterHandler(IXmppCloseHandler handler)
+        {
+            ProcessRegisterHandler(handler as IXmppRegisterHandler);
+            return router.RegisterHandler(handler);
+        }
+
         public void UnregisterHandler(string id)
         {
             router.UnregisterHandler(id);
@@ -33,9 +53,10 @@ namespace Jabber.Net.Server.Handlers
             try
             {
                 var jid = new Jid(e.GetAttribute("to") ?? string.Empty);
-                foreach (var handler in router.GetHandlers(e, jid))
+                foreach (var handler in router.GetElementHandlers(e, jid))
                 {
-                    var result = handler.ProcessElement(e, null, new XmppHandlerContext());
+                    var result = handler.ProcessElement(e, GetSession(endpoint), GetContext());
+                    ProcessResult(endpoint, result);
                 }
             }
             catch (Exception error)
@@ -48,7 +69,11 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
-
+                foreach (var handler in router.GetCloseHandlers())
+                {
+                    var result = handler.OnClose(GetSession(endpoint), GetContext());
+                    ProcessResult(endpoint, result);
+                }
             }
             catch (Exception error)
             {
@@ -60,7 +85,11 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
-
+                foreach (var handler in router.GetErrorHandlers())
+                {
+                    var result = handler.OnError(error, GetSession(endpoint), GetContext());
+                    ProcessResult(endpoint, result);
+                }
             }
             catch (Exception innererror)
             {
@@ -68,13 +97,28 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
+        public void ProcessResult(IXmppEndPoint endpoint, XmppHandlerResult result)
+        {
+
+        }
+
 
         private void ProcessRegisterHandler(IXmppRegisterHandler handler)
         {
             if (handler != null)
             {
-                handler.OnRegister(context);
+                handler.OnRegister(GetContext());
             }
+        }
+
+        private XmppHandlerContext GetContext()
+        {
+            return new XmppHandlerContext();
+        }
+
+        private XmppSession GetSession(IXmppEndPoint endpoint)
+        {
+            return sessionManager.GetSession(endpoint.SessionId) ?? new XmppSession(endpoint);
         }
     }
 }
