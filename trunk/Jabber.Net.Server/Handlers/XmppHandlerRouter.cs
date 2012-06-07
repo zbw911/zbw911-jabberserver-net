@@ -15,6 +15,8 @@ namespace Jabber.Net.Server.Handlers
         private readonly Dictionary<Type, MethodInfo> registers = new Dictionary<Type, MethodInfo>();
         private readonly Dictionary<string, List<IInvoker>> invokers = new Dictionary<string, List<IInvoker>>(50);
         private readonly MethodInfo registerMethod;
+        private readonly Dictionary<string, IXmppCloseHandler> closers = new Dictionary<string, IXmppCloseHandler>(50);
+        private readonly Dictionary<string, IXmppErrorHandler> errors = new Dictionary<string, IXmppErrorHandler>(50);
 
 
         public XmppHandlerRouter()
@@ -28,7 +30,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(jid, "jid");
             Args.NotNull(handler, "handler");
 
-            var id = string.Empty;
+            var id = uniqueId.CreateId();
             foreach (var m in handler.GetType().GetMethods().Where(m => m.Name == "ProcessElement"))
             {
                 var parameters = m.GetParameters();
@@ -47,17 +49,8 @@ namespace Jabber.Net.Server.Handlers
                         }
                         register = registers[elementType];
                     }
-                    if (string.IsNullOrEmpty(id))
-                    {
-                        id = uniqueId.CreateId();
-                    }
                     register.Invoke(this, new object[] { jid, Delegate.CreateDelegate(register.GetParameters()[1].ParameterType, handler, m), id });
                 }
-            }
-
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new ArgumentException("Xmpp element handler not found.");
             }
 
             return id;
@@ -71,6 +64,26 @@ namespace Jabber.Net.Server.Handlers
             var id = uniqueId.CreateId();
             RegisterHandlerInternal<T>(jid, handler, id);
             return id;
+        }
+
+        public string RegisterHandler(IXmppErrorHandler handler)
+        {
+            lock (errors)
+            {
+                var id = uniqueId.CreateId();
+                errors[id] = handler;
+                return id;
+            }
+        }
+
+        public string RegisterHandler(IXmppCloseHandler handler)
+        {
+            lock (closers)
+            {
+                var id = uniqueId.CreateId();
+                closers[id] = handler;
+                return id;
+            }
         }
 
         public void UnregisterHandler(string id)
@@ -91,10 +104,18 @@ namespace Jabber.Net.Server.Handlers
                         }
                     }
                 }
+                lock (closers)
+                {
+                    closers.Remove(id);
+                }
+                lock (errors)
+                {
+                    errors.Remove(id);
+                }
             }
         }
 
-        public IEnumerable<IInvoker> GetHandlers(Element e, Jid j)
+        public IEnumerable<IInvoker> GetElementHandlers(Element e, Jid j)
         {
             Args.NotNull(j, "j");
             Args.NotNull(e, "e");
@@ -104,6 +125,22 @@ namespace Jabber.Net.Server.Handlers
             {
                 List<IInvoker> list;
                 return invokers.TryGetValue(key, out list) ? list.ToArray() : new IInvoker[0];
+            }
+        }
+
+        public IEnumerable<IXmppCloseHandler> GetCloseHandlers()
+        {
+            lock (closers)
+            {
+                return closers.Values;
+            }
+        }
+
+        public IEnumerable<IXmppErrorHandler> GetErrorHandlers()
+        {
+            lock (errors)
+            {
+                return errors.Values;
             }
         }
 
