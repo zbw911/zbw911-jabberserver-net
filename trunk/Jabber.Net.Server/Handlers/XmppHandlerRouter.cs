@@ -6,7 +6,6 @@ using agsXMPP;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
 using Jabber.Net.Server.Utils;
-using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Handlers
 {
@@ -95,12 +94,12 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public IEnumerable<IInvoker> GetHandlers(XmppElement e, Jid j)
+        public IEnumerable<IInvoker> GetHandlers(Element e, Jid j)
         {
             Args.NotNull(j, "j");
             Args.NotNull(e, "e");
 
-            var key = GetKey(e.Element.GetType(), j);
+            var key = GetKey(e.GetType(), j);
             lock (invokers)
             {
                 List<IInvoker> list;
@@ -135,7 +134,7 @@ namespace Jabber.Net.Server.Handlers
         {
             string Id { get; }
 
-            XmppHandlerResult ProcessElement(XmppElement e, XmppSession s, XmppHandlerContext c);
+            XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c);
         }
 
         private class Invoker<T> : IInvoker where T : Element
@@ -151,9 +150,9 @@ namespace Jabber.Net.Server.Handlers
                 Id = id;
             }
 
-            public XmppHandlerResult ProcessElement(XmppElement e, XmppSession s, XmppHandlerContext c)
+            public XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c)
             {
-                return handler((T)e.Element, s, c);
+                return handler((T)e, s, c);
             }
         }
     }

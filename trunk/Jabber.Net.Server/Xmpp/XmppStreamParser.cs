@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using agsXMPP.protocol;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
@@ -28,12 +27,12 @@ namespace Jabber.Net.Xmpp
             Reset();
         }
 
-        public XmppElement Parse(byte[] buffer)
+        public Element Parse(byte[] buffer)
         {
-            return new XmppElement(ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer)));
+            return ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer));
         }
 
-        public byte[] ToBytes(XmppElement e)
+        public byte[] ToBytes(Element e)
         {
             return Encoding.UTF8.GetBytes(e.ToString());
         }
@@ -54,7 +53,7 @@ namespace Jabber.Net.Xmpp
             var ev = Parsed;
             if (ev != null && e is Element)
             {
-                ev(this, new ParsedArgs(new XmppElement((Element)e)));
+                ev(this, new ParsedArgs((Element)e));
             }
         }
 
@@ -70,16 +69,16 @@ namespace Jabber.Net.Xmpp
 
         public class ParsedArgs : EventArgs
         {
-            public XmppElement XmppElement
+            public Element Element
             {
                 get;
                 private set;
             }
 
 
-            public ParsedArgs(XmppElement xmppElement)
+            public ParsedArgs(Element element)
             {
-                XmppElement = xmppElement;
+                Element = element;
             }
         }
 

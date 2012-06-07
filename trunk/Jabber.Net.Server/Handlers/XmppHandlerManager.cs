@@ -3,7 +3,6 @@ using agsXMPP;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Sessions;
-using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Handlers
 {
@@ -29,11 +28,11 @@ namespace Jabber.Net.Server.Handlers
             router.UnregisterHandler(id);
         }
 
-        public void ProcessXmppElement(IXmppEndPoint endpoint, XmppElement e)
+        public void ProcessXmppElement(IXmppEndPoint endpoint, Element e)
         {
             try
             {
-                var jid = new Jid(e.Element.GetAttribute("to") ?? string.Empty);
+                var jid = new Jid(e.GetAttribute("to") ?? string.Empty);
                 foreach (var handler in router.GetHandlers(e, jid))
                 {
                     var result = handler.ProcessElement(e, null, new XmppHandlerContext());
