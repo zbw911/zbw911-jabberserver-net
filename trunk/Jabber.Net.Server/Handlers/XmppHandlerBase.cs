@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using agsXMPP.Xml.Dom;
+using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers
 {
-    class XmppHandlerBase
+    public class XmppHandlerBase
     {
+        public XmppHandlerResult Send(XmppSession session, params Element[] elements)
+        {
+            return new XmppSendResult(session, elements);
+        }
     }
 }

@@ -9,6 +9,19 @@ namespace Jabber.Net.Server.Sessions
         private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
 
+        public IList<AuthMechanism> SupportedAuthMechanisms
+        {
+            get;
+            private set;
+        }
+
+
+        public XmppSessionManager()
+        {
+            SupportedAuthMechanisms = new List<AuthMechanism>();
+        }
+
+
         public XmppSession GetSession(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -27,6 +40,19 @@ namespace Jabber.Net.Server.Sessions
                 locker.ExitReadLock();
             }
             return s;
+        }
+
+        public void OpenSession(XmppSession session)
+        {
+            locker.EnterWriteLock();
+            try
+            {
+                sessions.Add(session.Id, session);
+            }
+            finally
+            {
+                locker.ExitWriteLock();
+            }
         }
     }
 }
