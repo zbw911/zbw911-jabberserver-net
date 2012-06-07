@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -107,13 +107,16 @@
     <Compile Include="Handlers\XmppHandlerManager.cs" />
     <Compile Include="Handlers\XmppHandlerResult.cs" />
     <Compile Include="Handlers\XmppHandlerRouter.cs" />
+    <Compile Include="Handlers\XmppSendResult.cs" />
     <Compile Include="JabberNetServer.cs" />
     <Compile Include="Connections\IXmppListener.cs" />
     <Compile Include="Connections\TcpXmppListener.cs" />
     <Compile Include="Connections\XmppListenerManager.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="S2C\AuthDigestMD5Handler.cs" />
     <Compile Include="S2C\ClientStreamHandler.cs" />
+    <Compile Include="Sessions\AuthMechanism.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
     <Compile Include="Tests\XTest.cs" />

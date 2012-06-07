@@ -4,7 +4,19 @@ namespace Jabber.Net.Server.Sessions
 {
     public class XmppSession
     {
+        public string Id
+        {
+            get;
+            set;
+        }
+
         public IXmppEndPoint EndPoint
+        {
+            get;
+            set;
+        }
+
+        public bool Authenticated
         {
             get;
             private set;
@@ -13,8 +25,6 @@ namespace Jabber.Net.Server.Sessions
 
         public XmppSession(IXmppEndPoint endpoint)
         {
-            Args.NotNull(endpoint, "endpoint");
-
             EndPoint = endpoint;
         }
     }

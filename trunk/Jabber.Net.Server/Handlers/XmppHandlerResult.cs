@@ -1,11 +1,8 @@
 ﻿
 namespace Jabber.Net.Server.Handlers
 {
-    public class XmppHandlerResult
+    public abstract class XmppHandlerResult
     {
-
-
-
         public bool Handled
         {
             get;
@@ -17,5 +14,8 @@ namespace Jabber.Net.Server.Handlers
         {
             return null;
         }
+
+
+        public abstract void Execute(XmppHandlerContext context);
     }
 }

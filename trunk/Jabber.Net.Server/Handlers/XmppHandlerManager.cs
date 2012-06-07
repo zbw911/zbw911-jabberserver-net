@@ -48,6 +48,7 @@ namespace Jabber.Net.Server.Handlers
             router.UnregisterHandler(id);
         }
 
+
         public void ProcessXmppElement(IXmppEndPoint endpoint, Element e)
         {
             try
@@ -99,7 +100,14 @@ namespace Jabber.Net.Server.Handlers
 
         public void ProcessResult(IXmppEndPoint endpoint, XmppHandlerResult result)
         {
-
+            try
+            {
+                result.Execute(GetContext());
+            }
+            catch (Exception error)
+            {
+                ProcessError(endpoint, error);
+            }
         }
 
 
@@ -113,7 +121,7 @@ namespace Jabber.Net.Server.Handlers
 
         private XmppHandlerContext GetContext()
         {
-            return new XmppHandlerContext();
+            return new XmppHandlerContext(sessionManager);
         }
 
         private XmppSession GetSession(IXmppEndPoint endpoint)
