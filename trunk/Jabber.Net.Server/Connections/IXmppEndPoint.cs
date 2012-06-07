@@ -1,5 +1,5 @@
 ﻿using System;
-using Jabber.Net.Xmpp;
+using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Connections
 {
@@ -12,7 +12,7 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        void Send(XmppElement e, Action<XmppElement> error);
+        void Send(Element e, Action<Element> error);
 
         void Close();
     }

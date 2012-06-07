@@ -1,6 +1,6 @@
 ﻿using System;
+using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
-using Jabber.Net.Server.Utils;
 using Jabber.Net.Xmpp;
 
 namespace Jabber.Net.Server.Connections
@@ -28,7 +28,7 @@ namespace Jabber.Net.Server.Connections
             this.handlerManager = handlerManager;
             this.parser = new XmppStreamParser();
 
-            parser.Parsed += (s, e) => handlerManager.ProcessXmppElement(this, e.XmppElement);
+            parser.Parsed += (s, e) => handlerManager.ProcessXmppElement(this, e.Element);
             parser.Error += (s, e) => handlerManager.ProcessError(this, e.Error);
         }
 
@@ -37,7 +37,7 @@ namespace Jabber.Net.Server.Connections
             connection.BeginRecieve(this);
         }
 
-        public void Send(XmppElement e, Action<XmppElement> error)
+        public void Send(Element e, Action<Element> error)
         {
             connection.Send(parser.ToBytes(e), _ => error(e));
         }

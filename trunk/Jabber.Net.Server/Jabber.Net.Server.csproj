@@ -119,7 +119,7 @@
     <Compile Include="Utils\IUniqueId.cs" />
     <Compile Include="Utils\IncrementalUniqueId.cs" />
     <Compile Include="Utils\JidTypeConverter.cs" />
-    <Compile Include="Xmpp\XmppElement.cs" />
+    <None Include="Xmpp\XmppElement.cs" />
     <Compile Include="Xmpp\XmppStreamParser.cs" />
   </ItemGroup>
   <ItemGroup>
