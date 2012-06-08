@@ -8,6 +8,8 @@ namespace Jabber.Net.Server.Sessions
     {
         public static readonly XmppSession Empty = new XmppSession(string.Empty);
 
+        public static readonly XmppSession Current = null;
+
         private static readonly IUniqueId id = new IncrementalUniqueId();
         private IXmppEndPoint endpoint;
 

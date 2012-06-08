@@ -15,12 +15,12 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult Send(params Element[] elements)
         {
-            return Send(null, elements);
+            return Send(XmppSession.Current, elements);
         }
 
         public XmppHandlerResult Send(bool offline, params Element[] elements)
         {
-            return Send(null, offline, elements);
+            return Send(XmppSession.Current, offline, elements);
         }
 
         public XmppHandlerResult Send(XmppSession session, params Element[] elements)
@@ -35,22 +35,22 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult Error(StreamErrorCondition error)
         {
-            return Error(null, error);
+            return Error(XmppSession.Current, error);
         }
 
         public XmppHandlerResult Error(FailureCondition error)
         {
-            return Error(null, error);
+            return Error(XmppSession.Current, error);
         }
 
         public XmppHandlerResult Error(ErrorCode error)
         {
-            return Error(null, error);
+            return Error(XmppSession.Current, error);
         }
 
         public XmppHandlerResult Error(Exception error)
         {
-            return Error(error, null);
+            return Error(error, XmppSession.Current);
         }
 
         public XmppHandlerResult Error(XmppSession session, StreamErrorCondition error)

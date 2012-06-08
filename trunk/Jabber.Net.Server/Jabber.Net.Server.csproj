@@ -99,7 +99,7 @@
     <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
     <Compile Include="Handlers\XmppResultContext.cs" />
-    <Compile Include="Handlers\XmppErrorHandler.cs" />
+    <Compile Include="Handlers\XmppRequiredHandler.cs" />
     <Compile Include="Handlers\XmppErrorResult.cs" />
     <Compile Include="JabberStanzaException.cs" />
     <Compile Include="JabberSaslException.cs" />

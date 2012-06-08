@@ -12,7 +12,7 @@ namespace Jabber.Net.Server.Handlers
 
 
         public XmppHandlerResult()
-            : this(null)
+            : this(XmppSession.Current)
         {
 
         }

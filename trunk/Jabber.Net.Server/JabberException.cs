@@ -14,6 +14,11 @@ namespace Jabber.Net.Server
             set;
         }
 
+        public abstract bool CloseStream
+        {
+            get;
+        }
+
 
         public JabberException()
             : base()

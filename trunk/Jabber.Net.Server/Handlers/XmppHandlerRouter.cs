@@ -53,7 +53,7 @@ namespace Jabber.Net.Server.Handlers
                 }
             }
 
-            RegisterHandlerInternal(id, handler);
+            RegisterHandler(id, handler);
 
             return id;
         }
@@ -73,7 +73,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(handler, "handler");
 
             var id = uniqueId.CreateId();
-            RegisterHandlerInternal(id, handler);
+            RegisterHandler(id, handler);
             return id;
         }
 
@@ -149,7 +149,7 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        private void RegisterHandlerInternal(string id, object handler)
+        private void RegisterHandler(string id, object handler)
         {
             if (handler is IXmppCloseHandler)
             {
