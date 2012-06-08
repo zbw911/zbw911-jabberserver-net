@@ -15,5 +15,7 @@ namespace Jabber.Net.Server.Connections
         void Send(Element e, Action<Element> error);
 
         void Close();
+
+        void Reset();
     }
 }

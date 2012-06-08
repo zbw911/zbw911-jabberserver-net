@@ -47,6 +47,11 @@ namespace Jabber.Net.Server.Connections
             connection.Close();
         }
 
+        public void Reset()
+        {
+            parser.Reset();
+        }
+
 
         void IXmppReciever.OnRecive(byte[] buffer)
         {

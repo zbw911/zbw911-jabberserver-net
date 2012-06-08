@@ -10,8 +10,18 @@ namespace Jabber.Net.Server.Handlers
             private set;
         }
 
-        public XmppHandlerContext(XmppSessionManager sessionManager)
+        public XmppHandlerManager HandlerManager
         {
+            get;
+            private set;
+        }
+
+        public XmppHandlerContext(XmppHandlerManager handlerManager, XmppSessionManager sessionManager)
+        {
+            Args.NotNull(handlerManager, "handlerManager");
+            Args.NotNull(sessionManager, "sessionManager");
+
+            HandlerManager = handlerManager;
             SessionManager = sessionManager;
         }
     }

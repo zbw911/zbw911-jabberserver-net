@@ -1,5 +1,6 @@
 ﻿using System;
 using agsXMPP.protocol.sasl;
+using agsXMPP.sasl.DigestMD5;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
@@ -19,17 +20,98 @@ namespace Jabber.Net.Server.S2C
 
         public XmppHandlerResult ProcessElement(Auth element, XmppSession session, XmppHandlerContext context)
         {
-            throw new NotImplementedException();
+            if (element.MechanismType != MechanismType.DIGEST_MD5)
+            {
+                return Error(FailureCondition.invalid_mechanism);
+            }
+
+            var authStep = session.AuthData as AuthData;
+            if (authStep != null)
+            {
+                return Error(FailureCondition.temporary_auth_failure);
+            }
+
+            session.AuthData = new AuthData();
+            var challenge = new Challenge
+            {
+                TextBase64 = string.Format("realm=\"{0}\",nonce=\"{1}\",qop=\"auth\",charset=utf-8,algorithm=md5-sess", session.Jid.Server, CreateId())
+            };
+            return Send(session, challenge);
         }
 
         public XmppHandlerResult ProcessElement(Response element, XmppSession session, XmppHandlerContext context)
         {
-            throw new NotImplementedException();
+            var authStep = session.AuthData as AuthData;
+            if (authStep == null)
+            {
+                return Error(FailureCondition.temporary_auth_failure);
+            }
+
+            if (authStep.Step == AuthStep.Step1)
+            {
+                var step = new Step2(element.TextBase64);
+                //var user = ctx.UserManager.GetUser(new Jid(userName, stream.Domain, null));
+                var user = new { UserName = string.Empty, Password = string.Empty };
+
+                if (user != null &&
+                    string.Compare(session.Jid.Server, step.Realm, StringComparison.OrdinalIgnoreCase) == 0 &&
+                    step.Authorize(step.Username, user.Password))
+                {
+                    var challenge = new Challenge
+                    {
+                        TextBase64 = string.Format("rspauth={0}", step.CalculateResponse(step.Username, user.Password, string.Empty))
+                    };
+                    authStep.DoStep(step.Username);
+                    return Send(session, challenge);
+                }
+                else
+                {
+                    return Error(FailureCondition.not_authorized);
+                }
+            }
+            else if (authStep.Step == AuthStep.Step2)
+            {
+                session.Authenticate(authStep.UserName);
+                session.EndPoint.Reset();
+                return Send(session, new Success());
+            }
+            else
+            {
+                return Error(FailureCondition.temporary_auth_failure);
+            }
         }
 
         public XmppHandlerResult ProcessElement(Abort element, XmppSession session, XmppHandlerContext context)
         {
-            throw new NotImplementedException();
+            return Error(FailureCondition.aborted);
+        }
+
+
+        private enum AuthStep
+        {
+            Step1,
+            Step2,
+        }
+
+        private class AuthData
+        {
+            public string UserName
+            {
+                get;
+                private set;
+            }
+
+            public AuthStep Step
+            {
+                get;
+                private set;
+            }
+
+            public void DoStep(string username)
+            {
+                UserName = username;
+                Step++;
+            }
         }
     }
 }
