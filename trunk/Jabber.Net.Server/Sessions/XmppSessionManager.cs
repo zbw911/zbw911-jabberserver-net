@@ -64,7 +64,12 @@ namespace Jabber.Net.Server.Sessions
                 locker.EnterWriteLock();
                 try
                 {
-                    sessions.Remove(id);
+                    XmppSession s;
+                    if (sessions.TryGetValue(id, out s))
+                    {
+                        sessions.Remove(id);
+                        s.EndPoint.Close();
+                    }
                 }
                 finally
                 {

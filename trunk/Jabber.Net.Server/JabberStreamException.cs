@@ -26,7 +26,7 @@ namespace Jabber.Net.Server
 
         public override Element ToElement()
         {
-			return new Error(error);
+            return new Error(error) { Text = Message };
 		}
     }
 }
