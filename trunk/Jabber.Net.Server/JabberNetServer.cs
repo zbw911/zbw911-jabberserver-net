@@ -1,24 +1,14 @@
 ﻿using System.Configuration;
 using Jabber.Net.Server.Connections;
-using Jabber.Net.Server.Handlers;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 
 namespace Jabber.Net.Server
 {
-    public class JabberNetServer
+    public class JabberNetServer : IXmppResolver
     {
-        public XmppListenerManager ListenerManager
-        {
-            get;
-            set;
-        }
-
-        public XmppHandlerManager HandlerManager
-        {
-            get;
-            set;
-        }
+        private IUnityContainer unityContainer;
+        private XmppListenerManager listeners;
 
 
         public void Configure(string file)
@@ -26,22 +16,26 @@ namespace Jabber.Net.Server
             var map = new ExeConfigurationFileMap { ExeConfigFilename = file };
             var configuration = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
             var unitySection = (UnityConfigurationSection)configuration.GetSection(UnityConfigurationSection.SectionName);
-            var unityContainer = new UnityContainer()
-                .LoadConfiguration(unitySection, "Jabber");
+            unityContainer = new UnityContainer().LoadConfiguration(unitySection, "Jabber");
 
-            ListenerManager = unityContainer.Resolve<XmppListenerManager>();
-            HandlerManager = unityContainer.Resolve<XmppHandlerManager>();
+            unityContainer.RegisterInstance<IXmppResolver>(this, new ContainerControlledLifetimeManager());
+            listeners = unityContainer.Resolve<XmppListenerManager>();
         }
 
 
         public void Start()
         {
-            ListenerManager.StartListen();
+            listeners.StartListen();
         }
 
         public void Stop()
         {
-            ListenerManager.StopListen();
+            listeners.StopListen();
+        }
+
+        public T Resolve<T>()
+        {
+            return unityContainer.Resolve<T>();
         }
     }
 }

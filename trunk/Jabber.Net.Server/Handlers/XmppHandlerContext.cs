@@ -1,28 +1,36 @@
 ﻿using Jabber.Net.Server.Sessions;
+using Jabber.Net.Server.Storages;
 
 namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerContext
     {
-        public XmppSessionManager SessionManager
+        public XmppHandlerManager Handlers
         {
             get;
             private set;
         }
 
-        public XmppHandlerManager HandlerManager
+        public XmppSessionManager Sessions
         {
             get;
             private set;
         }
 
-        public XmppHandlerContext(XmppHandlerManager handlerManager, XmppSessionManager sessionManager)
+        public XmppStorageManager Storages
         {
-            Args.NotNull(handlerManager, "handlerManager");
-            Args.NotNull(sessionManager, "sessionManager");
+            get;
+            private set;
+        }
 
-            HandlerManager = handlerManager;
-            SessionManager = sessionManager;
+        public XmppHandlerContext(XmppHandlerManager handlers, IXmppResolver resolver)
+        {
+            Args.NotNull(resolver, "resolver");
+            Args.NotNull(handlers, "handlers");
+
+            Handlers = handlers;
+            Sessions = resolver.Resolve<XmppSessionManager>();
+            Storages = resolver.Resolve<XmppStorageManager>();
         }
     }
 }

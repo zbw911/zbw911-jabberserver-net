@@ -1,4 +1,5 @@
 ﻿using System;
+using agsXMPP;
 using agsXMPP.protocol.sasl;
 using agsXMPP.sasl.DigestMD5;
 using Jabber.Net.Server.Handlers;
@@ -14,7 +15,7 @@ namespace Jabber.Net.Server.S2C
     {
         public void OnRegister(XmppHandlerContext context)
         {
-            context.SessionManager.SupportedAuthMechanisms.Add(new AuthMechanism(MechanismType.DIGEST_MD5, true));
+            context.Sessions.SupportedAuthMechanisms.Add(new AuthMechanism(MechanismType.DIGEST_MD5, true));
         }
 
 
@@ -50,8 +51,7 @@ namespace Jabber.Net.Server.S2C
             if (authStep.Step == AuthStep.Step1)
             {
                 var step = new Step2(element.TextBase64);
-                //var user = ctx.UserManager.GetUser(new Jid(userName, stream.Domain, null));
-                var user = new { UserName = string.Empty, Password = string.Empty };
+                var user = context.Storages.Users.GetUser(new Jid(step.Username));
 
                 if (user != null &&
                     string.Compare(session.Jid.Server, step.Realm, StringComparison.OrdinalIgnoreCase) == 0 &&

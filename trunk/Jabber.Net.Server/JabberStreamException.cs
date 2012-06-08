@@ -38,7 +38,7 @@ namespace Jabber.Net.Server
 
         public override Element ToElement()
         {
-            return new Error(error) { Text = Message };
+            return new Error(error) { Prefix = agsXMPP.Uri.PREFIX, Text = Message };
         }
     }
 }

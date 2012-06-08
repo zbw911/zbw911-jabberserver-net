@@ -49,7 +49,7 @@ namespace Jabber.Net.Server.Sessions
             locker.EnterWriteLock();
             try
             {
-                sessions.Add(session.Id, session);
+                sessions[session.Id] = session;
             }
             finally
             {

@@ -22,7 +22,7 @@ namespace Jabber.Net.Server.Handlers
             context.Session.EndPoint.Send(error.ToElement(), null);
             if (error.CloseStream)
             {
-                context.SessionManager.CloseSession(context.Session.Id);
+                context.Sessions.CloseSession(context.Session.Id);
             }
         }
     }
