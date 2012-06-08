@@ -14,7 +14,12 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult Send(XmppSession session, params Element[] elements)
         {
-            return new XmppSendResult(session, elements);
+            return Send(session, false, elements);
+        }
+
+        public XmppHandlerResult Send(XmppSession session, bool offline, params Element[] elements)
+        {
+            return new XmppSendResult(session, offline, elements);
         }
 
         public XmppHandlerResult Error(StreamErrorCondition error)
