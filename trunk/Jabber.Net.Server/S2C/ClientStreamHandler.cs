@@ -7,25 +7,25 @@ using agsXMPP.protocol.stream;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
-using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.S2C
 {
     class ClientStreamHandler : XmppHandlerBase, IXmppHandler<Stream>
     {
-        private readonly IUniqueId id = new IncrementalUniqueId();
+        private const string XMPP_VERSION = "1.0";
 
 
         public XmppHandlerResult ProcessElement(Stream element, XmppSession session, XmppHandlerContext context)
         {
-            var stream = new Stream();
-            stream.Version = "1.0";
-            stream.From = element.To;
-            stream.Id = id.CreateId();
-            stream.Prefix = Uri.PREFIX;
+            var stream = new Stream
+            {
+                Id = CreateId(),
+                Prefix = Uri.PREFIX,
+                Version = XMPP_VERSION,
+                From = element.To,
+                Features = new Features { Prefix = Uri.PREFIX },
+            };
 
-            stream.Features = new Features();
-            stream.Features.Prefix = agsXMPP.Uri.PREFIX;
             if (session.Authenticated)
             {
                 stream.Features.AddChild(new Bind());
@@ -44,8 +44,7 @@ namespace Jabber.Net.Server.S2C
                 }
             }
 
-            session.Id = id.CreateId();
-            session.EndPoint.SessionId = session.Id;
+            session.Jid = stream.From;
             context.SessionManager.OpenSession(session);
 
             return Send(session, stream);

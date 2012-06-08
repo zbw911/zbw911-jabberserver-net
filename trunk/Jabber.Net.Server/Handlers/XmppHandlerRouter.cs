@@ -53,6 +53,8 @@ namespace Jabber.Net.Server.Handlers
                 }
             }
 
+            RegisterHandlerInternal(id, handler);
+
             return id;
         }
 
@@ -66,24 +68,13 @@ namespace Jabber.Net.Server.Handlers
             return id;
         }
 
-        public string RegisterHandler(IXmppErrorHandler handler)
+        public string RegisterHandler(object handler)
         {
-            lock (errors)
-            {
-                var id = uniqueId.CreateId();
-                errors[id] = handler;
-                return id;
-            }
-        }
+            Args.NotNull(handler, "handler");
 
-        public string RegisterHandler(IXmppCloseHandler handler)
-        {
-            lock (closers)
-            {
-                var id = uniqueId.CreateId();
-                closers[id] = handler;
-                return id;
-            }
+            var id = uniqueId.CreateId();
+            RegisterHandlerInternal(id, handler);
+            return id;
         }
 
         public void UnregisterHandler(string id)
@@ -147,9 +138,6 @@ namespace Jabber.Net.Server.Handlers
 
         private void RegisterHandlerInternal<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler, string id) where T : Element
         {
-            Args.NotNull(jid, "jid");
-            Args.NotNull(handler, "handler");
-
             var key = GetKey(typeof(T), jid);
             lock (invokers)
             {
@@ -158,6 +146,24 @@ namespace Jabber.Net.Server.Handlers
                     invokers[key] = new List<IInvoker>();
                 }
                 invokers[key].Add(new Invoker<T>(handler, id));
+            }
+        }
+
+        private void RegisterHandlerInternal(string id, object handler)
+        {
+            if (handler is IXmppCloseHandler)
+            {
+                lock (closers)
+                {
+                    closers[id] = (IXmppCloseHandler)handler;
+                }
+            }
+            if (handler is IXmppErrorHandler)
+            {
+                lock (errors)
+                {
+                    errors[id] = (IXmppErrorHandler)handler;
+                }
             }
         }
 

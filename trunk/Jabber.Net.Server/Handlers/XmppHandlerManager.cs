@@ -9,6 +9,7 @@ namespace Jabber.Net.Server.Handlers
     public class XmppHandlerManager
     {
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
+        private readonly XmppHandlerContext context;
         private readonly XmppSessionManager sessionManager;
 
 
@@ -17,6 +18,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(sessionManager, "sessionManager");
 
             this.sessionManager = sessionManager;
+            context = new XmppHandlerContext(this, sessionManager);
         }
 
 
@@ -49,14 +51,17 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public void ProcessXmppElement(IXmppEndPoint endpoint, Element e)
+        public void ProcessXmppElement(IXmppEndPoint endpoint, Element element)
         {
             try
             {
-                var jid = new Jid(e.GetAttribute("to") ?? string.Empty);
-                foreach (var handler in router.GetElementHandlers(e, jid))
+                Args.NotNull(endpoint, "endpoint");
+                Args.NotNull(element, "element");
+
+                var jid = new Jid(element.GetAttribute("to") ?? string.Empty);
+                foreach (var handler in router.GetElementHandlers(element, jid))
                 {
-                    var result = handler.ProcessElement(e, GetSession(endpoint), GetContext());
+                    var result = handler.ProcessElement(element, GetSession(endpoint), GetContext());
                     ProcessResult(endpoint, result);
                 }
             }
@@ -70,6 +75,8 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
+                Args.NotNull(endpoint, "endpoint");
+
                 foreach (var handler in router.GetCloseHandlers())
                 {
                     var result = handler.OnClose(GetSession(endpoint), GetContext());
@@ -86,6 +93,9 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
+                Args.NotNull(endpoint, "endpoint");
+                Args.NotNull(error, "error");
+
                 foreach (var handler in router.GetErrorHandlers())
                 {
                     var result = handler.OnError(error, GetSession(endpoint), GetContext());
@@ -102,6 +112,9 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
+                Args.NotNull(endpoint, "endpoint");
+                Args.NotNull(result, "result");
+
                 result.Execute(GetContext());
             }
             catch (Exception error)
@@ -121,7 +134,7 @@ namespace Jabber.Net.Server.Handlers
 
         private XmppHandlerContext GetContext()
         {
-            return new XmppHandlerContext(sessionManager);
+            return context;
         }
 
         private XmppSession GetSession(IXmppEndPoint endpoint)

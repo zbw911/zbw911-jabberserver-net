@@ -44,6 +44,8 @@ namespace Jabber.Net.Server.Sessions
 
         public void OpenSession(XmppSession session)
         {
+            Args.NotNull(session, "session");
+
             locker.EnterWriteLock();
             try
             {
@@ -52,6 +54,22 @@ namespace Jabber.Net.Server.Sessions
             finally
             {
                 locker.ExitWriteLock();
+            }
+        }
+
+        public void CloseSession(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                locker.EnterWriteLock();
+                try
+                {
+                    sessions.Remove(id);
+                }
+                finally
+                {
+                    locker.ExitWriteLock();
+                }
             }
         }
     }
