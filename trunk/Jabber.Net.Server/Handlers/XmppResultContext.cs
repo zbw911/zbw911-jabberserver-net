@@ -2,34 +2,20 @@
 
 namespace Jabber.Net.Server.Handlers
 {
-    public class XmppResultContext
+    public class XmppResultContext : XmppHandlerContext
     {
-        private readonly XmppHandlerContext context;
-
-
         public XmppSession Session
         {
             get;
             private set;
         }
 
-        public XmppSessionManager SessionManager
-        {
-            get { return context.SessionManager; }
-        }
-
-        public XmppHandlerManager HandlerManager
-        {
-            get { return context.HandlerManager; }
-        }
-
-        public XmppResultContext(XmppSession session, XmppHandlerContext context)
+        public XmppResultContext(XmppSession session, XmppHandlerManager handlers, IXmppResolver resolver)
+            : base(handlers, resolver)
         {
             Args.NotNull(session, "session");
-            Args.NotNull(context, "context");
 
-            this.Session = session;
-            this.context = context;
+            Session = session;
         }
     }
 }

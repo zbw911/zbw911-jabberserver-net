@@ -1,7 +1,7 @@
 ﻿using System;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
-using Jabber.Net.Xmpp;
+using Jabber.Net.Server.Xmpp;
 
 namespace Jabber.Net.Server.Connections
 {

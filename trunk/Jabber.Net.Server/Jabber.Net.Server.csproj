@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -101,6 +101,7 @@
     <Compile Include="Handlers\XmppResultContext.cs" />
     <Compile Include="Handlers\XmppRequiredHandler.cs" />
     <Compile Include="Handlers\XmppErrorResult.cs" />
+    <Compile Include="IXmppResolver.cs" />
     <Compile Include="JabberStanzaException.cs" />
     <Compile Include="JabberSaslException.cs" />
     <Compile Include="JabberStreamException.cs" />
@@ -123,11 +124,16 @@
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S2C\AuthDigestMD5Handler.cs" />
+    <Compile Include="S2C\BindHandler.cs" />
     <Compile Include="S2C\ClientStreamHandler.cs" />
+    <Compile Include="S2C\SessionHandler.cs" />
     <Compile Include="Sessions\AuthMechanism.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
+    <Compile Include="Storages\XmppUserStorage.cs" />
+    <Compile Include="Storages\IXmppUserStorage.cs" />
     <Compile Include="Storages\XmppStorageBase.cs" />
+    <Compile Include="Storages\XmppStorageManager.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
     <Compile Include="Utils\GuidUniqueId.cs" />
@@ -135,6 +141,7 @@
     <Compile Include="Utils\IncrementalUniqueId.cs" />
     <Compile Include="Utils\JidTypeConverter.cs" />
     <None Include="Xmpp\XmppElement.cs" />
+    <Compile Include="XmppUser.cs" />
     <Compile Include="Xmpp\XmppStreamParser.cs" />
   </ItemGroup>
   <ItemGroup>

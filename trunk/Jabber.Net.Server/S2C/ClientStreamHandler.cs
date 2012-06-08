@@ -34,7 +34,7 @@ namespace Jabber.Net.Server.S2C
             else
             {
                 stream.Features.Mechanisms = new Mechanisms();
-                foreach (var m in context.SessionManager.SupportedAuthMechanisms)
+                foreach (var m in context.Sessions.SupportedAuthMechanisms)
                 {
                     stream.Features.Mechanisms.AddChild(new Mechanism(m.Name));
                     if (m.Required)
@@ -45,7 +45,7 @@ namespace Jabber.Net.Server.S2C
             }
 
             session.Jid = stream.From;
-            context.SessionManager.OpenSession(session);
+            context.Sessions.OpenSession(session);
 
             return Send(session, stream);
         }

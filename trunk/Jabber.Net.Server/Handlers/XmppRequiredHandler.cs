@@ -14,7 +14,7 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult OnClose(XmppSession session, XmppHandlerContext context)
         {
-            context.SessionManager.CloseSession(session.Id);
+            context.Sessions.CloseSession(session.Id);
             return Void();
         }
     }

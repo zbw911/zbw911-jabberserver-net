@@ -10,15 +10,18 @@ namespace Jabber.Net.Server.Handlers
     {
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
         private readonly XmppSessionManager sessionManager;
+        private readonly IXmppResolver resolver;
         private readonly XmppHandlerContext context;
 
 
-        public XmppHandlerManager(XmppSessionManager sessionManager)
+        public XmppHandlerManager(XmppSessionManager sessionManager, IXmppResolver resolver)
         {
             Args.NotNull(sessionManager, "sessionManager");
+            Args.NotNull(resolver, "resolver");
 
             this.sessionManager = sessionManager;
-            this.context = new XmppHandlerContext(this, sessionManager);
+            this.resolver = resolver;
+            this.context = new XmppHandlerContext(this, resolver);
 
             RegisterHandler(new XmppRequiredHandler());
         }
@@ -146,7 +149,7 @@ namespace Jabber.Net.Server.Handlers
 
         private XmppResultContext GetResultContext(XmppSession session)
         {
-            return new XmppResultContext(session, GetContext());
+            return new XmppResultContext(session, this, resolver);
         }
 
         private XmppSession GetSession(IXmppEndPoint endpoint)

@@ -1,9 +1,8 @@
 #if DEBUG
-using System;
 using System.Xml.Linq;
 using NUnit.Framework;
 
-namespace Jabber.Net.Server
+namespace Jabber.Net.Server.Tests
 {
 	[TestFixture]
 	public class XTest
