@@ -19,6 +19,8 @@ namespace Jabber.Net.Server.Handlers
 
             this.sessionManager = sessionManager;
             this.context = new XmppHandlerContext(this, sessionManager);
+
+            RegisterHandler(new XmppRequiredHandler());
         }
 
 
@@ -33,13 +35,7 @@ namespace Jabber.Net.Server.Handlers
             return router.RegisterHandler<T>(jid, handler);
         }
 
-        public string RegisterHandler(IXmppErrorHandler handler)
-        {
-            ProcessRegisterHandler(handler as IXmppRegisterHandler);
-            return router.RegisterHandler(handler);
-        }
-
-        public string RegisterHandler(IXmppCloseHandler handler)
+        public string RegisterHandler(object handler)
         {
             ProcessRegisterHandler(handler as IXmppRegisterHandler);
             return router.RegisterHandler(handler);
