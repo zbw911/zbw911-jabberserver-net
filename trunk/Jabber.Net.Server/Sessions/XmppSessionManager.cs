@@ -61,19 +61,22 @@ namespace Jabber.Net.Server.Sessions
         {
             if (!string.IsNullOrEmpty(id))
             {
+                XmppSession s;
                 locker.EnterWriteLock();
                 try
                 {
-                    XmppSession s;
                     if (sessions.TryGetValue(id, out s))
                     {
                         sessions.Remove(id);
-                        s.EndPoint.Close();
                     }
                 }
                 finally
                 {
                     locker.ExitWriteLock();
+                }
+                if (s != null)
+                {
+                    s.EndPoint.Close();
                 }
             }
         }

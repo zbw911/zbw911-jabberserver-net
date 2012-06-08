@@ -127,6 +127,7 @@
     <Compile Include="Sessions\AuthMechanism.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
+    <Compile Include="Storages\XmppStorageBase.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
     <Compile Include="Utils\GuidUniqueId.cs" />
