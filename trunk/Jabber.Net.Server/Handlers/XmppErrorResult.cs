@@ -6,30 +6,28 @@ namespace Jabber.Net.Server.Handlers
     public class XmppErrorResult : XmppHandlerResult
     {
         private readonly Exception error;
-        private readonly XmppSession session;
 
 
-        public XmppErrorResult(Exception error, XmppSession session)
+        public XmppErrorResult(XmppSession session, Exception error)
+            : base(session)
         {
             Args.NotNull(error, "error");
-            Args.NotNull(session, "session");
 
             this.error = error;
-            this.session = session;
         }
 
 
-        public override void Execute(XmppHandlerContext context)
+        public override void Execute(XmppResultContext context)
         {
             Args.NotNull(context, "context");
 
             if (error is JabberException)
             {
-                session.EndPoint.Send(((JabberException)error).ToElement(), null);
+                context.Session.EndPoint.Send(((JabberException)error).ToElement(), null);
             }
             if (error is JabberStreamException)
             {
-                context.SessionManager.CloseSession(session.Id);
+                context.SessionManager.CloseSession(context.Session.Id);
             }
             /*if (ex is JabberException)
             {

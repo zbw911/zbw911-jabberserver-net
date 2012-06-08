@@ -124,7 +124,7 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(result, "result");
 
-                result.Execute(GetContext());
+                result.Execute(GetResultContext(result.Session ?? GetSession(endpoint)));
             }
             catch (Exception error)
             {
@@ -144,6 +144,11 @@ namespace Jabber.Net.Server.Handlers
         private XmppHandlerContext GetContext()
         {
             return context;
+        }
+
+        private XmppResultContext GetResultContext(XmppSession session)
+        {
+            return new XmppResultContext(session, GetContext());
         }
 
         private XmppSession GetSession(IXmppEndPoint endpoint)
