@@ -1,4 +1,5 @@
-﻿using agsXMPP.protocol;
+﻿using System;
+using agsXMPP.protocol;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
@@ -12,6 +13,16 @@ namespace Jabber.Net.Server.Handlers
         private static readonly IUniqueId id = new IncrementalUniqueId();
 
 
+        public XmppHandlerResult Send(params Element[] elements)
+        {
+            return Send(null, elements);
+        }
+
+        public XmppHandlerResult Send(bool offline, params Element[] elements)
+        {
+            return Send(null, offline, elements);
+        }
+
         public XmppHandlerResult Send(XmppSession session, params Element[] elements)
         {
             return Send(session, false, elements);
@@ -24,17 +35,42 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult Error(StreamErrorCondition error)
         {
-            throw new JabberStreamException(error);
+            return Error(null, error);
         }
 
         public XmppHandlerResult Error(FailureCondition error)
         {
-            throw new JabberSaslException(error);
+            return Error(null, error);
         }
 
         public XmppHandlerResult Error(ErrorCode error)
         {
-            throw new JabberStanzaException(error);
+            return Error(null, error);
+        }
+
+        public XmppHandlerResult Error(Exception error)
+        {
+            return Error(error, null);
+        }
+
+        public XmppHandlerResult Error(XmppSession session, StreamErrorCondition error)
+        {
+            throw new JabberStreamException(error, session);
+        }
+
+        public XmppHandlerResult Error(XmppSession session, FailureCondition error)
+        {
+            throw new JabberSaslException(error, session);
+        }
+
+        public XmppHandlerResult Error(XmppSession session, ErrorCode error)
+        {
+            throw new JabberStanzaException(error, session);
+        }
+
+        public XmppHandlerResult Error(Exception error, XmppSession session)
+        {
+            return new XmppErrorResult(session, error);
         }
 
         public XmppHandlerResult Void()

@@ -6,6 +6,8 @@ namespace Jabber.Net.Server.Sessions
 {
     public class XmppSession
     {
+        public static readonly XmppSession Empty = new XmppSession(string.Empty);
+
         private static readonly IUniqueId id = new IncrementalUniqueId();
         private IXmppEndPoint endpoint;
 
@@ -46,6 +48,11 @@ namespace Jabber.Net.Server.Sessions
         }
 
 
+        private XmppSession(string id)
+        {
+            Id = id;
+        }
+
         public XmppSession(IXmppEndPoint endpoint)
         {
             Id = id.CreateId();
@@ -57,6 +64,17 @@ namespace Jabber.Net.Server.Sessions
             Jid.User = username;
             Authenticated = true;
             AuthData = null;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var s = obj as XmppSession;
+            return s != null && Equals(Id, s.Id);
         }
     }
 }

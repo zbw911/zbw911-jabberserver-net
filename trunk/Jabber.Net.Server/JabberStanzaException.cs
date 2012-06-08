@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using agsXMPP.protocol.client;
 using agsXMPP.Xml.Dom;
+using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server
 {
@@ -11,8 +12,8 @@ namespace Jabber.Net.Server
         private readonly ErrorCode error;
 
         
-        public JabberStanzaException (ErrorCode error)
-            : base()
+        public JabberStanzaException (ErrorCode error, XmppSession session)
+            : base(session)
         {
             this.error = error;
         }

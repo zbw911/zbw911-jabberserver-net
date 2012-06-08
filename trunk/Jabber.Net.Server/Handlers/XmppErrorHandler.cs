@@ -7,7 +7,7 @@ namespace Jabber.Net.Server.Handlers
     {
         public XmppHandlerResult OnError(Exception error, XmppSession session, XmppHandlerContext context)
         {
-            return new XmppErrorResult(error, session);
+            return new XmppErrorResult(session, error);
         }
     }
 }
