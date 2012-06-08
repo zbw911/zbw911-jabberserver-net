@@ -11,7 +11,7 @@ namespace Jabber.Net.Server.Handlers
 {
     class XmppHandlerRouter
     {
-        private readonly IUniqueId uniqueId = new IncrementalUniqueId();
+        private static readonly IUniqueId uniqueId = new IncrementalUniqueId();
         private readonly Dictionary<Type, MethodInfo> registers = new Dictionary<Type, MethodInfo>();
         private readonly Dictionary<string, List<IInvoker>> invokers = new Dictionary<string, List<IInvoker>>(50);
         private readonly MethodInfo registerMethod;

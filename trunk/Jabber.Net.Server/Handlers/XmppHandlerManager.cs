@@ -59,9 +59,12 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(element, "element");
 
                 var jid = new Jid(element.GetAttribute("to") ?? string.Empty);
+                var session = GetSession(endpoint);
+                var context = GetContext();
+
                 foreach (var handler in router.GetElementHandlers(element, jid))
                 {
-                    var result = handler.ProcessElement(element, GetSession(endpoint), GetContext());
+                    var result = handler.ProcessElement(element, session, context);
                     ProcessResult(endpoint, result);
                 }
             }
@@ -77,9 +80,12 @@ namespace Jabber.Net.Server.Handlers
             {
                 Args.NotNull(endpoint, "endpoint");
 
+                var session = GetSession(endpoint);
+                var context = GetContext();
+
                 foreach (var handler in router.GetCloseHandlers())
                 {
-                    var result = handler.OnClose(GetSession(endpoint), GetContext());
+                    var result = handler.OnClose(session, context);
                     ProcessResult(endpoint, result);
                 }
             }
@@ -96,9 +102,12 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(error, "error");
 
+                var session = GetSession(endpoint);
+                var context = GetContext();
+                
                 foreach (var handler in router.GetErrorHandlers())
                 {
-                    var result = handler.OnError(error, GetSession(endpoint), GetContext());
+                    var result = handler.OnError(error, session, context);
                     ProcessResult(endpoint, result);
                 }
             }

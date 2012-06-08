@@ -1,11 +1,12 @@
-﻿using Jabber.Net.Server.Connections;
-using System;
-using agsXMPP;
+﻿using agsXMPP;
+using Jabber.Net.Server.Connections;
+using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Sessions
 {
     public class XmppSession
     {
+        private static readonly IUniqueId id = new IncrementalUniqueId();
         private IXmppEndPoint endpoint;
 
 
@@ -47,7 +48,7 @@ namespace Jabber.Net.Server.Sessions
 
         public XmppSession(IXmppEndPoint endpoint)
         {
-            Id = Guid.NewGuid().ToString("N");
+            Id = id.CreateId();
             EndPoint = endpoint;
         }
 

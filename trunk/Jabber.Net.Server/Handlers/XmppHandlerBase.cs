@@ -1,4 +1,5 @@
 ﻿using agsXMPP.protocol;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
@@ -8,7 +9,7 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerBase
     {
-        private readonly IUniqueId id = new IncrementalUniqueId();
+        private static readonly IUniqueId id = new IncrementalUniqueId();
 
 
         public XmppHandlerResult Send(XmppSession session, params Element[] elements)
@@ -24,6 +25,11 @@ namespace Jabber.Net.Server.Handlers
         public XmppHandlerResult Error(FailureCondition error)
         {
             throw new JabberSaslException(error);
+        }
+
+        public XmppHandlerResult Error(ErrorCode error)
+        {
+            throw new JabberStanzaException(error);
         }
 
         public XmppHandlerResult Void()
