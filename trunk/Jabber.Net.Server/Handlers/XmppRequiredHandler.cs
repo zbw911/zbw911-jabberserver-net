@@ -1,0 +1,21 @@
+﻿using System;
+using Jabber.Net.Server.Sessions;
+
+namespace Jabber.Net.Server.Handlers
+{
+    public class XmppRequiredHandler : XmppHandlerBase,
+        IXmppErrorHandler,
+        IXmppCloseHandler
+    {
+        public XmppHandlerResult OnError(Exception error, XmppSession session, XmppHandlerContext context)
+        {
+            return Error(error, session);
+        }
+
+        public XmppHandlerResult OnClose(XmppSession session, XmppHandlerContext context)
+        {
+            context.SessionManager.CloseSession(session.Id);
+            return Void();
+        }
+    }
+}

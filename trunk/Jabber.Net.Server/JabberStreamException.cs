@@ -12,12 +12,23 @@ namespace Jabber.Net.Server
         private readonly StreamErrorCondition error;
 
 
+        public override bool CloseStream
+        {
+            get { return true; }
+        }
+
+
         public JabberStreamException(StreamErrorCondition error, XmppSession session)
             : base(session)
         {
             this.error = error;
         }
 
+        public JabberStreamException(Exception exception)
+            : base(exception.Message, exception)
+        {
+            this.error = StreamErrorCondition.InternalServerError;
+        }
 
         protected JabberStreamException(SerializationInfo info, StreamingContext context)
             : base(info, context)

@@ -9,8 +9,8 @@ namespace Jabber.Net.Server.Handlers
     public class XmppHandlerManager
     {
         private readonly XmppHandlerRouter router = new XmppHandlerRouter();
-        private readonly XmppHandlerContext context;
         private readonly XmppSessionManager sessionManager;
+        private readonly XmppHandlerContext context;
 
 
         public XmppHandlerManager(XmppSessionManager sessionManager)
@@ -18,7 +18,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(sessionManager, "sessionManager");
 
             this.sessionManager = sessionManager;
-            context = new XmppHandlerContext(this, sessionManager);
+            this.context = new XmppHandlerContext(this, sessionManager);
         }
 
 
@@ -102,9 +102,10 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(error, "error");
 
-                var session = GetSession(endpoint);
+                var session = error is JabberException ? ((JabberException)error).Session : XmppSession.Current;
+                if (Equals(session, XmppSession.Current)) session = GetSession(endpoint);
                 var context = GetContext();
-                
+
                 foreach (var handler in router.GetErrorHandlers())
                 {
                     var result = handler.OnError(error, session, context);
@@ -124,7 +125,8 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(result, "result");
 
-                result.Execute(GetResultContext(result.Session ?? GetSession(endpoint)));
+                var session = Equals(result.Session, XmppSession.Current) ? GetSession(endpoint) : result.Session;
+                result.Execute(GetResultContext(session));
             }
             catch (Exception error)
             {

@@ -39,7 +39,7 @@ namespace Jabber.Net.Server.Connections
 
         public void Send(Element e, Action<Element> error)
         {
-            connection.Send(parser.ToBytes(e), _ => error(e));
+            connection.Send(parser.ToBytes(e), error != null ? _ => error(e) : (Action<byte[]>)null);
         }
 
         public void Close()

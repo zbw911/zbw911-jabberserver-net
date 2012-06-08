@@ -11,8 +11,14 @@ namespace Jabber.Net.Server
     {
         private readonly ErrorCode error;
 
-        
-        public JabberStanzaException (ErrorCode error, XmppSession session)
+
+        public override bool CloseStream
+        {
+            get { return false; }
+        }
+
+
+        public JabberStanzaException(ErrorCode error, XmppSession session)
             : base(session)
         {
             this.error = error;
