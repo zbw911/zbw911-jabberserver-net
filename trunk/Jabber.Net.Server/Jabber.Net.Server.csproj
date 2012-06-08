@@ -126,6 +126,7 @@
     <Compile Include="Sessions\XmppSessionManager.cs" />
     <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
+    <Compile Include="Utils\GuidUniqueId.cs" />
     <Compile Include="Utils\IUniqueId.cs" />
     <Compile Include="Utils\IncrementalUniqueId.cs" />
     <Compile Include="Utils\JidTypeConverter.cs" />
