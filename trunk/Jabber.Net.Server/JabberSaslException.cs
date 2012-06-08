@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using agsXMPP.protocol;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server
 {
     [Serializable]
-    public class JabberSaslException : JabberException
+    public class JabberSaslException : JabberStreamException
     {
         private readonly FailureCondition error;
 
 
         public JabberSaslException(FailureCondition error)
-            : base()
+            : base(StreamErrorCondition.NotAuthorized)
         {
             this.error = error;
         }
@@ -26,7 +27,7 @@ namespace Jabber.Net.Server
 
         public override Element ToElement()
         {
-			return new Failure(error);
-		}
+            return new Failure(error);
+        }
     }
 }
