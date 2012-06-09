@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -141,6 +141,7 @@
     <Compile Include="Utils\IncrementalUniqueId.cs" />
     <Compile Include="Utils\JidTypeConverter.cs" />
     <None Include="Xmpp\XmppElement.cs" />
+    <Compile Include="Utils\ReaderWriterLock.cs" />
     <Compile Include="XmppUser.cs" />
     <Compile Include="Xmpp\XmppStreamParser.cs" />
   </ItemGroup>

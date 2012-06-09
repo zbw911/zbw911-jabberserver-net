@@ -57,8 +57,9 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(element, "element");
 
-                var jid = new Jid(element.GetAttribute("to") ?? string.Empty);
                 var session = GetSession(endpoint);
+                var to = element.GetAttribute("to");
+                var jid = !string.IsNullOrEmpty(to) ? new Jid(to) : session.Jid ?? Jid.Empty;
                 var context = GetContext();
 
                 foreach (var handler in router.GetElementHandlers(element, jid))

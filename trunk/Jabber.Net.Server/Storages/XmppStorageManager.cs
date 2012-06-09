@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
+using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Storages
 {
     public class XmppStorageManager
     {
         private readonly Dictionary<string, object> storages = new Dictionary<string, object>();
-        private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLock locker = new ReaderWriterLock();
 
 
         public IXmppUserStorage Users
@@ -14,20 +14,15 @@ namespace Jabber.Net.Server.Storages
             get { return GetStorage<IXmppUserStorage>("users"); }
         }
 
-        
+
         public void AddStorage(string name, object storage)
         {
             Args.NotNull(name, "name");
             Args.NotNull(storage, "storage");
 
-            locker.EnterWriteLock();
-            try
+            using (locker.WriteLock())
             {
                 storages.Add(name, storage);
-            }
-            finally
-            {
-                locker.ExitWriteLock();
             }
         }
 
@@ -35,14 +30,9 @@ namespace Jabber.Net.Server.Storages
         {
             Args.NotNull(name, "name");
 
-            locker.EnterWriteLock();
-            try
+            using (locker.WriteLock())
             {
                 storages.Remove(name);
-            }
-            finally
-            {
-                locker.ExitWriteLock();
             }
         }
 
@@ -51,14 +41,9 @@ namespace Jabber.Net.Server.Storages
             Args.NotNull(name, "name");
 
             object storage;
-            locker.EnterReadLock();
-            try
+            using (locker.ReadLock())
             {
                 return storages.TryGetValue(name, out storage) ? (T)storage : default(T);
-            }
-            finally
-            {
-                locker.ExitReadLock();
             }
         }
     }
