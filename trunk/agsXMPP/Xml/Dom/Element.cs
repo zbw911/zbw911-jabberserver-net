@@ -42,7 +42,7 @@ namespace agsXMPP.Xml.Dom
 {
     #region usings
 
-    
+
 
     #endregion
 
@@ -76,6 +76,15 @@ namespace agsXMPP.Xml.Dom
             Value = string.Empty;
         }
 
+        protected Element(Element e)
+            : base(e)
+        {
+            m_TagName = e.m_TagName;
+            m_Attributes = e.m_Attributes;
+            m_Value = e.m_Value;
+            Prefix = e.Prefix;
+        }
+
         /* 
          * don't think we need this 2 constructors anymore
          * 
@@ -105,7 +114,8 @@ namespace agsXMPP.Xml.Dom
         /// </summary>
         /// <param name="tagName">
         /// </param>
-        public Element(string tagName) : this()
+        public Element(string tagName)
+            : this()
         {
             m_TagName = tagName;
         }
@@ -116,7 +126,8 @@ namespace agsXMPP.Xml.Dom
         /// </param>
         /// <param name="tagText">
         /// </param>
-        public Element(string tagName, string tagText) : this(tagName)
+        public Element(string tagName, string tagText)
+            : this(tagName)
         {
             Value = tagText;
         }
@@ -127,7 +138,8 @@ namespace agsXMPP.Xml.Dom
         /// </param>
         /// <param name="tagText">
         /// </param>
-        public Element(string tagName, bool tagText) : this(tagName, tagText ? "true" : "false")
+        public Element(string tagName, bool tagText)
+            : this(tagName, tagText ? "true" : "false")
         {
         }
 
@@ -139,7 +151,8 @@ namespace agsXMPP.Xml.Dom
         /// </param>
         /// <param name="ns">
         /// </param>
-        public Element(string tagName, string tagText, string ns) : this(tagName, tagText)
+        public Element(string tagName, string tagText, string ns)
+            : this(tagName, tagText)
         {
             Namespace = ns;
         }
@@ -241,7 +254,7 @@ namespace agsXMPP.Xml.Dom
         {
             if (HasAttribute(name))
             {
-                return (string) m_Attributes[name];
+                return (string)m_Attributes[name];
             }
             else
             {
@@ -259,7 +272,7 @@ namespace agsXMPP.Xml.Dom
         {
             if (HasAttribute(name))
             {
-                return int.Parse((string) m_Attributes[name]);
+                return int.Parse((string)m_Attributes[name]);
             }
             else
             {
@@ -277,7 +290,7 @@ namespace agsXMPP.Xml.Dom
         {
             if (HasAttribute(name))
             {
-                return long.Parse((string) m_Attributes[name]);
+                return long.Parse((string)m_Attributes[name]);
             }
             else
             {
@@ -296,7 +309,7 @@ namespace agsXMPP.Xml.Dom
         {
             if (HasAttribute(name))
             {
-                var tmp = (string) m_Attributes[name];
+                var tmp = (string)m_Attributes[name];
                 if (tmp.ToLower() == "true")
                 {
                     return true;
@@ -344,7 +357,7 @@ namespace agsXMPP.Xml.Dom
             {
                 try
                 {
-                    return double.Parse((string) m_Attributes[name], ifp);
+                    return double.Parse((string)m_Attributes[name], ifp);
                 }
                 catch
                 {
@@ -511,7 +524,7 @@ namespace agsXMPP.Xml.Dom
             if (HasTag(type) == false)
             {
                 Element newel;
-                newel = (Element) Activator.CreateInstance(type);
+                newel = (Element)Activator.CreateInstance(type);
                 newel.Value = argText;
                 AddChild(newel);
             }
@@ -532,7 +545,7 @@ namespace agsXMPP.Xml.Dom
                 RemoveTag(type);
             }
 
-            AddChild((Element) Activator.CreateInstance(type));
+            AddChild((Element)Activator.CreateInstance(type));
         }
 
         /// <summary>
@@ -990,7 +1003,7 @@ namespace agsXMPP.Xml.Dom
         /// </returns>
         public string Attribute(string name)
         {
-            return (string) m_Attributes[name];
+            return (string)m_Attributes[name];
         }
 
         /// <summary>
@@ -1421,7 +1434,7 @@ namespace agsXMPP.Xml.Dom
         /// </returns>
         public T SelectSingleElement<T>() where T : Element
         {
-            return (T) _SelectElement(this, typeof (T));
+            return (T)_SelectElement(this, typeof(T));
         }
 
         /// <summary>
@@ -1434,7 +1447,7 @@ namespace agsXMPP.Xml.Dom
         /// </returns>
         public T SelectSingleElement<T>(bool traverseChildren) where T : Element
         {
-            return (T) _SelectElement(this, typeof (T), traverseChildren);
+            return (T)_SelectElement(this, typeof(T), traverseChildren);
         }
 
 #endif
@@ -1536,7 +1549,7 @@ namespace agsXMPP.Xml.Dom
 
                         if (traverseChildren)
                         {
-                            _SelectElements((Element) n, type, es, true);
+                            _SelectElements((Element)n, type, es, true);
                         }
                     }
                 }
@@ -1582,9 +1595,9 @@ namespace agsXMPP.Xml.Dom
                 {
                     if (ch.NodeType == NodeType.Element)
                     {
-                        if (((Element) ch).TagName == tagname)
+                        if (((Element)ch).TagName == tagname)
                         {
-                            rElement = (Element) ch;
+                            rElement = (Element)ch;
                             return rElement;
                         }
                         else
@@ -1640,7 +1653,7 @@ namespace agsXMPP.Xml.Dom
                     {
                         if (ch.GetType() == type)
                         {
-                            rElement = (Element) ch;
+                            rElement = (Element)ch;
                             return rElement;
                         }
                         else
@@ -1734,7 +1747,7 @@ namespace agsXMPP.Xml.Dom
                         var e = ch as Element;
                         if (e.TagName == tagname && e.Namespace == nameSpace)
                         {
-                            rElement = (Element) ch;
+                            rElement = (Element)ch;
                             return rElement;
                         }
                         else
@@ -1775,14 +1788,14 @@ namespace agsXMPP.Xml.Dom
                 {
                     if (n.NodeType == NodeType.Element)
                     {
-                        if (((Element) n).m_TagName == tagname)
+                        if (((Element)n).m_TagName == tagname)
                         {
                             es.Add(n);
                         }
 
                         if (traverseChildren)
                         {
-                            _SelectElements((Element) n, tagname, es, true);
+                            _SelectElements((Element)n, tagname, es, true);
                         }
                     }
                 }
@@ -1838,14 +1851,14 @@ namespace agsXMPP.Xml.Dom
                 {
                     if (n.NodeType == NodeType.Element)
                     {
-                        if (n.GetType() == typeof (T))
+                        if (n.GetType() == typeof(T))
                         {
                             list.Add(n as T);
                         }
 
                         if (traverseChildren)
                         {
-                            _SelectElements((Element) n, list, true);
+                            _SelectElements((Element)n, list, true);
                         }
                     }
                 }
@@ -1860,7 +1873,7 @@ namespace agsXMPP.Xml.Dom
 
         public override object Clone()
         {
-            var clone = (Element) base.Clone();
+            var clone = (Element)base.Clone();
             clone.m_Attributes = new ListDictionary();
             foreach (DictionaryEntry a in m_Attributes) clone.m_Attributes.Add(a.Key, a.Value);
             return clone;

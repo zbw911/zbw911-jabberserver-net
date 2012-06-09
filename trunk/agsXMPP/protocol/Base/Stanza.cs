@@ -19,13 +19,13 @@ namespace agsXMPP.protocol.Base
 
         /// <summary>
         /// </summary>
-        public Stanza() : base() {}
+        public Stanza() : base() { }
 
         /// <summary>
         /// </summary>
         /// <param name="tag">
         /// </param>
-        public Stanza(string tag) : base(tag) {}
+        public Stanza(string tag) : base(tag) { }
 
         /// <summary>
         /// </summary>
@@ -33,9 +33,15 @@ namespace agsXMPP.protocol.Base
         /// </param>
         /// <param name="ns">
         /// </param>
-        public Stanza(string tag, string ns) : base(tag)
+        public Stanza(string tag, string ns)
+            : base(tag)
         {
             Namespace = ns;
+        }
+
+        protected Stanza(Stanza s)
+            : base(s)
+        {
         }
 
         /// <summary>
@@ -46,7 +52,8 @@ namespace agsXMPP.protocol.Base
         /// </param>
         /// <param name="ns">
         /// </param>
-        public Stanza(string tag, string text, string ns) : base(tag, text)
+        public Stanza(string tag, string text, string ns)
+            : base(tag, text)
         {
             Namespace = ns;
         }
@@ -85,16 +92,17 @@ namespace agsXMPP.protocol.Base
             set { SetAttribute("xml:lang", value); }
         }
 
-		public bool HasFrom {
-			get { return From != null; }		
-		}
+        public bool HasFrom
+        {
+            get { return From != null; }
+        }
 
-		public bool HasTo
-		{
-			get { return To != null; }
-		}
-		
-		#endregion
+        public bool HasTo
+        {
+            get { return To != null; }
+        }
+
+        #endregion
 
         #region Methods
 

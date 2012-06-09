@@ -3,6 +3,10 @@ using System.Text;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.bind;
+using agsXMPP.protocol.iq.session;
+using agsXMPP.protocol.iq.vcard;
 
 namespace Jabber.Net.Server.Xmpp
 {
@@ -29,7 +33,8 @@ namespace Jabber.Net.Server.Xmpp
 
         public Element Parse(byte[] buffer)
         {
-            return ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer));
+            var e = ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer));
+            return CorrectIQType(e);
         }
 
         public byte[] ToBytes(Element e)
@@ -53,7 +58,7 @@ namespace Jabber.Net.Server.Xmpp
             var ev = Parsed;
             if (ev != null && e is Element)
             {
-                ev(this, new ParsedArgs((Element)e));
+                ev(this, new ParsedArgs(CorrectIQType((Element)e)));
             }
         }
 
@@ -64,6 +69,27 @@ namespace Jabber.Net.Server.Xmpp
             {
                 ev(this, new ParseErrorArgs(ex));
             }
+        }
+
+        private Element CorrectIQType(Element element)
+        {
+            var iq = element as IQ;
+            if (iq != null)
+            {
+                if (iq.SelectSingleElement<Bind>() != null)
+                {
+                    return new BindIq(iq);
+                }
+                if (iq.SelectSingleElement<Session>() != null)
+                {
+                    return new SessionIq(iq);
+                }
+                if (iq.SelectSingleElement("vCard") as Vcard != null)
+                {
+                    return new VcardIq(iq);
+                }
+            }
+            return element;
         }
 
 

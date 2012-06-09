@@ -57,6 +57,12 @@ namespace agsXMPP.protocol.Base
             Namespace = ns;
         }
 
+        protected DirectionalElement(DirectionalElement e)
+            : base(e)
+        {
+            Switched = e.Switched;
+        }
+
         #endregion
 
         #region Properties
