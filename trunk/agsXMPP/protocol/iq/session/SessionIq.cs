@@ -48,7 +48,13 @@ namespace agsXMPP.protocol.iq.session
 			this.AddChild(m_Session);
 		}
 
-		public SessionIq(IqType type) : this()
+        public SessionIq(IQ iq)
+            : base(iq)
+        {
+        }
+
+        public SessionIq(IqType type)
+            : this()
 		{			
 			this.Type = type;		
 		}

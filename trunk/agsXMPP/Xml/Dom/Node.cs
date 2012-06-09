@@ -90,6 +90,16 @@ namespace agsXMPP.Xml.Dom
             m_ChildNodes = new NodeList(this);
         }
 
+        protected Node(Node n)
+        {
+            m_ChildNodes = n.m_ChildNodes;
+            m_Index = n.m_Index;
+            Parent = n.Parent;
+            NodeType = n.NodeType;
+            Namespace = n.Namespace;
+            Value = n.Value;
+        }
+
         #endregion
 
         #region Properties

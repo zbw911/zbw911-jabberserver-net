@@ -56,6 +56,11 @@ namespace agsXMPP.protocol.iq.bind
 			m_Bind.Resource = resource;
 		}
 
+        public BindIq(IQ iq)
+            : base(iq)
+        {
+        }
+
         public new Bind Query
         {
             get
