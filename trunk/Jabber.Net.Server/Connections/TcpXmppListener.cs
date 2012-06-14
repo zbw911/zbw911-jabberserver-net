@@ -6,14 +6,16 @@ namespace Jabber.Net.Server.Connections
 {
     class TcpXmppListener : IXmppListener
     {
+        private readonly IPEndPoint endpoint;
         private TcpListener listener;
         private Action<IXmppConnection> newConnection;
 
 
-        public Uri ListenUri
+        public TcpXmppListener(Uri listenUri)
         {
-            get;
-            set;
+            Args.NotNull(listenUri, "listenUri");
+
+            endpoint = new IPEndPoint(IPAddress.Parse(listenUri.Host), listenUri.Port); ;
         }
 
 
@@ -22,8 +24,6 @@ namespace Jabber.Net.Server.Connections
             Args.NotNull(newConnection, "newConnection");
 
             this.newConnection = newConnection;
-
-            var endpoint = new IPEndPoint(IPAddress.Parse(ListenUri.Host), ListenUri.Port);
             listener = new TcpListener(endpoint)
             {
                 ExclusiveAddressUse = true,
