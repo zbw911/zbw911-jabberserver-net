@@ -3,7 +3,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers
 {
-    public class XmppRequiredHandler : XmppHandlerBase,
+    class XmppRequiredHandler : XmppHandlerBase,
         IXmppErrorHandler,
         IXmppCloseHandler
     {
