@@ -13,10 +13,23 @@ namespace Jabber.Net.Server.S2C
     class ClientStreamHandler : XmppHandlerBase, IXmppHandler<Stream>
     {
         private const string XMPP_VERSION = "1.0";
+        private readonly Jid domain;
+
+
+        public ClientStreamHandler(Jid domain)
+        {
+            Args.NotNull(domain, "domain");
+            this.domain = domain;
+        }
 
 
         public XmppHandlerResult ProcessElement(Stream element, XmppSession session, XmppHandlerContext context)
         {
+            if (element.To != domain)
+            {
+                return Error(StreamErrorCondition.HostUnknown);
+            }
+
             var stream = new Stream
             {
                 Id = CreateId(),

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Jabber.Net.Server.Utils;
+using Jabber.Net.Server.Collections;
 
 namespace Jabber.Net.Server.Sessions
 {
     public class XmppSessionManager
     {
-        private readonly Dictionary<string, XmppSession> sessions = new Dictionary<string, XmppSession>(1000);
-        private readonly ReaderWriterLock locker = new ReaderWriterLock();
+        private readonly ReaderWriterLockDictionary<string, XmppSession> sessions = new ReaderWriterLockDictionary<string, XmppSession>(1000);
 
 
         public IList<AuthMechanism> SupportedAuthMechanisms
@@ -30,21 +29,14 @@ namespace Jabber.Net.Server.Sessions
             }
 
             XmppSession s;
-            using (locker.ReadLock())
-            {
-                sessions.TryGetValue(id, out s);
-            }
-            return s;
+            return sessions.TryGetValue(id, out s) ? s : null;
         }
 
         public void OpenSession(XmppSession session)
         {
             Args.NotNull(session, "session");
 
-            using (locker.WriteLock())
-            {
-                sessions[session.Id] = session;
-            }
+            sessions[session.Id] = session;
         }
 
         public void CloseSession(string id)
@@ -52,13 +44,7 @@ namespace Jabber.Net.Server.Sessions
             if (!string.IsNullOrEmpty(id))
             {
                 XmppSession s;
-                using(locker.WriteLock())
-                {
-                    if (sessions.TryGetValue(id, out s))
-                    {
-                        sessions.Remove(id);
-                    }
-                }
+                sessions.Remove(id, out s);
                 if (s != null)
                 {
                     s.EndPoint.Close();

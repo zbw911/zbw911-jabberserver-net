@@ -93,11 +93,13 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ReaderWriterLockDictionary.cs" />
     <Compile Include="Connections\IXmppEndPoint.cs" />
     <Compile Include="Connections\IXmppReciever.cs" />
     <Compile Include="Connections\IXmppConnection.cs" />
     <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
+    <Compile Include="Handlers\XmppHandlerStorage.cs" />
     <Compile Include="Handlers\XmppResultContext.cs" />
     <Compile Include="Handlers\XmppRequiredHandler.cs" />
     <Compile Include="Handlers\XmppErrorResult.cs" />
