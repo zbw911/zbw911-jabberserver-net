@@ -23,6 +23,7 @@ namespace Jabber.Net.Server.Handlers
             this.resolver = resolver;
             this.context = new XmppHandlerContext(this, resolver);
 
+            RegisterHandler(new Jid("{user}@{server}/{resource}"), new XmppValidationHandler());
             RegisterHandler(new XmppRequiredHandler());
         }
 

@@ -14,6 +14,18 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
+        public bool SupportBind
+        {
+            get;
+            set;
+        }
+
+        public bool SupportSession
+        {
+            get;
+            set;
+        }
+
 
         public XmppSessionManager()
         {
