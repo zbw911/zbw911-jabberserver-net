@@ -12,7 +12,6 @@ namespace Jabber.Net.Server.S2C
 {
     class ClientStreamHandler : XmppHandlerBase, IXmppHandler<Stream>
     {
-        private const string XMPP_VERSION = "1.0";
         private readonly Jid domain;
 
 
@@ -34,18 +33,18 @@ namespace Jabber.Net.Server.S2C
             {
                 Id = CreateId(),
                 Prefix = Uri.PREFIX,
-                Version = XMPP_VERSION,
+                Version = element.Version,
                 From = element.To,
                 Features = new Features { Prefix = Uri.PREFIX },
+                Language = element.Language,
             };
 
-            if (session.Authenticated)
+            if (!session.Authenticated)
             {
-                stream.Features.AddChild(new Bind());
-                stream.Features.AddChild(new Session());
-            }
-            else
-            {
+                session.Jid = stream.From;
+                session.Language = stream.Language;
+                context.Sessions.OpenSession(session);
+
                 stream.Features.Mechanisms = new Mechanisms();
                 foreach (var m in context.Sessions.SupportedAuthMechanisms)
                 {
@@ -56,9 +55,17 @@ namespace Jabber.Net.Server.S2C
                     }
                 }
             }
-
-            session.Jid = stream.From;
-            context.Sessions.OpenSession(session);
+            else
+            {
+                if (context.Sessions.SupportBind)
+                {
+                    stream.Features.AddChild(new Bind());
+                }
+                if (context.Sessions.SupportSession)
+                {
+                    stream.Features.AddChild(new Session());
+                }
+            }
 
             return Send(session, stream);
         }

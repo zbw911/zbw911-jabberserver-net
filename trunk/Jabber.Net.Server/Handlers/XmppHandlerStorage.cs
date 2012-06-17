@@ -21,15 +21,7 @@ namespace Jabber.Net.Server.Handlers
             using (locker.WriteLock())
             {
                 var id = uniqueId.CreateId();
-                while (true)
-                {
-                    types.Add(type, id);
-                    type = type.BaseType;
-                    if (type == null || type == typeof(object))
-                    {
-                        break;
-                    }
-                }
+                types.Add(type, id);
                 jids.Add(jid, id);
                 handlerIds.Add(invoker.HandlerId, id);
                 handlers.Add(id, invoker);
@@ -54,22 +46,30 @@ namespace Jabber.Net.Server.Handlers
         {
             using (locker.ReadLock())
             {
-                var byType = types.GetIdentifiers(type);
+                var byType = Enumerable.Empty<string>();
+                var byJid = Enumerable.Empty<string>();
 
-                var result = Intersect(byType, jid);
+                while (type != null && type != typeof(object))
+                {
+                    byType = byType.Union(types.GetIdentifiers(type));
+                    type = type.BaseType;
+                }
+
+                byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}@{server}/{resource}")));
                 if (jid.HasResource)
                 {
-                    result = Intersect(byType, new Jid(jid.User, jid.Server, "{resource}"));
+                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.User, jid.Server, "{resource}")));
                 }
                 if (jid.HasUser)
                 {
-                    result = Intersect(byType, new Jid("{user}", jid.Server, jid.HasResource ? "{resource}" : string.Empty));
+                    byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}", jid.Server, jid.HasResource ? "{resource}" : string.Empty)));
                 }
                 if (!string.IsNullOrEmpty(jid.Server))
                 {
-                    result = Intersect(byType, new Jid(jid.HasUser ? "{user}" : string.Empty, "{server}", jid.HasResource ? "{resource}" : string.Empty));
+                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.HasUser ? "{user}" : string.Empty, "{server}", jid.HasResource ? "{resource}" : string.Empty)));
                 }
-                return result
+                return byType.Reverse()
+                    .Intersect(byJid)
                     .Select(id => handlers[id])
                     .ToArray();
             }

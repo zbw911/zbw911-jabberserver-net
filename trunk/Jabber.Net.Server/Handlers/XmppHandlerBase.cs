@@ -10,7 +10,7 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerBase
     {
-        private static readonly IUniqueId id = new IncrementalUniqueId();
+        private static readonly IUniqueId id = new RandomUniqueId();
 
 
         public XmppHandlerResult Send(params Element[] elements)

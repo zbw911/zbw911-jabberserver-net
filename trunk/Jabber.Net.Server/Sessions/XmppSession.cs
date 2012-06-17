@@ -49,6 +49,12 @@ namespace Jabber.Net.Server.Sessions
             set;
         }
 
+        public string Language
+        {
+            get;
+            set;
+        }
+
 
         private XmppSession(string id)
         {
@@ -57,7 +63,9 @@ namespace Jabber.Net.Server.Sessions
 
         public XmppSession(IXmppEndPoint endpoint)
         {
-            Id = id.CreateId();
+            Args.NotNull(endpoint, "endpoint");
+
+            Id = endpoint.SessionId ?? id.CreateId();
             EndPoint = endpoint;
         }
 
