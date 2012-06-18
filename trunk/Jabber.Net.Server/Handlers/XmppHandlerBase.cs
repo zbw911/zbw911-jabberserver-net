@@ -84,6 +84,11 @@ namespace Jabber.Net.Server.Handlers
             return new XmppCloseResult(session);
         }
 
+        public XmppHandlerResult Component(params XmppHandlerResult[] results)
+        {
+            return new XmppComponentResult(results);
+        }
+
 
         protected string CreateId()
         {

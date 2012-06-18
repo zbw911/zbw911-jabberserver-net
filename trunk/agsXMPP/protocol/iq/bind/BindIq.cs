@@ -28,33 +28,20 @@ namespace agsXMPP.protocol.iq.bind
     using client;
 
     /// <summary>
-	/// Summary description for BindIq.
-	/// </summary>
-	public class BindIq : IQ
-	{
-		private Bind m_Bind = new Bind();
-		
-		public BindIq()
-		{
-			this.GenerateId();
-			this.AddChild(m_Bind);
-		}
+    /// Summary description for BindIq.
+    /// </summary>
+    public class BindIq : IQ
+    {
+        public BindIq()
+        {
+            this.GenerateId();
+        }
 
-		public BindIq(IqType type) : this()
-		{			
-			this.Type = type;		
-		}
-
-		public BindIq(IqType type, Jid to) : this()
-		{			
-			this.Type = type;
-			this.To = to;
-		}
-
-		public BindIq(IqType type, Jid to, string resource) : this(type, to)
-		{			
-			m_Bind.Resource = resource;
-		}
+        public BindIq(IqType type)
+            : this()
+        {
+            this.Type = type;
+        }
 
         public BindIq(IQ iq)
             : base(iq)
@@ -65,8 +52,16 @@ namespace agsXMPP.protocol.iq.bind
         {
             get
             {
-                return m_Bind;
+                return SelectSingleElement(typeof(Bind)) as Bind;
+            }
+            set
+            {
+                RemoveTag(typeof(Bind));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
             }
         }
-	}
+    }
 }

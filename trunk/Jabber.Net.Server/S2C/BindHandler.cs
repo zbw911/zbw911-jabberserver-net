@@ -1,16 +1,28 @@
 ﻿using System;
+using agsXMPP.protocol;
+using agsXMPP.protocol.Base;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
+using agsXMPP.protocol.iq.register;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
-using agsXMPP.protocol.client;
 
 namespace Jabber.Net.Server.S2C
 {
-    class BindHandler : XmppHandlerBase, IXmppHandler<BindIq>, IXmppRegisterHandler
+    class BindHandler : XmppHandlerBase, IXmppHandler<BindIq>, IXmppHandler<Stanza>, IXmppRegisterHandler
     {
         public void OnRegister(XmppHandlerContext context)
         {
             context.Sessions.SupportBind = true;
+        }
+
+        public XmppHandlerResult ProcessElement(Stanza element, XmppSession session, XmppHandlerContext context)
+        {
+            if (!session.Binded && !(element is BindIq) && !(element is RegisterIq))
+            {
+                return Error(StreamErrorCondition.NotAuthorized);
+            }
+            return Void();
         }
 
         public XmppHandlerResult ProcessElement(BindIq element, XmppSession session, XmppHandlerContext context)
@@ -35,36 +47,26 @@ namespace Jabber.Net.Server.S2C
 
         private XmppHandlerResult ProcessBind(BindIq element, XmppSession session, XmppHandlerContext context)
         {
-            /*
-            var answer = new IQ(IqType.result);
-            answer.Id = iq.Id;
+            if (session.Binded)
+            {
+                return Error(ErrorCode.Conflict, element);
+            }
 
-            var bind = (Bind)iq.Bind;
-            var resource = !string.IsNullOrEmpty(bind.Resource) ? bind.Resource : stream.User;
-            if (stream.MultipleResources) answer.To = iq.From;
-            return answer;
+            var resource = ((Bind)element.Query).Resource;
+            session.BindResource(!string.IsNullOrEmpty(resource) ? resource : session.Jid.User);
 
-            var jid = new Jid(stream.User, stream.Domain, resource);
+            var answer = new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) };
+            var send = Send(new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) });
 
-                var findedSession = context.Sessions.FindSession(jid);
-                if (findedSession != null)
-                {
-                    if (session.Id != findedSession.Id)
-                    {
-                        context.Sender.SendToAndClose(session.Stream, XmppStreamError.Conflict);
-                    }
-                    else
-                    {
-                        return XmppStanzaError.ToConflict(iq);
-                    }
-                }
-
-                stream.BindResource(resource);
-                context.SessionManager.AddSession(new XmppSession(jid, stream));
-                answer.Bind = new Bind(jid);
-             
-             */
-            throw new NotImplementedException();
+            var conflict = context.Sessions.FindSession(session.Jid);
+            if (conflict != null && !session.Equals(conflict))
+            {
+                return Component(send, Close(conflict));
+            }
+            else
+            {
+                return send;
+            }
         }
 
         private XmppHandlerResult ProcessUnbind(BindIq element, XmppSession session, XmppHandlerContext context)

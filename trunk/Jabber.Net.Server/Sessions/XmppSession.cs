@@ -43,7 +43,7 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
-        public bool Connected
+        public bool Binded
         {
             get;
             private set;
@@ -85,7 +85,7 @@ namespace Jabber.Net.Server.Sessions
         public void BindResource(string resource)
         {
             Jid.Resource = resource;
-            Connected = true;
+            Binded = true;
         }
 
         public override int GetHashCode()
