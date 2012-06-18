@@ -43,6 +43,12 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
+        public bool Connected
+        {
+            get;
+            private set;
+        }
+
         public object AuthData
         {
             get;
@@ -74,6 +80,12 @@ namespace Jabber.Net.Server.Sessions
             Jid.User = username;
             Authenticated = true;
             AuthData = null;
+        }
+
+        public void BindResource(string resource)
+        {
+            Jid.Resource = resource;
+            Connected = true;
         }
 
         public override int GetHashCode()

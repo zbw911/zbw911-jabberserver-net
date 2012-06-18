@@ -103,8 +103,7 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(error, "error");
 
-                var session = error is JabberException ? ((JabberException)error).Session : XmppSession.Current;
-                if (Equals(session, XmppSession.Current)) session = GetSession(endpoint);
+                var session = GetSession(endpoint);
                 var context = GetContext();
 
                 foreach (var handler in router.GetErrorHandlers())

@@ -2,7 +2,6 @@
 using System.Runtime.Serialization;
 using agsXMPP.protocol;
 using agsXMPP.Xml.Dom;
-using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server
 {
@@ -18,8 +17,7 @@ namespace Jabber.Net.Server
         }
 
 
-        public JabberStreamException(StreamErrorCondition error, XmppSession session)
-            : base(session)
+        public JabberStreamException(StreamErrorCondition error)
         {
             this.error = error;
         }

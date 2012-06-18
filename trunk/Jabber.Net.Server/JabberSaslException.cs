@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using agsXMPP.protocol;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
-using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server
 {
@@ -13,8 +12,8 @@ namespace Jabber.Net.Server
         private readonly FailureCondition error;
 
 
-        public JabberSaslException(FailureCondition error, XmppSession session)
-            : base(StreamErrorCondition.NotAuthorized, session)
+        public JabberSaslException(FailureCondition error)
+            : base(StreamErrorCondition.NotAuthorized)
         {
             this.error = error;
         }
