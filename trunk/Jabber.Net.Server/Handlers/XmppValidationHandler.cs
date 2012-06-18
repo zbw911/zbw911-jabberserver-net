@@ -9,7 +9,7 @@ namespace Jabber.Net.Server.Handlers
     {
         public XmppHandlerResult ProcessElement(Stanza element, XmppSession session, XmppHandlerContext context)
         {
-            if (!(element is agsXMPP.protocol.Stream) && !(element is RegisterIq))
+            if (!(element is RegisterIq))
             {
                 if (!session.Authenticated)
                 {

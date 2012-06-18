@@ -99,6 +99,7 @@
     <Compile Include="Connections\IXmppConnection.cs" />
     <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
+    <Compile Include="Handlers\XmppComponentResult.cs" />
     <Compile Include="Handlers\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppValidationHandler.cs" />
     <Compile Include="Handlers\XmppHandlerStorage.cs" />

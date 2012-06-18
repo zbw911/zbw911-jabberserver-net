@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Jabber.Net.Server.Collections;
+using agsXMPP;
 
 namespace Jabber.Net.Server.Sessions
 {
@@ -43,6 +44,13 @@ namespace Jabber.Net.Server.Sessions
             XmppSession s;
             return sessions.TryGetValue(id, out s) ? s : null;
         }
+
+        public XmppSession FindSession(Jid jid)
+        {
+            Args.NotNull(jid, "jid");
+            return null;
+        }
+
 
         public void OpenSession(XmppSession session)
         {
