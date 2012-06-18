@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
@@ -12,6 +13,7 @@ namespace Jabber.Net.Server.Handlers
         private readonly XmppSessionManager sessionManager;
         private readonly IXmppResolver resolver;
         private readonly XmppHandlerContext context;
+        private readonly XmppDefaultHandler defaultHandler;
 
 
         public XmppHandlerManager(XmppSessionManager sessionManager, IXmppResolver resolver)
@@ -22,6 +24,7 @@ namespace Jabber.Net.Server.Handlers
             this.sessionManager = sessionManager;
             this.resolver = resolver;
             this.context = new XmppHandlerContext(this, resolver);
+            this.defaultHandler = new XmppDefaultHandler();
 
             RegisterHandler(new Jid("{user}@{server}/{resource}"), new XmppValidationHandler());
         }
@@ -60,11 +63,19 @@ namespace Jabber.Net.Server.Handlers
                 var session = GetSession(endpoint);
                 var to = element.GetAttribute("to");
                 var jid = !string.IsNullOrEmpty(to) ? new Jid(to) : session.Jid ?? Jid.Empty;
+                var handlers = router.GetElementHandlers(element, jid);
 
-                foreach (var handler in router.GetElementHandlers(element, jid))
+                if (handlers.Any())
                 {
-                    var result = handler.ProcessElement(element, session, context);
-                    ProcessResult(result);
+                    foreach (var handler in handlers)
+                    {
+                        var result = handler.ProcessElement(element, session, context);
+                        ProcessResult(result);
+                    }
+                }
+                else
+                {
+                    ProcessResult(defaultHandler.ProcessElement(element, session, context));
                 }
             }
             catch (Exception error)
@@ -90,7 +101,7 @@ namespace Jabber.Net.Server.Handlers
                 }
                 finally
                 {
-                    ProcessResult(new XmppCloseResult(session));
+                    ProcessResult(defaultHandler.OnClose(session, context));
                 }
             }
             catch (Exception error)
@@ -117,7 +128,7 @@ namespace Jabber.Net.Server.Handlers
                 }
                 finally
                 {
-                    ProcessResult(new XmppErrorResult(session, error));
+                    ProcessResult(defaultHandler.OnError(error, session, context));
                 }
             }
             catch (Exception innererror)

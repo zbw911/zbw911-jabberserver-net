@@ -5,8 +5,8 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers
 {
-    class XmppValidationHandler : XmppHandlerBase, IXmppHandler<Stanza>
-    {
+    class XmppValidationHandler : XmppHandlerBase
+    {/*
         public XmppHandlerResult ProcessElement(Stanza element, XmppSession session, XmppHandlerContext context)
         {
             if (!(element is RegisterIq))
@@ -18,6 +18,6 @@ namespace Jabber.Net.Server.Handlers
             }
 
             return Void();
-        }
+        }*/
     }
 }

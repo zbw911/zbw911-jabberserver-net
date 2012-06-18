@@ -46,11 +46,6 @@ namespace Jabber.Net.Server.Handlers
         }
 
         
-        public XmppHandlerResult Void()
-        {
-            return new XmppVoidResult();
-        }
-
         public XmppHandlerResult Close(XmppSession session)
         {
             return new XmppCloseResult(session);
