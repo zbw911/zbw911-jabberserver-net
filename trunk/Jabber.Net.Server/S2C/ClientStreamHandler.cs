@@ -26,7 +26,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.To != domain)
             {
-                return Error(StreamErrorCondition.HostUnknown);
+                return Error(session, StreamErrorCondition.HostUnknown);
             }
 
             var stream = new Stream

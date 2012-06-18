@@ -13,7 +13,7 @@ namespace Jabber.Net.Server.Handlers
             {
                 if (!session.Authenticated)
                 {
-                    return Error(StreamErrorCondition.NotAuthorized);
+                    return Error(session, StreamErrorCondition.NotAuthorized);
                 }
             }
 

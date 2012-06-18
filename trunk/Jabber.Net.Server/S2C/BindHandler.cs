@@ -20,7 +20,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (!session.Binded && !(element is BindIq) && !(element is RegisterIq))
             {
-                return Error(StreamErrorCondition.NotAuthorized);
+                return Error(session, StreamErrorCondition.NotAuthorized);
             }
             return Void();
         }
@@ -29,7 +29,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.Type != IqType.set)
             {
-                return Error(ErrorCode.BadRequest, element);
+                return Error(session, ErrorCode.BadRequest, element);
             }
             else if (element.Query.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
             {
@@ -41,7 +41,7 @@ namespace Jabber.Net.Server.S2C
             }
             else
             {
-                return Error(ErrorCode.BadRequest, element);
+                return Error(session, ErrorCode.BadRequest, element);
             }
         }
 
@@ -49,14 +49,14 @@ namespace Jabber.Net.Server.S2C
         {
             if (session.Binded)
             {
-                return Error(ErrorCode.Conflict, element);
+                return Error(session, ErrorCode.Conflict, element);
             }
 
             var resource = ((Bind)element.Query).Resource;
             session.BindResource(!string.IsNullOrEmpty(resource) ? resource : session.Jid.User);
 
             var answer = new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) };
-            var send = Send(new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) });
+            var send = Send(session, new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) });
 
             var conflict = context.Sessions.FindSession(session.Jid);
             if (conflict != null && !session.Equals(conflict))
@@ -72,7 +72,7 @@ namespace Jabber.Net.Server.S2C
         private XmppHandlerResult ProcessUnbind(BindIq element, XmppSession session, XmppHandlerContext context)
         {
             var resource = ((Bind)element.Query).Resource;
-            return session.Jid.Resource == resource ? Close(session) : Error(ErrorCode.NotFound, element);
+            return session.Jid.Resource == resource ? Close(session) : Error(session, ErrorCode.NotFound, element);
         }
     }
 }

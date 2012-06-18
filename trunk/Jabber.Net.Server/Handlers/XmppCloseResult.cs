@@ -11,9 +11,9 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public override void Execute(XmppResultContext context)
+        public override void Execute(XmppHandlerContext context)
         {
-            context.Sessions.CloseSession(context.Session.Id);
+            context.Sessions.CloseSession(Session.Id);
         }
     }
 }

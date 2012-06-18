@@ -9,7 +9,7 @@ namespace Jabber.Net.Server.Handlers
 
 
         public XmppComponentResult(params XmppHandlerResult[] results)
-            : base(XmppSession.Current)
+            : base(XmppSession.Empty)
         {
             Args.NotNull(results, "results");
 
@@ -17,11 +17,11 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public override void Execute(XmppResultContext context)
+        public override void Execute(XmppHandlerContext context)
         {
             foreach (var r in results)
             {
-                context.Handlers.ProcessResult(null, r);
+                context.Handlers.ProcessResult(r);
             }
         }
     }

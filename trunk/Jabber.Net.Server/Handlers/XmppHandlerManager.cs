@@ -24,7 +24,6 @@ namespace Jabber.Net.Server.Handlers
             this.context = new XmppHandlerContext(this, resolver);
 
             RegisterHandler(new Jid("{user}@{server}/{resource}"), new XmppValidationHandler());
-            RegisterHandler(new XmppRequiredHandler());
         }
 
 
@@ -61,12 +60,11 @@ namespace Jabber.Net.Server.Handlers
                 var session = GetSession(endpoint);
                 var to = element.GetAttribute("to");
                 var jid = !string.IsNullOrEmpty(to) ? new Jid(to) : session.Jid ?? Jid.Empty;
-                var context = GetContext();
 
                 foreach (var handler in router.GetElementHandlers(element, jid))
                 {
                     var result = handler.ProcessElement(element, session, context);
-                    ProcessResult(endpoint, result);
+                    ProcessResult(result);
                 }
             }
             catch (Exception error)
@@ -82,17 +80,22 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(endpoint, "endpoint");
 
                 var session = GetSession(endpoint);
-                var context = GetContext();
-
-                foreach (var handler in router.GetCloseHandlers())
+                try
                 {
-                    var result = handler.OnClose(session, context);
-                    ProcessResult(endpoint, result);
+                    foreach (var handler in router.GetCloseHandlers())
+                    {
+                        var result = handler.OnClose(session, context);
+                        ProcessResult(result);
+                    }
+                }
+                finally
+                {
+                    ProcessResult(new XmppCloseResult(session));
                 }
             }
             catch (Exception error)
             {
-                Log.Error(error);
+                ProcessError(endpoint, error);
             }
         }
 
@@ -104,12 +107,17 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(error, "error");
 
                 var session = GetSession(endpoint);
-                var context = GetContext();
-
-                foreach (var handler in router.GetErrorHandlers())
+                try
                 {
-                    var result = handler.OnError(error, session, context);
-                    ProcessResult(endpoint, result);
+                    foreach (var handler in router.GetErrorHandlers())
+                    {
+                        var result = handler.OnError(error, session, context);
+                        ProcessResult(result);
+                    }
+                }
+                finally
+                {
+                    ProcessResult(new XmppErrorResult(session, error));
                 }
             }
             catch (Exception innererror)
@@ -118,20 +126,11 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public void ProcessResult(IXmppEndPoint endpoint, XmppHandlerResult result)
+        public void ProcessResult(XmppHandlerResult result)
         {
-            try
-            {
-                Args.NotNull(endpoint, "endpoint");
-                Args.NotNull(result, "result");
+            Args.NotNull(result, "result");
 
-                var session = Equals(result.Session, XmppSession.Current) ? GetSession(endpoint) : result.Session;
-                result.Execute(GetResultContext(session));
-            }
-            catch (Exception error)
-            {
-                ProcessError(endpoint, error);
-            }
+            result.Execute(context);
         }
 
 
@@ -139,18 +138,8 @@ namespace Jabber.Net.Server.Handlers
         {
             if (handler != null)
             {
-                handler.OnRegister(GetContext());
+                handler.OnRegister(context);
             }
-        }
-
-        private XmppHandlerContext GetContext()
-        {
-            return context;
-        }
-
-        private XmppResultContext GetResultContext(XmppSession session)
-        {
-            return new XmppResultContext(session, this, resolver);
         }
 
         private XmppSession GetSession(IXmppEndPoint endpoint)

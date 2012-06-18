@@ -23,13 +23,13 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.MechanismType != MechanismType.DIGEST_MD5)
             {
-                return Error(FailureCondition.invalid_mechanism);
+                return Error(session, FailureCondition.invalid_mechanism);
             }
 
             var authStep = session.AuthData as AuthData;
             if (authStep != null)
             {
-                return Error(FailureCondition.temporary_auth_failure);
+                return Error(session, FailureCondition.temporary_auth_failure);
             }
 
             session.AuthData = new AuthData();
@@ -45,7 +45,7 @@ namespace Jabber.Net.Server.S2C
             var authStep = session.AuthData as AuthData;
             if (authStep == null)
             {
-                return Error(FailureCondition.temporary_auth_failure);
+                return Error(session, FailureCondition.temporary_auth_failure);
             }
 
             if (authStep.Step == AuthStep.Step1)
@@ -66,7 +66,7 @@ namespace Jabber.Net.Server.S2C
                 }
                 else
                 {
-                    return Error(FailureCondition.not_authorized);
+                    return Error(session, FailureCondition.not_authorized);
                 }
             }
             else if (authStep.Step == AuthStep.Step2)
@@ -77,13 +77,13 @@ namespace Jabber.Net.Server.S2C
             }
             else
             {
-                return Error(FailureCondition.temporary_auth_failure);
+                return Error(session, FailureCondition.temporary_auth_failure);
             }
         }
 
         public XmppHandlerResult ProcessElement(Abort element, XmppSession session, XmppHandlerContext context)
         {
-            return Error(FailureCondition.aborted);
+            return Error(session, FailureCondition.aborted);
         }
 
 

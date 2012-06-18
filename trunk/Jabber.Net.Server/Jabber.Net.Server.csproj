@@ -103,8 +103,6 @@
     <Compile Include="Handlers\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppValidationHandler.cs" />
     <Compile Include="Handlers\XmppHandlerStorage.cs" />
-    <Compile Include="Handlers\XmppResultContext.cs" />
-    <Compile Include="Handlers\XmppRequiredHandler.cs" />
     <Compile Include="Handlers\XmppErrorResult.cs" />
     <Compile Include="IXmppResolver.cs" />
     <Compile Include="JabberStanzaException.cs" />
