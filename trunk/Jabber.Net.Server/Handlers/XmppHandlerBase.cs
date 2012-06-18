@@ -1,5 +1,6 @@
 ﻿using System;
 using agsXMPP.protocol;
+using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
@@ -43,9 +44,9 @@ namespace Jabber.Net.Server.Handlers
             return Error(XmppSession.Current, error);
         }
 
-        public XmppHandlerResult Error(ErrorCode error)
+        public XmppHandlerResult Error(ErrorCode error, Stanza stanza)
         {
-            return Error(XmppSession.Current, error);
+            return Error(XmppSession.Current, error, stanza);
         }
 
         public XmppHandlerResult Error(Exception error)
@@ -55,17 +56,17 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult Error(XmppSession session, StreamErrorCondition error)
         {
-            throw new JabberStreamException(error, session);
+            return Error(new JabberStreamException(error), session);
         }
 
         public XmppHandlerResult Error(XmppSession session, FailureCondition error)
         {
-            throw new JabberSaslException(error, session);
+            return Error(new JabberSaslException(error), session);
         }
 
-        public XmppHandlerResult Error(XmppSession session, ErrorCode error)
+        public XmppHandlerResult Error(XmppSession session, ErrorCode error, Stanza stanza)
         {
-            throw new JabberStanzaException(error, session);
+            return Error(new JabberStanzaException(error, stanza), session);
         }
 
         public XmppHandlerResult Error(Exception error, XmppSession session)
@@ -76,6 +77,11 @@ namespace Jabber.Net.Server.Handlers
         public XmppHandlerResult Void()
         {
             return new XmppVoidResult();
+        }
+
+        public XmppHandlerResult Close(XmppSession session)
+        {
+            return new XmppCloseResult(session);
         }
 
 

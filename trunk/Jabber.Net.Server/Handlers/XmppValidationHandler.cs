@@ -1,5 +1,5 @@
-﻿using agsXMPP.protocol.Base;
-using agsXMPP.protocol.client;
+﻿using agsXMPP.protocol;
+using agsXMPP.protocol.Base;
 using agsXMPP.protocol.iq.register;
 using Jabber.Net.Server.Sessions;
 
@@ -9,11 +9,11 @@ namespace Jabber.Net.Server.Handlers
     {
         public XmppHandlerResult ProcessElement(Stanza element, XmppSession session, XmppHandlerContext context)
         {
-            if (!(element is Stream) && !(element is RegisterIq))
+            if (!(element is agsXMPP.protocol.Stream) && !(element is RegisterIq))
             {
                 if (!session.Authenticated)
                 {
-                    return Error(ErrorCode.Unauthorized);
+                    return Error(StreamErrorCondition.NotAuthorized);
                 }
             }
 

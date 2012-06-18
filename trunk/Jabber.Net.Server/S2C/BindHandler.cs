@@ -17,18 +17,34 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.Type != IqType.set)
             {
-                return Error(ErrorCode.BadRequest);
+                return Error(ErrorCode.BadRequest, element);
             }
+            else if (element.Query.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
+            {
+                return ProcessBind(element, session, context);
+            }
+            else if (element.Query.TagName.Equals("unbind", StringComparison.OrdinalIgnoreCase))
+            {
+                return ProcessUnbind(element, session, context);
+            }
+            else
+            {
+                return Error(ErrorCode.BadRequest, element);
+            }
+        }
 
+        private XmppHandlerResult ProcessBind(BindIq element, XmppSession session, XmppHandlerContext context)
+        {
+            /*
             var answer = new IQ(IqType.result);
             answer.Id = iq.Id;
 
             var bind = (Bind)iq.Bind;
             var resource = !string.IsNullOrEmpty(bind.Resource) ? bind.Resource : stream.User;
+            if (stream.MultipleResources) answer.To = iq.From;
+            return answer;
 
-            if (bind.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
-            {
-                var jid = new Jid(stream.User, stream.Domain, resource);
+            var jid = new Jid(stream.User, stream.Domain, resource);
 
                 var findedSession = context.Sessions.FindSession(jid);
                 if (findedSession != null)
@@ -46,24 +62,15 @@ namespace Jabber.Net.Server.S2C
                 stream.BindResource(resource);
                 context.SessionManager.AddSession(new XmppSession(jid, stream));
                 answer.Bind = new Bind(jid);
-            }
-            else if (bind.TagName.Equals("unbind", StringComparison.OrdinalIgnoreCase))
-            {
-                if (!stream.Resources.Contains(resource)) return XmppStanzaError.ToNotFound(iq);
+             
+             */
+            throw new NotImplementedException();
+        }
 
-                context.SessionManager.CloseSession(iq.From);
-                stream.UnbindResource(resource);
-                if (stream.Resources.Count == 0)
-                {
-                    context.Sender.CloseStream(stream);
-                }
-            }
-            else
-            {
-                return XmppStanzaError.ToBadRequest(iq);
-            }
-            if (stream.MultipleResources) answer.To = iq.From;
-            return answer;
+        private XmppHandlerResult ProcessUnbind(BindIq element, XmppSession session, XmppHandlerContext context)
+        {
+            var resource = ((Bind)element.Query).Resource;
+            return session.Jid.Resource == resource ? Close(session) : Error(ErrorCode.NotFound, element);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
 using agsXMPP.Xml.Dom;
-using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server
 {
@@ -10,6 +10,7 @@ namespace Jabber.Net.Server
     public class JabberStanzaException : JabberException
     {
         private readonly ErrorCode error;
+        private readonly Stanza stanza;
 
 
         public override bool CloseStream
@@ -18,10 +19,10 @@ namespace Jabber.Net.Server
         }
 
 
-        public JabberStanzaException(ErrorCode error, XmppSession session)
-            : base(session)
+        public JabberStanzaException(ErrorCode error, Stanza stanza)
         {
             this.error = error;
+            this.stanza = stanza;
         }
 
 
@@ -33,7 +34,25 @@ namespace Jabber.Net.Server
 
         public override Element ToElement()
         {
-            return new Error(error) { Message = base.Message };
-		}
+            var e = new Error(error);
+            if (error == ErrorCode.InternalServerError)
+            {
+                e.Message = this.Message;
+            }
+            if (stanza != null)
+            {
+                if (!stanza.Switched)
+                {
+                    stanza.SwitchDirection();
+                }
+                stanza.SetAttribute("type", "error");
+                stanza.ReplaceChild(e);
+                return stanza;
+            }
+            else
+            {
+                return e;
+            }
+        }
     }
 }
