@@ -11,18 +11,14 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public XmppHandlerResult()
-            : this(XmppSession.Current)
-        {
-
-        }
-
         public XmppHandlerResult(XmppSession session)
         {
+            Args.NotNull(session, "session");
+
             Session = session;
         }
 
 
-        public abstract void Execute(XmppResultContext context);
+        public abstract void Execute(XmppHandlerContext context);
     }
 }

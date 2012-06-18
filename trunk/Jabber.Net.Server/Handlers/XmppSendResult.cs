@@ -19,17 +19,17 @@ namespace Jabber.Net.Server.Handlers
             this.elements = elements;
         }
 
-        public override void Execute(XmppResultContext context)
+        public override void Execute(XmppHandlerContext context)
         {
             Args.NotNull(context, "context");
 
             foreach (var e in elements)
             {
-                context.Session.EndPoint.Send(e, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
+                Session.EndPoint.Send(e, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
             }
         }
 
-        private void Save(Element e, XmppResultContext context)
+        private void Save(Element e, XmppHandlerContext context)
         {
             //context.Storage<IOfflineStorage>().Save(e);
         }
