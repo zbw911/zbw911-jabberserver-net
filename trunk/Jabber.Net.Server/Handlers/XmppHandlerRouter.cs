@@ -31,7 +31,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(handler, "handler");
 
             var id = uniqueId.CreateId();
-            foreach (var m in handler.GetType().GetMethods().Where(m => m.Name == "ProcessElement"))
+            foreach (var m in handler.GetType().GetMethods().Where(m => m.Name == "ProcessElement" || m.Name == "ValidateElement"))
             {
                 var parameters = m.GetParameters();
                 if (parameters.Length == 3 &&
@@ -47,25 +47,6 @@ namespace Jabber.Net.Server.Handlers
 
             RegisterHandler(id, handler);
 
-            return id;
-        }
-
-        public string RegisterHandler<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler) where T : Element
-        {
-            Args.NotNull(jid, "jid");
-            Args.NotNull(handler, "handler");
-
-            var id = uniqueId.CreateId();
-            RegisterHandlerInternal<T>(jid, handler, id);
-            return id;
-        }
-
-        public string RegisterHandler(object handler)
-        {
-            Args.NotNull(handler, "handler");
-
-            var id = uniqueId.CreateId();
-            RegisterHandler(id, handler);
             return id;
         }
 

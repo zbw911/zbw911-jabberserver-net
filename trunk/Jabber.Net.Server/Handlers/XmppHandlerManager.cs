@@ -25,8 +25,6 @@ namespace Jabber.Net.Server.Handlers
             this.resolver = resolver;
             this.context = new XmppHandlerContext(this, resolver);
             this.defaultHandler = new XmppDefaultHandler();
-
-            RegisterHandler(new Jid("{user}@{server}/{resource}"), new XmppValidationHandler());
         }
 
 
@@ -36,15 +34,9 @@ namespace Jabber.Net.Server.Handlers
             return router.RegisterHandler(jid, handler);
         }
 
-        public string RegisterHandler<T>(Jid jid, Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler) where T : Element
-        {
-            return router.RegisterHandler<T>(jid, handler);
-        }
-
         public string RegisterHandler(object handler)
         {
-            ProcessRegisterHandler(handler as IXmppRegisterHandler);
-            return router.RegisterHandler(handler);
+            return RegisterHandler(new Jid("{user}@{server}/{resource}"), handler);
         }
 
         public void UnregisterHandler(string id)
@@ -139,9 +131,10 @@ namespace Jabber.Net.Server.Handlers
 
         public void ProcessResult(XmppHandlerResult result)
         {
-            Args.NotNull(result, "result");
-
-            result.Execute(context);
+            if (result != null)
+            {
+                result.Execute(context);
+            }
         }
 
 

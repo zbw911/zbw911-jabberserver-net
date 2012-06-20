@@ -45,7 +45,7 @@ namespace Jabber.Net.Server.Handlers
             return new XmppErrorResult(session, error);
         }
 
-        
+
         public XmppHandlerResult Close(XmppSession session)
         {
             return new XmppCloseResult(session);
@@ -54,6 +54,11 @@ namespace Jabber.Net.Server.Handlers
         public XmppHandlerResult Component(params XmppHandlerResult[] results)
         {
             return new XmppComponentResult(results);
+        }
+
+        public XmppHandlerResult Void()
+        {
+            return null;
         }
 
 
