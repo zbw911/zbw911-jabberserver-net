@@ -17,7 +17,7 @@
  *																					 *
  * For general enquiries visit our website at:										 *
  * http://www.ag-software.de														 *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using System;
 
@@ -28,51 +28,57 @@ namespace agsXMPP.protocol.iq.disco
     using Xml.Dom;
 
     public enum DiscoAction
-	{		
-		NONE = -1,
-		remove,
-		update
-	}
+    {
+        NONE = -1,
+        remove,
+        update
+    }
 
-	/// <summary>
-	///
-	/// </summary>
-	public class DiscoItem : Element
-	{
-		public DiscoItem()
-		{
-			this.TagName	= "item";
-			this.Namespace	= Uri.DISCO_ITEMS;
-		}
+    /// <summary>
+    ///
+    /// </summary>
+    public class DiscoItem : Element
+    {
+        public DiscoItem()
+        {
+            this.TagName = "item";
+            this.Namespace = Uri.DISCO_ITEMS;
+        }
 
-		public Jid Jid
-		{
-			get { return new Jid(GetAttribute("jid")); }
-			set { SetAttribute("jid", value.ToString()); }
-		}
-		
-		public string Name
-		{
-			get { return GetAttribute("name"); }
-			set { SetAttribute("name", value); }
-		}
-		
-		public string Node
-		{
-			get { return GetAttribute("node"); }
-			set { SetAttribute("node", value); }
-		}
+        public DiscoItem(Jid jid, string name)
+        {
+            Jid = jid;
+            Name = name;
+        }
 
-		public DiscoAction Action
-		{
-			get { return (DiscoAction) GetAttributeEnum("action", typeof(DiscoAction)); }
-			set 
-			{ 
-				if (value == DiscoAction.NONE) 
-					RemoveAttribute("action");
-				else
-					SetAttribute("action", value.ToString()); 
-			}
-		}
-	}
+        public Jid Jid
+        {
+            get { return new Jid(GetAttribute("jid")); }
+            set { SetAttribute("jid", value.ToString()); }
+        }
+
+        public string Name
+        {
+            get { return GetAttribute("name"); }
+            set { SetAttribute("name", value); }
+        }
+
+        public string Node
+        {
+            get { return GetAttribute("node"); }
+            set { SetAttribute("node", value); }
+        }
+
+        public DiscoAction Action
+        {
+            get { return (DiscoAction)GetAttributeEnum("action", typeof(DiscoAction)); }
+            set
+            {
+                if (value == DiscoAction.NONE)
+                    RemoveAttribute("action");
+                else
+                    SetAttribute("action", value.ToString());
+            }
+        }
+    }
 }

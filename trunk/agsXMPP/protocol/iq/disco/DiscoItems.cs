@@ -106,7 +106,12 @@ namespace agsXMPP.protocol.iq.disco
 			return item;
 		}
 
-		public void AddDiscoItem(DiscoItem item)
+        public void AddDiscoItem(Jid jid, string name)
+        {
+            AddDiscoItem(new DiscoItem(jid, name));
+        }
+        
+        public void AddDiscoItem(DiscoItem item)
 		{
 			AddChild(item);			
 		}

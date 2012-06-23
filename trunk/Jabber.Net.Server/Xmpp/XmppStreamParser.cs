@@ -93,6 +93,10 @@ namespace Jabber.Net.Server.Xmpp
                 {
                     return new DiscoInfoIq(iq);
                 }
+                if (iq.SelectSingleElement<DiscoItems>() != null)
+                {
+                    return new DiscoItemsIq(iq);
+                }
             }
             return element;
         }

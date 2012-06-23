@@ -72,11 +72,9 @@ namespace agsXMPP.protocol.iq.disco
 	/// </summary>
 	public class DiscoItemsIq : IQ
 	{
-		private DiscoItems m_DiscoItems = new DiscoItems();
-	
 		public DiscoItemsIq()
 		{
-			base.Query = m_DiscoItems;
+			Query = new DiscoItems();
 			this.GenerateId();
 		}
 
@@ -85,11 +83,24 @@ namespace agsXMPP.protocol.iq.disco
 			this.Type = type;		
 		}	
 
+        public DiscoItemsIq(IQ iq)
+            : base(iq)
+        {
+        }
+
         public new DiscoItems Query
         {
             get
             {
-                return m_DiscoItems;
+                return SelectSingleElement(typeof(DiscoItems)) as DiscoItems;
+            }
+            set
+            {
+                RemoveTag(typeof(DiscoItems));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
             }
         }
 	}
