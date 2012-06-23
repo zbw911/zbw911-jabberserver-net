@@ -7,6 +7,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.iq.vcard;
+using agsXMPP.protocol.iq.disco;
 
 namespace Jabber.Net.Server.Xmpp
 {
@@ -87,6 +88,10 @@ namespace Jabber.Net.Server.Xmpp
                 if (iq.SelectSingleElement("vCard") as Vcard != null)
                 {
                     return new VcardIq(iq);
+                }
+                if (iq.SelectSingleElement<DiscoInfo>() != null)
+                {
+                    return new DiscoInfoIq(iq);
                 }
             }
             return element;

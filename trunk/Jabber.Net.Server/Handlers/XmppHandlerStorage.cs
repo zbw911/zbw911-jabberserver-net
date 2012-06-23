@@ -62,11 +62,11 @@ namespace Jabber.Net.Server.Handlers
                 }
                 if (jid.HasUser)
                 {
-                    byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}", jid.Server, jid.HasResource ? "{resource}" : string.Empty)));
+                    byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}", jid.Server, jid.HasResource ? "{resource}" : null)));
                 }
                 if (!string.IsNullOrEmpty(jid.Server))
                 {
-                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.HasUser ? "{user}" : string.Empty, "{server}", jid.HasResource ? "{resource}" : string.Empty)));
+                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.HasUser ? "{user}" : null, jid.Server, jid.HasResource ? "{resource}" : null)));
                 }
                 return byType.Reverse()
                     .Intersect(byJid)

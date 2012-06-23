@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Jabber.Net.Server.Utils;
 
@@ -6,13 +7,13 @@ namespace Jabber.Net.Server.Collections
 {
     class ReaderWriterLockDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private readonly IDictionary<TKey, TValue> dic = new Dictionary<TKey, TValue>();
         private readonly ReaderWriterLock locker = new ReaderWriterLock();
+        private readonly IDictionary<TKey, TValue> dic;
 
 
         public ReaderWriterLockDictionary()
         {
-
+            dic = new Dictionary<TKey, TValue>();
         }
 
         public ReaderWriterLockDictionary(int capacity)
@@ -25,14 +26,14 @@ namespace Jabber.Net.Server.Collections
         {
             get
             {
-                using (locker.ReadLock())
+                using (ReadLock())
                 {
                     return dic[key];
                 }
             }
             set
             {
-                using (locker.WriteLock())
+                using (WriteLock())
                 {
                     dic[key] = value;
                 }
@@ -43,7 +44,7 @@ namespace Jabber.Net.Server.Collections
         {
             get
             {
-                using (locker.ReadLock())
+                using (ReadLock())
                 {
                     return new List<TKey>(dic.Keys);
                 }
@@ -54,7 +55,7 @@ namespace Jabber.Net.Server.Collections
         {
             get
             {
-                using (locker.ReadLock())
+                using (ReadLock())
                 {
                     return new List<TValue>(dic.Values);
                 }
@@ -65,7 +66,7 @@ namespace Jabber.Net.Server.Collections
         {
             get
             {
-                using (locker.ReadLock())
+                using (ReadLock())
                 {
                     return dic.Count;
                 }
@@ -76,7 +77,7 @@ namespace Jabber.Net.Server.Collections
         {
             get
             {
-                using (locker.ReadLock())
+                using (ReadLock())
                 {
                     return dic.IsReadOnly;
                 }
@@ -86,7 +87,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool ContainsKey(TKey key)
         {
-            using (locker.ReadLock())
+            using (ReadLock())
             {
                 return dic.ContainsKey(key);
             }
@@ -94,7 +95,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            using (locker.ReadLock())
+            using (ReadLock())
             {
                 return dic.Contains(item);
             }
@@ -102,7 +103,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            using (locker.ReadLock())
+            using (ReadLock())
             {
                 return dic.TryGetValue(key, out value);
             }
@@ -110,7 +111,7 @@ namespace Jabber.Net.Server.Collections
 
         public void Add(TKey key, TValue value)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 dic.Add(key, value);
             }
@@ -118,7 +119,7 @@ namespace Jabber.Net.Server.Collections
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 dic.Add(item);
             }
@@ -126,7 +127,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool Remove(TKey key)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 return dic.Remove(key);
             }
@@ -134,7 +135,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool Remove(TKey key, out TValue value)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 if (dic.TryGetValue(key, out value))
                 {
@@ -146,7 +147,7 @@ namespace Jabber.Net.Server.Collections
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 return dic.Remove(item);
             }
@@ -154,7 +155,7 @@ namespace Jabber.Net.Server.Collections
 
         public void Clear()
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 dic.Clear();
             }
@@ -162,7 +163,7 @@ namespace Jabber.Net.Server.Collections
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            using (locker.WriteLock())
+            using (WriteLock())
             {
                 dic.CopyTo(array, arrayIndex);
             }
@@ -170,7 +171,7 @@ namespace Jabber.Net.Server.Collections
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            using (locker.ReadLock())
+            using (ReadLock())
             {
                 return new Dictionary<TKey, TValue>(dic).GetEnumerator();
             }
@@ -179,6 +180,17 @@ namespace Jabber.Net.Server.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+
+        private IDisposable ReadLock()
+        {
+            return locker.ReadLock();
+        }
+
+        private IDisposable WriteLock()
+        {
+            return locker.WriteLock();
         }
     }
 }

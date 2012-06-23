@@ -9,54 +9,54 @@ using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Handlers
 {
-    public class XmppHandlerBase
+    public class XmppHandler
     {
         private static readonly IUniqueId id = new RandomUniqueId();
 
 
-        public XmppHandlerResult Send(XmppSession session, params Element[] elements)
+        protected XmppHandlerResult Send(XmppSession session, params Element[] elements)
         {
             return Send(session, false, elements);
         }
 
-        public XmppHandlerResult Send(XmppSession session, bool offline, params Element[] elements)
+        protected XmppHandlerResult Send(XmppSession session, bool offline, params Element[] elements)
         {
             return new XmppSendResult(session, offline, elements);
         }
 
 
-        public XmppHandlerResult Error(XmppSession session, StreamErrorCondition error)
+        protected XmppHandlerResult Error(XmppSession session, StreamErrorCondition error)
         {
             return Error(session, new JabberStreamException(error));
         }
 
-        public XmppHandlerResult Error(XmppSession session, FailureCondition error)
+        protected XmppHandlerResult Error(XmppSession session, FailureCondition error)
         {
             return Error(session, new JabberSaslException(error));
         }
 
-        public XmppHandlerResult Error(XmppSession session, ErrorCode error, Stanza stanza)
+        protected XmppHandlerResult Error(XmppSession session, ErrorCode error, Stanza stanza)
         {
             return Error(session, new JabberStanzaException(error, stanza));
         }
 
-        public XmppHandlerResult Error(XmppSession session, Exception error)
+        protected XmppHandlerResult Error(XmppSession session, Exception error)
         {
             return new XmppErrorResult(session, error);
         }
 
 
-        public XmppHandlerResult Close(XmppSession session)
+        protected XmppHandlerResult Close(XmppSession session)
         {
             return new XmppCloseResult(session);
         }
 
-        public XmppHandlerResult Component(params XmppHandlerResult[] results)
+        protected XmppHandlerResult Component(params XmppHandlerResult[] results)
         {
             return new XmppComponentResult(results);
         }
 
-        public XmppHandlerResult Void()
+        protected XmppHandlerResult Void()
         {
             return null;
         }
@@ -65,6 +65,21 @@ namespace Jabber.Net.Server.Handlers
         protected string CreateId()
         {
             return id.CreateId();
+        }
+
+
+        private class XmppCloseResult : XmppHandlerResult
+        {
+            public XmppCloseResult(XmppSession session)
+                : base(session)
+            {
+            }
+
+
+            public override void Execute(XmppHandlerContext context)
+            {
+                context.Sessions.CloseSession(Session.Id);
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers
 {
-    class XmppDefaultHandler : XmppHandlerBase,
+    class XmppDefaultHandler : XmppHandler,
         IXmppHandler<Element>,
         IXmppCloseHandler,
         IXmppErrorHandler

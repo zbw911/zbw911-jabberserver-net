@@ -7,7 +7,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class AuthDigestMD5Handler : XmppHandlerBase,
+    class AuthDigestMD5Handler : XmppHandler,
         IXmppHandler<Auth>,
         IXmppHandler<Response>,
         IXmppHandler<Abort>,

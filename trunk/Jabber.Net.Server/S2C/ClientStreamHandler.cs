@@ -10,7 +10,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class ClientStreamHandler : XmppHandlerBase, IXmppHandler<Stream>
+    class ClientStreamHandler : XmppHandler, IXmppHandler<Stream>
     {
         private readonly Jid domain;
 

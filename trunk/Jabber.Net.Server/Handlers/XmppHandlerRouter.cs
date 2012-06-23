@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
@@ -31,7 +30,7 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(handler, "handler");
 
             var id = uniqueId.CreateId();
-            foreach (var m in handler.GetType().GetMethods().Where(m => m.Name == "ProcessElement" || m.Name == "ValidateElement"))
+            foreach (var m in handler.GetType().GetMethods())
             {
                 var parameters = m.GetParameters();
                 if (parameters.Length == 3 &&
@@ -101,6 +100,8 @@ namespace Jabber.Net.Server.Handlers
         {
             string HandlerId { get; }
 
+            MethodInfo MethodInfo { get; }
+
             XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c);
         }
 
@@ -109,6 +110,8 @@ namespace Jabber.Net.Server.Handlers
             private readonly Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler;
 
             public string HandlerId { get; private set; }
+
+            public MethodInfo MethodInfo { get { return handler.Method; } }
 
 
             public Invoker(Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler, string handlerId)

@@ -125,7 +125,17 @@ namespace agsXMPP.protocol.Base
             }
         }
 
-		public bool Switched
+        public bool HasFrom
+        {
+            get { return From != null && !Equals(From, Jid.Empty); }
+        }
+
+        public bool HasTo
+        {
+            get { return To != null && !Equals(From, Jid.Empty); }
+        }
+
+        public bool Switched
 		{
 			get;
 			private set;
