@@ -5,7 +5,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class ServiceVCardHandler: XmppHandler, IXmppHandler<VcardIq>
+    class ServiceVCardHandler : XmppHandler, IXmppHandler<VcardIq>
     {
         private readonly VcardIq iq;
 

@@ -17,7 +17,7 @@
  *																					 *
  * For general enquiries visit our website at:										 *
  * http://www.ag-software.de														 *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using System;
 using agsXMPP.protocol.client;
@@ -27,36 +27,52 @@ namespace agsXMPP.protocol.iq.version
     using client;
 
     /// <summary>
-	/// Summary description for VersionIq.
-	/// </summary>
-	public class VersionIq : IQ
-	{
-		private Version m_Version = new Version();
+    /// Summary description for VersionIq.
+    /// </summary>
+    public class VersionIq : IQ
+    {
+        public VersionIq()
+        {
+            this.GenerateId();
+        }
 
-		public VersionIq()
-		{		
-			base.Query = m_Version;
-			this.GenerateId();
-		}
+        public VersionIq(IqType type)
+            : this()
+        {
+            this.Type = type;
+        }
 
-		public VersionIq(IqType type) : this()
-		{			
-			this.Type = type;		
-		}
+        public VersionIq(IqType type, Jid to)
+            : this(type)
+        {
+            this.To = to;
+        }
 
-		public VersionIq(IqType type, Jid to) : this(type)
-		{
-			this.To = to;
-		}
+        public VersionIq(IqType type, Jid to, Jid from)
+            : this(type, to)
+        {
+            this.From = from;
+        }
 
-		public VersionIq(IqType type, Jid to, Jid from) : this(type, to)
-		{
-			this.From = from;
-		}
+        public VersionIq(IQ iq)
+            : base(iq)
+        {
+        }
 
-		public new Version Query
-		{
-			get { return m_Version;	}
-		}
-	}
+        public new Version Query
+        {
+            get
+            {
+                return SelectSingleElement(typeof(Version)) as Version;
+            }
+            set
+            {
+                RemoveTag(typeof(Version));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
+            }
+        }
+    }
 }
