@@ -103,6 +103,7 @@
     <Compile Include="Handlers\XmppComponentResult.cs" />
     <Compile Include="Handlers\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppDefaultHandler.cs" />
+    <Compile Include="S2C\ServiceInfoHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
     <Compile Include="S2C\ServiceDiscoInfoHandler.cs" />
     <Compile Include="S2C\ServiceDiscoItemsHandler.cs" />

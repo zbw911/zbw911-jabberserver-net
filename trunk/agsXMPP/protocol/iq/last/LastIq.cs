@@ -27,39 +27,52 @@ namespace agsXMPP.protocol.iq.last
     using client;
 
     /// <summary>
-	/// Summary description for LastIq.
-	/// </summary>
-	public class LastIq : IQ
-	{
-		private Last m_Last = new Last();
+    /// Summary description for LastIq.
+    /// </summary>
+    public class LastIq : IQ
+    {
+        public LastIq()
+        {
+            this.GenerateId();
+        }
 
-		public LastIq()
-		{		
-			base.Query = m_Last;
-			this.GenerateId();			
-		}
+        public LastIq(IqType type)
+            : this()
+        {
+            this.Type = type;
+        }
 
-		public LastIq(IqType type) : this()
-		{			
-			this.Type = type;		
-		}
+        public LastIq(IqType type, Jid to)
+            : this(type)
+        {
+            this.To = to;
+        }
 
-		public LastIq(IqType type, Jid to) : this(type)
-		{
-			this.To = to;
-		}
+        public LastIq(IqType type, Jid to, Jid from)
+            : this(type, to)
+        {
+            this.From = from;
+        }
 
-		public LastIq(IqType type, Jid to, Jid from) : this(type, to)
-		{
-			this.From = from;
-		}
+        public LastIq(IQ iq)
+            : base(iq)
+        {
+        }
 
-		public new Last Query
-		{
-			get
-			{
-				return m_Last;
-			}
-		}
-	}
+        public new Last Query
+        {
+            get
+            {
+                return SelectSingleElement(typeof(Last)) as Last;
+            }
+            set
+            {
+                RemoveTag(typeof(Last));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
+            }
+        }
+    }
 }

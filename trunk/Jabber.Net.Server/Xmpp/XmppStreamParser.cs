@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Text;
+using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.bind;
+using agsXMPP.protocol.iq.disco;
+using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.iq.session;
+using agsXMPP.protocol.iq.vcard;
+using agsXMPP.protocol.iq.version;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
-using agsXMPP.protocol.client;
-using agsXMPP.protocol.iq.bind;
-using agsXMPP.protocol.iq.session;
-using agsXMPP.protocol.iq.vcard;
-using agsXMPP.protocol.iq.disco;
 
 namespace Jabber.Net.Server.Xmpp
 {
@@ -81,21 +83,29 @@ namespace Jabber.Net.Server.Xmpp
                 {
                     return new BindIq(iq);
                 }
-                if (iq.SelectSingleElement<Session>() != null)
+                else if (iq.SelectSingleElement<Session>() != null)
                 {
                     return new SessionIq(iq);
                 }
-                if (iq.SelectSingleElement("vCard") as Vcard != null)
+                else if (iq.SelectSingleElement("vCard") as Vcard != null)
                 {
                     return new VcardIq(iq);
                 }
-                if (iq.SelectSingleElement<DiscoInfo>() != null)
+                else if (iq.SelectSingleElement<DiscoInfo>() != null)
                 {
                     return new DiscoInfoIq(iq);
                 }
-                if (iq.SelectSingleElement<DiscoItems>() != null)
+                else if (iq.SelectSingleElement<DiscoItems>() != null)
                 {
                     return new DiscoItemsIq(iq);
+                }
+                else if (iq.SelectSingleElement<Last>() != null)
+                {
+                    return new LastIq(iq);
+                }
+                else if (iq.SelectSingleElement<agsXMPP.protocol.iq.version.Version>() != null)
+                {
+                    return new VersionIq(iq);
                 }
             }
             return element;
