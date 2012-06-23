@@ -110,7 +110,12 @@ namespace agsXMPP.protocol.iq.disco
 			AddChild(id);
 		}
 
-		public DiscoFeature AddFeature()
+        public void AddIdentity(string category, string type, string name)
+        {
+            AddIdentity(new DiscoIdentity(type, name, category));
+        }
+
+        public DiscoFeature AddFeature()
 		{
 			DiscoFeature f = new DiscoFeature();
 			AddChild(f);
@@ -122,7 +127,12 @@ namespace agsXMPP.protocol.iq.disco
 			AddChild(f);
 		}
 
-		public DiscoIdentity[] GetIdentities()
+        public void AddFeature(string feature)
+        {
+            AddFeature(new DiscoFeature(feature));
+        }
+        
+        public DiscoIdentity[] GetIdentities()
 		{
             ElementList nl = SelectElements(typeof(DiscoIdentity));
 			DiscoIdentity[] items = new DiscoIdentity[nl.Count];
