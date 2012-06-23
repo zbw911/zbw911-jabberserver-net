@@ -9,20 +9,11 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class BindHandler : XmppHandlerBase, IXmppHandler<BindIq>, IXmppValidator<Stanza>, IXmppRegisterHandler
+    class BindHandler : XmppHandler, IXmppHandler<BindIq>, IXmppRegisterHandler
     {
         public void OnRegister(XmppHandlerContext context)
         {
             context.Sessions.SupportBind = true;
-        }
-
-        public XmppHandlerResult ValidateElement(Stanza element, XmppSession session, XmppHandlerContext context)
-        {
-            if (!session.Binded && !(element is BindIq) && !(element is RegisterIq))
-            {
-                return Error(session, StreamErrorCondition.NotAuthorized);
-            }
-            return Void();
         }
 
         public XmppHandlerResult ProcessElement(BindIq element, XmppSession session, XmppHandlerContext context)

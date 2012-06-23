@@ -49,13 +49,25 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
-                Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(element, "element");
 
                 var session = GetSession(endpoint);
                 var to = element.GetAttribute("to");
                 var jid = !string.IsNullOrEmpty(to) ? new Jid(to) : session.Jid ?? Jid.Empty;
-                var handlers = router.GetElementHandlers(element, jid);
+
+                var invokers = router.GetElementHandlers(element, jid);
+                var handlers = invokers.Where(i => i.MethodInfo.Name == "ProcessElement");
+                var validators = invokers.Where(i => i.MethodInfo.Name == "ValidateElement");
+
+                foreach (var validator in validators)
+                {
+                    var result = validator.ProcessElement(element, session, context);
+                    if (result != null)
+                    {
+                        ProcessResult(result);
+                        return;
+                    }
+                }
 
                 if (handlers.Any())
                 {
@@ -80,8 +92,6 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
-                Args.NotNull(endpoint, "endpoint");
-
                 var session = GetSession(endpoint);
                 try
                 {
@@ -106,7 +116,6 @@ namespace Jabber.Net.Server.Handlers
         {
             try
             {
-                Args.NotNull(endpoint, "endpoint");
                 Args.NotNull(error, "error");
 
                 var session = GetSession(endpoint);
@@ -148,6 +157,7 @@ namespace Jabber.Net.Server.Handlers
 
         private XmppSession GetSession(IXmppEndPoint endpoint)
         {
+            Args.NotNull(endpoint, "endpoint");
             return sessionManager.GetSession(endpoint.SessionId) ?? new XmppSession(endpoint);
         }
     }

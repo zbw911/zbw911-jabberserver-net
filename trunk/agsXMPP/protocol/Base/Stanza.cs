@@ -92,16 +92,6 @@ namespace agsXMPP.protocol.Base
             set { SetAttribute("xml:lang", value); }
         }
 
-        public bool HasFrom
-        {
-            get { return From != null; }
-        }
-
-        public bool HasTo
-        {
-            get { return To != null; }
-        }
-
         #endregion
 
         #region Methods

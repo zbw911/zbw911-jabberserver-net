@@ -103,7 +103,10 @@
     <Compile Include="Handlers\XmppComponentResult.cs" />
     <Compile Include="Handlers\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppDefaultHandler.cs" />
-    <Compile Include="Handlers\XmppValidationHandler.cs" />
+    <Compile Include="S2C\ServerDiscoInfoHandler.cs" />
+    <Compile Include="S2C\ServerDiscoItemsHandler.cs" />
+    <Compile Include="S2C\SessionHandler.cs" />
+    <Compile Include="S2C\StanzaValidator.cs" />
     <Compile Include="Handlers\XmppHandlerStorage.cs" />
     <Compile Include="Handlers\XmppErrorResult.cs" />
     <Compile Include="IXmppResolver.cs" />
@@ -114,7 +117,7 @@
     <Compile Include="Handlers\IXmppCloseHandler.cs" />
     <Compile Include="Handlers\IXmppHandler.cs" />
     <Compile Include="Handlers\IXmppRegisterHandler.cs" />
-    <Compile Include="Handlers\XmppHandlerBase.cs" />
+    <Compile Include="Handlers\XmppHandler.cs" />
     <Compile Include="Handlers\XmppHandlerContext.cs" />
     <Compile Include="Handlers\XmppHandlerManager.cs" />
     <Compile Include="Handlers\XmppHandlerResult.cs" />
@@ -130,6 +133,8 @@
     <Compile Include="S2C\AuthDigestMD5Handler.cs" />
     <Compile Include="S2C\BindHandler.cs" />
     <Compile Include="S2C\ClientStreamHandler.cs" />
+    <Compile Include="Services\XmppService.cs" />
+    <Compile Include="Services\XmppServiceManager.cs" />
     <Compile Include="Sessions\AuthMechanism.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
