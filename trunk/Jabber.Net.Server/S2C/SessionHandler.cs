@@ -16,7 +16,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.Type != IqType.set)
             {
-                return Error(session, ErrorCode.BadRequest, element);
+                return Error(session, ErrorCondition.BadRequest, element);
             }
             element.SwitchDirection();
             element.Type = IqType.result;

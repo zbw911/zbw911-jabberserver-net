@@ -20,7 +20,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.Type != IqType.set)
             {
-                return Error(session, ErrorCode.BadRequest, element);
+                return Error(session, ErrorCondition.BadRequest, element);
             }
             else if (element.Query.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
             {
@@ -32,7 +32,7 @@ namespace Jabber.Net.Server.S2C
             }
             else
             {
-                return Error(session, ErrorCode.BadRequest, element);
+                return Error(session, ErrorCondition.BadRequest, element);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Jabber.Net.Server.S2C
         {
             if (session.Binded)
             {
-                return Error(session, ErrorCode.Conflict, element);
+                return Error(session, ErrorCondition.Conflict, element);
             }
 
             var resource = ((Bind)element.Query).Resource;
@@ -63,7 +63,7 @@ namespace Jabber.Net.Server.S2C
         private XmppHandlerResult ProcessUnbind(BindIq element, XmppSession session, XmppHandlerContext context)
         {
             var resource = ((Bind)element.Query).Resource;
-            return session.Jid.Resource == resource ? Close(session) : Error(session, ErrorCode.NotFound, element);
+            return session.Jid.Resource == resource ? Close(session) : Error(session, ErrorCondition.ItemNotFound, element);
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Jabber.Net.Server.Handlers
 
         private void Save(Element e, XmppHandlerContext context)
         {
+            System.Threading.ThreadPool.RegisterWaitForSingleObject(
             //context.Storage<IOfflineStorage>().Save(e);
         }
     }

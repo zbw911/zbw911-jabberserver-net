@@ -9,7 +9,7 @@ namespace Jabber.Net.Server
     [Serializable]
     public class JabberStanzaException : JabberException
     {
-        private readonly ErrorCode error;
+        private readonly ErrorCondition error;
         private readonly Stanza stanza;
 
 
@@ -19,7 +19,7 @@ namespace Jabber.Net.Server
         }
 
 
-        public JabberStanzaException(ErrorCode error, Stanza stanza)
+        public JabberStanzaException(ErrorCondition error, Stanza stanza)
         {
             this.error = error;
             this.stanza = stanza;
@@ -35,7 +35,7 @@ namespace Jabber.Net.Server
         public override Element ToElement()
         {
             var e = new Error(error);
-            if (error == ErrorCode.InternalServerError)
+            if (error == ErrorCondition.InternalServerError)
             {
                 e.Message = this.Message;
             }
@@ -45,7 +45,7 @@ namespace Jabber.Net.Server
                 {
                     stanza.SwitchDirection();
                 }
-                stanza.SetAttribute("type", "error");
+                stanza.SetAttribute("type", IqType.error.ToString());
                 stanza.ReplaceChild(e);
                 return stanza;
             }
