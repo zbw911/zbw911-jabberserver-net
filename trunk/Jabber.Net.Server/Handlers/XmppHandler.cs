@@ -35,7 +35,7 @@ namespace Jabber.Net.Server.Handlers
             return Error(session, new JabberSaslException(error));
         }
 
-        protected XmppHandlerResult Error(XmppSession session, ErrorCode error, Stanza stanza)
+        protected XmppHandlerResult Error(XmppSession session, ErrorCondition error, Stanza stanza)
         {
             return Error(session, new JabberStanzaException(error, stanza));
         }
@@ -59,6 +59,11 @@ namespace Jabber.Net.Server.Handlers
         protected XmppHandlerResult Void()
         {
             return null;
+        }
+
+        protected XmppHandlerResult Request(XmppHandlerResult request, TimeSpan timeout, XmppHandlerResult defaultResponce)
+        {
+            throw new NotImplementedException();
         }
 
 
