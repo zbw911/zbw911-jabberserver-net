@@ -42,9 +42,16 @@ namespace Jabber.Net.Server.Handlers
                 }
 
                 var iq = stanza as IQ;
-                if (iq != null && (iq.Type == IqType.get || iq.Type == IqType.set))
+                if (iq != null)
                 {
-                    return Request(Send(to, stanza), TimeSpan.FromSeconds(5), Error(session, ErrorCondition.RecipientUnavailable, stanza));
+                    if (iq.Type == IqType.get || iq.Type == IqType.set)
+                    {
+                        return Request(to, iq, Error(session, ErrorCondition.RecipientUnavailable, stanza));
+                    }
+                    else
+                    {
+                        return RequestCancel(to, iq);
+                    }
                 }
                 return Send(to, stanza);
             }

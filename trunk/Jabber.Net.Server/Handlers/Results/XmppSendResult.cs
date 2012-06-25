@@ -1,7 +1,6 @@
 ﻿using System;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
-using Jabber.Net.Server.Utils;
 
 namespace Jabber.Net.Server.Handlers.Results
 {
@@ -27,17 +26,6 @@ namespace Jabber.Net.Server.Handlers.Results
 
         public override void Execute(XmppHandlerContext context)
         {
-            Args.NotNull(context, "context");
-
-            if (Element.TagName == "iq")
-            {
-                var type = Element.GetAttribute("type");
-                if (type == "result" || type == "error")
-                {
-                    TaskQueue.RemoveTask(Element.GetAttribute("id"));
-                }
-            }
-
             Session.EndPoint.Send(Element, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
         }
 
