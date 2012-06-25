@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppComponentResult : XmppHandlerResult
     {
-        private readonly List<XmppHandlerResult> results = new List<XmppHandlerResult>();
+        private readonly IEnumerable<XmppHandlerResult> results;
 
 
         public XmppComponentResult(params XmppHandlerResult[] results)
@@ -13,7 +14,7 @@ namespace Jabber.Net.Server.Handlers.Results
         {
             Args.NotNull(results, "results");
 
-            this.results.AddRange(results);
+            this.results = results.ToArray();
         }
 
 

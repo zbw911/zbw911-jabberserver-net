@@ -43,11 +43,7 @@ namespace Jabber.Net.Server.Handlers
 
         protected XmppHandlerResult Error(XmppSession session, Exception error)
         {
-            Args.NotNull(error, "error");
-
-            var je = (error as JabberException) ?? new JabberStreamException(error);
-            var send = Send(session, je.ToElement());
-            return je.CloseStream ? Component(send, Close(session)) : send;
+            return new XmppErrorResult(session, error);
         }
 
 
@@ -66,9 +62,14 @@ namespace Jabber.Net.Server.Handlers
             return null;
         }
 
-        protected XmppRequestResult Request(XmppHandlerResult request, TimeSpan timeout, XmppHandlerResult timeoutResponce)
+        protected XmppRequestResult Request(XmppSession session, IQ iq, XmppHandlerResult timeoutResponce)
         {
-            return new XmppRequestResult(request, timeout, timeoutResponce);
+            return new XmppRequestResult(session, iq, timeoutResponce, TimeSpan.FromSeconds(10));
+        }
+
+        protected XmppRequestResult RequestCancel(XmppSession session, IQ iq)
+        {
+            return new XmppRequestResult(session, iq, null, TimeSpan.Zero);
         }
 
 

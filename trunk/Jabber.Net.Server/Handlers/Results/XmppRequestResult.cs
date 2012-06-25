@@ -1,4 +1,5 @@
 ﻿using System;
+using agsXMPP.protocol.client;
 using Jabber.Net.Server.Sessions;
 using Jabber.Net.Server.Utils;
 
@@ -6,38 +7,35 @@ namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppRequestResult : XmppHandlerResult
     {
-        private readonly XmppHandlerResult request;
-        private readonly TimeSpan timeout;
+        private readonly IQ iq;
         private readonly XmppHandlerResult timeoutResponce;
+        private readonly TimeSpan timeout;
 
 
-        public XmppRequestResult(XmppHandlerResult request, TimeSpan timeout, XmppHandlerResult timeoutResponce)
-            : base(XmppSession.Empty)
+        public XmppRequestResult(XmppSession session, IQ iq, XmppHandlerResult timeoutResponce, TimeSpan timeout)
+            : base(session)
         {
-            Args.NotNull(request, "request");
-            Args.NotNull(timeoutResponce, "timeoutResponce");
+            Args.NotNull(iq, "iq");
+            Args.Requires<InvalidOperationException>(timeoutResponce == null && (iq.Type == IqType.get || iq.Type == IqType.set), "timeoutResponce can not be null at get or set iq");
 
-            this.request = request;
-            this.timeout = timeout;
+            this.iq = iq;
             this.timeoutResponce = timeoutResponce;
+            this.timeout = timeout;
         }
 
 
         public override void Execute(XmppHandlerContext context)
         {
-            request.Execute(context);
-            if (request is XmppSendResult)
+            if (iq.Type == IqType.get || iq.Type == IqType.set)
             {
-                var e = ((XmppSendResult)request).Element;
-                if (e.TagName == "iq")
-                {
-                    var type = e.GetAttribute("type");
-                    if (type == "get" || type == "set")
-                    {
-                        TaskQueue.AddTask(e.GetAttribute("id"), () => timeoutResponce.Execute(context));
-                    }
-                }
+                TaskQueue.AddTask(iq.Id, () => context.Handlers.ProcessResult(timeoutResponce));
             }
+            else
+            {
+                TaskQueue.RemoveTask(iq.Id);
+            }
+
+            context.Handlers.ProcessResult(new XmppSendResult(Session, iq, false));
         }
     }
 }

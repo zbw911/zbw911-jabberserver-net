@@ -1,5 +1,4 @@
-﻿using System;
-using Jabber.Net.Server.Sessions;
+﻿using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.Handlers.Results
 {
