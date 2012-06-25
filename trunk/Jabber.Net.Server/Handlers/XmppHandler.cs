@@ -4,6 +4,7 @@ using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
+using Jabber.Net.Server.Handlers.Results;
 using Jabber.Net.Server.Sessions;
 using Jabber.Net.Server.Utils;
 
@@ -14,14 +15,14 @@ namespace Jabber.Net.Server.Handlers
         private static readonly IUniqueId id = new RandomUniqueId();
 
 
-        protected XmppHandlerResult Send(XmppSession session, params Element[] elements)
+        protected XmppHandlerResult Send(XmppSession session, Element element)
         {
-            return Send(session, false, elements);
+            return Send(session, element, false);
         }
 
-        protected XmppHandlerResult Send(XmppSession session, bool offline, params Element[] elements)
+        protected XmppHandlerResult Send(XmppSession session, Element element, bool offline)
         {
-            return new XmppSendResult(session, offline, elements);
+            return new XmppSendResult(session, element, offline);
         }
 
 
@@ -42,16 +43,20 @@ namespace Jabber.Net.Server.Handlers
 
         protected XmppHandlerResult Error(XmppSession session, Exception error)
         {
-            return new XmppErrorResult(session, error);
+            Args.NotNull(error, "error");
+
+            var je = (error as JabberException) ?? new JabberStreamException(error);
+            var send = Send(session, je.ToElement());
+            return je.CloseStream ? Component(send, Close(session)) : send;
         }
 
 
-        protected XmppHandlerResult Close(XmppSession session)
+        protected XmppCloseResult Close(XmppSession session)
         {
             return new XmppCloseResult(session);
         }
 
-        protected XmppHandlerResult Component(params XmppHandlerResult[] results)
+        protected XmppComponentResult Component(params XmppHandlerResult[] results)
         {
             return new XmppComponentResult(results);
         }
@@ -61,30 +66,15 @@ namespace Jabber.Net.Server.Handlers
             return null;
         }
 
-        protected XmppHandlerResult Request(XmppHandlerResult request, TimeSpan timeout, XmppHandlerResult defaultResponce)
+        protected XmppRequestResult Request(XmppHandlerResult request, TimeSpan timeout, XmppHandlerResult timeoutResponce)
         {
-            throw new NotImplementedException();
+            return new XmppRequestResult(request, timeout, timeoutResponce);
         }
 
 
         protected string CreateId()
         {
             return id.CreateId();
-        }
-
-
-        private class XmppCloseResult : XmppHandlerResult
-        {
-            public XmppCloseResult(XmppSession session)
-                : base(session)
-            {
-            }
-
-
-            public override void Execute(XmppHandlerContext context)
-            {
-                context.Sessions.CloseSession(Session.Id);
-            }
         }
     }
 }

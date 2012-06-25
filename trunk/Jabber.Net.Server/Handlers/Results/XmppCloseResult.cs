@@ -1,7 +1,7 @@
 ﻿using System;
 using Jabber.Net.Server.Sessions;
 
-namespace Jabber.Net.Server.Handlers
+namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppCloseResult : XmppHandlerResult
     {
