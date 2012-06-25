@@ -13,7 +13,7 @@ using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Xmpp
 {
-    public class XmppStreamParser
+    class XmppStreamParser
     {
         private readonly StreamParser agsParser;
 

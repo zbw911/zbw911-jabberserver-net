@@ -1,9 +1,9 @@
 ﻿using System;
+using agsXMPP.protocol;
 using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
-using agsXMPP.protocol;
 
 namespace Jabber.Net.Server.Handlers
 {
@@ -22,21 +22,21 @@ namespace Jabber.Net.Server.Handlers
 
             if (!stanza.HasTo || stanza.To.IsServer)
             {
+                // server answer
                 var iq = stanza as IQ;
                 if (iq != null && (iq.Type == IqType.get || iq.Type == IqType.set))
                 {
+                    // unknown request iq
                     return Error(session, ErrorCondition.ServiceUnavailable, stanza);
                 }
-                else
-                {
-                    return Void();
-                }
+                return Void();
             }
 
             if (stanza.HasTo && stanza.To.IsFull)
             {
-                var toSession = context.Sessions.FindSession(stanza.To);
-                if (toSession == null)
+                // route stanza to client
+                var to = context.Sessions.FindSession(stanza.To);
+                if (to == null)
                 {
                     return Error(session, ErrorCondition.RecipientUnavailable, stanza);
                 }
@@ -44,12 +44,9 @@ namespace Jabber.Net.Server.Handlers
                 var iq = stanza as IQ;
                 if (iq != null && (iq.Type == IqType.get || iq.Type == IqType.set))
                 {
-                    return Request(Send(toSession, stanza), TimeSpan.FromSeconds(5), Error(session, ErrorCondition.RecipientUnavailable, stanza));
+                    return Request(Send(to, stanza), TimeSpan.FromSeconds(5), Error(session, ErrorCondition.RecipientUnavailable, stanza));
                 }
-                else
-                {
-                    return Send(toSession, stanza);
-                }
+                return Send(to, stanza);
             }
 
             return Void();
