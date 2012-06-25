@@ -1,25 +1,47 @@
 ﻿using System;
+using System.ServiceProcess;
 
 namespace Jabber.Net.Server
 {
-    class Program
+    class Program : ServiceBase
     {
+        private readonly JabberNetServer jabberServer = new JabberNetServer();
+
+
         static void Main(string[] args)
         {
-            try
+            var service = new Program();
+            if (Environment.UserInteractive)
             {
-                var server = new JabberNetServer();
-                server.Configure(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-                server.Start();
+                try
+                {
+                    service.OnStart(args);
 
-                Console.ReadKey();
-
-                server.Stop();
+                    Console.WriteLine("Press any key to stop...");
+                    Console.ReadKey();
+                    
+                    service.OnStop();
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine(error);
+                }
             }
-            catch (Exception error)
+            else
             {
-                Console.WriteLine(error);
+                Run(service);
             }
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            jabberServer.Configure(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            jabberServer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            jabberServer.Stop();
         }
     }
 }
