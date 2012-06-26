@@ -4,6 +4,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.disco;
 using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.iq.@private;
 using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.protocol.iq.version;
@@ -106,6 +107,10 @@ namespace Jabber.Net.Server.Xmpp
                 else if (iq.SelectSingleElement<agsXMPP.protocol.iq.version.Version>() != null)
                 {
                     return new VersionIq(iq);
+                }
+                else if (iq.SelectSingleElement<Private>() != null)
+                {
+                    return new PrivateIq(iq);
                 }
             }
             return element;

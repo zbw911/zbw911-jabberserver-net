@@ -28,5 +28,10 @@ namespace Jabber.Net.Server.Handlers
         {
             return new XmppErrorResult(session, new JabberStreamException(error));
         }
+
+        protected XmppHandlerResult Fail()
+        {
+            return new XmppComponentResult();
+        }
     }
 }

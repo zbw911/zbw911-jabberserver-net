@@ -29,7 +29,14 @@ namespace Jabber.Net.Server.S2C
             {
                 if (!allowed.Contains(iq.Type))
                 {
-                    return Error(session, ErrorCondition, iq);
+                    if (iq.Type == IqType.get || iq.Type == IqType.set)
+                    {
+                        return Error(session, ErrorCondition, iq);
+                    }
+                    else
+                    {
+                        return Fail();
+                    }
                 }
             }
             return Success();

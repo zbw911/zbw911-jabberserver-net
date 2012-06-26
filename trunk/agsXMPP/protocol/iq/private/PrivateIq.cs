@@ -32,32 +32,30 @@ namespace agsXMPP.protocol.iq.@private
 	/// </summary>
 	public class PrivateIq : IQ
 	{
-		Private m_Private	= new Private();
-
 		public PrivateIq()
 		{
-			base.Query = m_Private;
 			this.GenerateId();
 		}
 
-		public PrivateIq(IqType type) : this()
-		{			
-			this.Type = type;		
-		}
+        public PrivateIq(IQ iq)
+            : base(iq)
+        {
+        }
 
-		public PrivateIq(IqType type, Jid to) : this(type)
-		{
-			this.To = to;
-		}
-
-		public PrivateIq(IqType type, Jid to, Jid from) : this(type, to)
-		{
-			this.From = from;
-		}
-
-		public new Private Query
-		{
-			get { return m_Private; }
-		}
+        public new Private Query
+        {
+            get
+            {
+                return SelectSingleElement<Private>();
+            }
+            set
+            {
+                RemoveTag(typeof(Private));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
+            }
+        }
 	}
 }
