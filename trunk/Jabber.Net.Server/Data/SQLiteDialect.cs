@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Jabber.Net.Server.Data
 {
-    public class SQLiteDialect : ISqlDialect
+    class SQLiteDialect : ISqlDialect
     {
         public string IdentityQuery
         {

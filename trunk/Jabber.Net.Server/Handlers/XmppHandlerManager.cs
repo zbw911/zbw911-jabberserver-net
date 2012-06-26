@@ -9,11 +9,12 @@ namespace Jabber.Net.Server.Handlers
 {
     public class XmppHandlerManager
     {
-        private readonly XmppHandlerRouter router = new XmppHandlerRouter();
+        private readonly XmppHandlerRouter router;
         private readonly XmppSessionManager sessionManager;
         private readonly IXmppResolver resolver;
         private readonly XmppHandlerContext context;
         private readonly XmppDefaultHandler defaultHandler;
+        private readonly IXmppHandlerInvoker defaultInvoker;
 
 
         public XmppHandlerManager(XmppSessionManager sessionManager, IXmppResolver resolver)
@@ -21,16 +22,22 @@ namespace Jabber.Net.Server.Handlers
             Args.NotNull(sessionManager, "sessionManager");
             Args.NotNull(resolver, "resolver");
 
+            this.router = new XmppHandlerRouter();
             this.sessionManager = sessionManager;
             this.resolver = resolver;
             this.context = new XmppHandlerContext(this, resolver);
+
             this.defaultHandler = new XmppDefaultHandler();
+            this.defaultInvoker = new XmppHandlerRouter.Invoker<Element>(defaultHandler.ProcessElement, "DefaultHandler");
         }
 
 
         public string RegisterHandler(Jid jid, object handler)
         {
-            ProcessRegisterHandler(handler as IXmppRegisterHandler);
+            if (handler is IXmppRegisterHandler)
+            {
+                ((IXmppRegisterHandler)handler).OnRegister(context);
+            }
             return router.RegisterHandler(jid, handler);
         }
 
@@ -45,7 +52,7 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public void ProcessXmppElement(IXmppEndPoint endpoint, Element element)
+        public void ProcessElement(IXmppEndPoint endpoint, Element element)
         {
             try
             {
@@ -55,41 +62,26 @@ namespace Jabber.Net.Server.Handlers
                 var to = element.GetAttribute("to");
                 var jid = !string.IsNullOrEmpty(to) ? new Jid(to) : session.Jid ?? Jid.Empty;
 
-                var invokers = router.GetElementHandlers(element, jid);
-                var handlers = invokers.Where(i => i.MethodInfo.Name == "ProcessElement");
-                var validators = invokers.Where(i => i.MethodInfo.Name == "ValidateElement");
-
-                foreach (var validator in validators)
+                if (!ProcessValidation(defaultInvoker, element, session, context))
                 {
-                    var result = validator.ProcessElement(element, session, context);
-                    if (result != null)
-                    {
-                        ProcessResult(result);
-                        return;
-                    }
+                    return;
                 }
 
+                var handlers = router.GetElementHandlers(element, jid);
                 if (handlers.Any())
                 {
                     foreach (var handler in handlers)
                     {
-                        XmppHandlerResult result;
-                        foreach (var validator in handler.Validators)
+                        if (!ProcessValidation(handler, element, session, context))
                         {
-                            result = validator.ValidateElement(element, session, context);
-                            if (result != null)
-                            {
-                                ProcessResult(result);
-                                continue;
-                            }
+                            continue;
                         }
-                        result = handler.ProcessElement(element, session, context);
-                        ProcessResult(result);
+                        ProcessResult(handler.ProcessElement(element, session, context));
                     }
                 }
                 else
                 {
-                    ProcessResult(defaultHandler.ProcessElement(element, session, context));
+                    ProcessResult(defaultInvoker.ProcessElement(element, session, context));
                 }
             }
             catch (Exception error)
@@ -107,8 +99,7 @@ namespace Jabber.Net.Server.Handlers
                 {
                     foreach (var handler in router.GetCloseHandlers())
                     {
-                        var result = handler.OnClose(session, context);
-                        ProcessResult(result);
+                        ProcessResult(handler.OnClose(session, context));
                     }
                 }
                 finally
@@ -133,8 +124,7 @@ namespace Jabber.Net.Server.Handlers
                 {
                     foreach (var handler in router.GetErrorHandlers())
                     {
-                        var result = handler.OnError(error, session, context);
-                        ProcessResult(result);
+                        ProcessResult(handler.OnError(error, session, context));
                     }
                 }
                 finally
@@ -156,14 +146,20 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-
-        private void ProcessRegisterHandler(IXmppRegisterHandler handler)
+        private bool ProcessValidation(IXmppHandlerInvoker i, Element e, XmppSession s, XmppHandlerContext c)
         {
-            if (handler != null)
+            foreach (var validator in i.Validators)
             {
-                handler.OnRegister(context);
+                var result = validator.ValidateElement(e, s, c);
+                if (result != null)
+                {
+                    ProcessResult(result);
+                    return false;
+                }
             }
+            return true;
         }
+
 
         private XmppSession GetSession(IXmppEndPoint endpoint)
         {

@@ -60,7 +60,7 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public IEnumerable<IInvoker> GetElementHandlers(Element e, Jid j)
+        public IEnumerable<IXmppHandlerInvoker> GetElementHandlers(Element e, Jid j)
         {
             Args.NotNull(j, "j");
             Args.NotNull(e, "e");
@@ -97,24 +97,11 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public interface IInvoker
-        {
-            string HandlerId { get; }
-
-            MethodInfo MethodInfo { get; }
-
-            IEnumerable<XmppValidationAttribute> Validators { get; }
-
-            XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c);
-        }
-
-        private class Invoker<T> : IInvoker where T : Element
+        internal class Invoker<T> : IXmppHandlerInvoker where T : Element
         {
             private readonly Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler;
 
             public string HandlerId { get; private set; }
-
-            public MethodInfo MethodInfo { get { return handler.Method; } }
 
             public IEnumerable<XmppValidationAttribute> Validators { get; private set; }
 

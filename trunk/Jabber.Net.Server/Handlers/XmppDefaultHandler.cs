@@ -2,6 +2,9 @@
 using agsXMPP.protocol;
 using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.auth;
+using agsXMPP.protocol.iq.bind;
+using agsXMPP.protocol.iq.register;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
 
@@ -12,6 +15,7 @@ namespace Jabber.Net.Server.Handlers
         IXmppCloseHandler,
         IXmppErrorHandler
     {
+        [DefaultValidator]
         public XmppHandlerResult ProcessElement(Element element, XmppSession session, XmppHandlerContext context)
         {
             var stanza = element as Stanza;
@@ -67,6 +71,36 @@ namespace Jabber.Net.Server.Handlers
         public XmppHandlerResult OnError(Exception error, XmppSession session, XmppHandlerContext context)
         {
             return Error(session, error);
+        }
+
+
+        class DefaultValidator : XmppValidationAttribute
+        {
+            public override XmppHandlerResult ValidateElement(Element element, XmppSession session, XmppHandlerContext context)
+            {
+                var stanza = element as Stanza;
+                if (stanza != null)
+                {
+                    // auhtentication
+                    if (!session.Authenticated && !(stanza is AuthIq) && !(stanza is RegisterIq))
+                    {
+                        return Error(session, StreamErrorCondition.NotAuthorized);
+                    }
+
+                    // resource binding
+                    if (!session.Binded && !(stanza is AuthIq) && !(stanza is RegisterIq) && !(stanza is BindIq))
+                    {
+                        return Error(session, StreamErrorCondition.NotAuthorized);
+                    }
+
+                    // correct from
+                    if (stanza.HasFrom && session.Jid != stanza.From)
+                    {
+                        return Error(session, StreamErrorCondition.InvalidFrom);
+                    }
+                }
+                return Success();
+            }
         }
     }
 }

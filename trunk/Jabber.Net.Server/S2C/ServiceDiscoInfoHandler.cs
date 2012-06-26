@@ -24,7 +24,7 @@ namespace Jabber.Net.Server.S2C
             }
         }
 
-        [IQType(ErrorCondition.BadRequest, IqType.get)]
+        [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(DiscoInfoIq element, XmppSession session, XmppHandlerContext context)
         {
             var result = (DiscoInfoIq)iq.Clone();

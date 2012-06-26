@@ -28,7 +28,7 @@ namespace Jabber.Net.Server.Connections
             this.handlerManager = handlerManager;
             this.parser = new XmppStreamParser();
 
-            parser.Parsed += (s, e) => handlerManager.ProcessXmppElement(this, e.Element);
+            parser.Parsed += (s, e) => handlerManager.ProcessElement(this, e.Element);
             parser.Error += (s, e) => handlerManager.ProcessError(this, e.Error);
         }
 
