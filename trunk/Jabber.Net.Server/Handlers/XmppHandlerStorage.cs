@@ -10,13 +10,13 @@ namespace Jabber.Net.Server.Handlers
     {
         private readonly ReaderWriterLock locker = new ReaderWriterLock();
         private readonly IUniqueId uniqueId = new GuidUniqueId();
-        private readonly Dictionary<string, XmppHandlerRouter.IInvoker> handlers = new Dictionary<string, XmppHandlerRouter.IInvoker>();
+        private readonly Dictionary<string, IXmppHandlerInvoker> handlers = new Dictionary<string, IXmppHandlerInvoker>();
         private readonly RouterStore<string> handlerIds = new RouterStore<string>();
         private readonly RouterStore<Type> types = new RouterStore<Type>();
         private readonly RouterStore<Jid> jids = new RouterStore<Jid>();
 
 
-        public void Register(Type type, Jid jid, XmppHandlerRouter.IInvoker invoker)
+        public void Register(Type type, Jid jid, IXmppHandlerInvoker invoker)
         {
             using (locker.WriteLock())
             {
@@ -42,7 +42,7 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public IEnumerable<XmppHandlerRouter.IInvoker> GetInvokers(Type type, Jid jid)
+        public IEnumerable<IXmppHandlerInvoker> GetInvokers(Type type, Jid jid)
         {
             using (locker.ReadLock())
             {

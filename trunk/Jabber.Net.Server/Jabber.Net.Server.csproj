@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -123,9 +123,9 @@
     <Compile Include="Data\Sql\SqlQuery.cs" />
     <Compile Include="Data\Sql\SqlUpdate.cs" />
     <Compile Include="Data\Sql\SubExp.cs" />
+    <Compile Include="Handlers\IXmppHandlerInvoker.cs" />
     <Compile Include="Handlers\Results\XmppErrorResult.cs" />
     <Compile Include="Handlers\Results\XmppRequestResult.cs" />
-    <Compile Include="Handlers\IXmppValidator.cs" />
     <Compile Include="Handlers\Results\XmppComponentResult.cs" />
     <Compile Include="Handlers\Results\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppDefaultHandler.cs" />
@@ -137,7 +137,6 @@
     <Compile Include="S2C\ServiceDiscoItemsHandler.cs" />
     <Compile Include="S2C\ServiceInfo.cs" />
     <Compile Include="S2C\SessionHandler.cs" />
-    <Compile Include="S2C\StanzaValidator.cs" />
     <Compile Include="Handlers\XmppHandlerStorage.cs" />
     <Compile Include="IXmppResolver.cs" />
     <Compile Include="JabberStanzaException.cs" />

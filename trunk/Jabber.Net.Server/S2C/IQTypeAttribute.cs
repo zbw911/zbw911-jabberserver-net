@@ -9,15 +9,18 @@ namespace Jabber.Net.Server.S2C
     public class IQTypeAttribute : XmppValidationAttribute
     {
         private readonly IqType[] allowed;
-        private readonly ErrorCondition error;
 
-
-        public IQTypeAttribute(ErrorCondition error, params IqType[] allowed)
+        public ErrorCondition ErrorCondition
         {
-            this.error = error;
-            this.allowed = allowed;
+            get;
+            set;
         }
 
+
+        public IQTypeAttribute(params IqType[] allowed)
+        {
+            this.allowed = allowed;
+        }
 
         public override XmppHandlerResult ValidateElement(Element element, XmppSession session, XmppHandlerContext context)
         {
@@ -26,7 +29,7 @@ namespace Jabber.Net.Server.S2C
             {
                 if (!allowed.Contains(iq.Type))
                 {
-                    return Error(session, error, iq);
+                    return Error(session, ErrorCondition, iq);
                 }
             }
             return Success();
