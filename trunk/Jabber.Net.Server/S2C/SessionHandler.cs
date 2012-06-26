@@ -12,12 +12,9 @@ namespace Jabber.Net.Server.S2C
             context.Sessions.SupportSession = true;
         }
 
+        [IQType(ErrorCondition.BadRequest, IqType.set)]
         public XmppHandlerResult ProcessElement(SessionIq element, XmppSession session, XmppHandlerContext context)
         {
-            if (element.Type != IqType.set)
-            {
-                return Error(session, ErrorCondition.BadRequest, element);
-            }
             element.SwitchDirection();
             element.Type = IqType.result;
             return Send(session, element);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
@@ -102,6 +103,8 @@ namespace Jabber.Net.Server.Handlers
 
             MethodInfo MethodInfo { get; }
 
+            IEnumerable<XmppValidationAttribute> Validators { get; }
+
             XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c);
         }
 
@@ -113,11 +116,14 @@ namespace Jabber.Net.Server.Handlers
 
             public MethodInfo MethodInfo { get { return handler.Method; } }
 
+            public IEnumerable<XmppValidationAttribute> Validators { get; private set; }
+
 
             public Invoker(Func<T, XmppSession, XmppHandlerContext, XmppHandlerResult> handler, string handlerId)
             {
                 this.handler = handler;
                 HandlerId = handlerId;
+                Validators = handler.Method.GetCustomAttributes(false).OfType<XmppValidationAttribute>();
             }
 
             public XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c)

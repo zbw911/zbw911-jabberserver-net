@@ -129,6 +129,8 @@
     <Compile Include="Handlers\Results\XmppComponentResult.cs" />
     <Compile Include="Handlers\Results\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppDefaultHandler.cs" />
+    <Compile Include="Handlers\XmppValidationAttribute.cs" />
+    <Compile Include="S2C\IQTypeAttribute.cs" />
     <Compile Include="S2C\ServiceInfoHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
     <Compile Include="S2C\ServiceDiscoInfoHandler.cs" />

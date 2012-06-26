@@ -29,7 +29,7 @@ namespace Jabber.Net.Server.Handlers
                     // unknown request iq
                     return Error(session, ErrorCondition.ServiceUnavailable, stanza);
                 }
-                return Void();
+                return Void(); // ignore
             }
 
             if (stanza.HasTo && stanza.To.IsFull)
@@ -50,7 +50,7 @@ namespace Jabber.Net.Server.Handlers
                     }
                     else
                     {
-                        return RequestCancel(to, iq);
+                        return Response(to, iq);
                     }
                 }
                 return Send(to, stanza);

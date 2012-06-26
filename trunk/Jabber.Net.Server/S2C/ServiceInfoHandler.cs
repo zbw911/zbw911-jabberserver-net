@@ -14,6 +14,7 @@ namespace Jabber.Net.Server.S2C
         private readonly DateTime started = DateTime.UtcNow;
 
 
+        [IQType(ErrorCondition.BadRequest, IqType.get)]
         public XmppHandlerResult ProcessElement(LastIq element, XmppSession session, XmppHandlerContext context)
         {
             element.SwitchDirection();
@@ -22,6 +23,7 @@ namespace Jabber.Net.Server.S2C
             return Send(session, element);
         }
 
+        [IQType(ErrorCondition.BadRequest, IqType.get)]
         public XmppHandlerResult ProcessElement(VersionIq element, XmppSession session, XmppHandlerContext context)
         {
             element.SwitchDirection();
