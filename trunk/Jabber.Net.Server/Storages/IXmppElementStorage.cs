@@ -1,32 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using agsXMPP;
 using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Storages
 {
     public interface IXmppElementStorage
     {
-        T GetSingleElement<T>(string key);
+        Element GetSingleElement(Jid jid, string tag, string ns);
 
-        void SaveSingleElement(string key, Element element);
+        void SaveSingleElement(Jid jid, Element element);
 
-        void RemoveSingleElement<T>(string key);
-
-
-        Element GetSingleElement(string key, Type elementType);
-
-        void RemoveSingleElement(string key, Type elementType);
+        void RemoveSingleElement(Jid jid, string tag, string ns);
 
 
-        IEnumerable<T> GetElements<T>(string key);
+        IEnumerable<Element> GetElements(Jid jid, string tag, string ns);
 
-        void SaveElements(string key, params Element[] elements);
+        void SaveElements(Jid jid, params Element[] element);
 
-        void RemoveElements<T>(string key);
-
-
-        IEnumerable<Element> GetElements(string key, Type elementType);
-
-        void RemoveElements(string key, Type elementType);
+        void RemoveElements(Jid jid, string tag, string ns);
     }
 }

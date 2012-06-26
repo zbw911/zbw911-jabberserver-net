@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -58,7 +58,7 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -86,10 +86,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="nunit.framework, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Refs\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
@@ -167,11 +163,10 @@
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
     <Compile Include="Storages\IXmppElementStorage.cs" />
+    <Compile Include="Storages\XmppElementStorage.cs" />
     <Compile Include="Storages\XmppUserStorage.cs" />
     <Compile Include="Storages\IXmppUserStorage.cs" />
-    <Compile Include="Storages\XmppStorageBase.cs" />
     <Compile Include="Storages\XmppStorageManager.cs" />
-    <Compile Include="Tests\XTest.cs" />
     <Compile Include="Args.cs" />
     <Compile Include="Utils\RandomUniqueId.cs" />
     <Compile Include="Utils\GuidUniqueId.cs" />
