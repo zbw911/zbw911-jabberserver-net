@@ -74,7 +74,7 @@ namespace Jabber.Net.Server.Handlers
                     foreach (var handler in handlers)
                     {
                         XmppHandlerResult result;
-                        foreach (var validator in handler.MethodInfo.GetCustomAttributes(false).OfType<XmppValidationAttribute>())
+                        foreach (var validator in handler.Validators)
                         {
                             result = validator.ValidateElement(element, session, context);
                             if (result != null)
