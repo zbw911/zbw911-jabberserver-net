@@ -75,12 +75,6 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        private IEnumerable<string> Intersect(IEnumerable<string> result, Jid jid)
-        {
-            var byJids = jids.GetIdentifiers(jid);
-            return 0 < byJids.Count() ? result.Intersect(byJids) : result;
-        }
-
 
         private class RouterStore<T>
         {

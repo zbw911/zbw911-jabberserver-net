@@ -18,6 +18,7 @@ namespace Jabber.Net.Server.S2C
         }
 
 
+        [IQType(ErrorCondition.BadRequest, IqType.get)]
         public XmppHandlerResult ProcessElement(VcardIq element, XmppSession session, XmppHandlerContext context)
         {
             var result = (VcardIq)iq.Clone();

@@ -9,7 +9,7 @@ namespace Jabber.Net.Server.S2C
     {
         private readonly DiscoInfoIq iq;
 
-
+        
         public ServiceDiscoInfoHandler(ServiceInfo serviceInfo, string[] features)
         {
             Args.NotNull(serviceInfo, "serviceInfo");
@@ -24,7 +24,7 @@ namespace Jabber.Net.Server.S2C
             }
         }
 
-
+        [IQType(ErrorCondition.BadRequest, IqType.get)]
         public XmppHandlerResult ProcessElement(DiscoInfoIq element, XmppSession session, XmppHandlerContext context)
         {
             var result = (DiscoInfoIq)iq.Clone();

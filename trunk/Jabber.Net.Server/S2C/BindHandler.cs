@@ -16,13 +16,10 @@ namespace Jabber.Net.Server.S2C
             context.Sessions.SupportBind = true;
         }
 
+        [IQType(ErrorCondition.BadRequest, IqType.set)]
         public XmppHandlerResult ProcessElement(BindIq element, XmppSession session, XmppHandlerContext context)
         {
-            if (element.Type != IqType.set)
-            {
-                return Error(session, ErrorCondition.BadRequest, element);
-            }
-            else if (element.Query.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
+            if (element.Query.TagName.Equals("bind", StringComparison.OrdinalIgnoreCase))
             {
                 return ProcessBind(element, session, context);
             }

@@ -73,7 +73,17 @@ namespace Jabber.Net.Server.Handlers
                 {
                     foreach (var handler in handlers)
                     {
-                        var result = handler.ProcessElement(element, session, context);
+                        XmppHandlerResult result;
+                        foreach (var validator in handler.MethodInfo.GetCustomAttributes(false).OfType<XmppValidationAttribute>())
+                        {
+                            result = validator.ValidateElement(element, session, context);
+                            if (result != null)
+                            {
+                                ProcessResult(result);
+                                continue;
+                            }
+                        }
+                        result = handler.ProcessElement(element, session, context);
                         ProcessResult(result);
                     }
                 }
