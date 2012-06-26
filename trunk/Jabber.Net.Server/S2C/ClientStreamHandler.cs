@@ -4,6 +4,7 @@ using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.sasl;
 using agsXMPP.protocol.stream;
+using agsXMPP.protocol.stream.feature;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
@@ -53,6 +54,10 @@ namespace Jabber.Net.Server.S2C
                     {
                         stream.Features.Mechanisms.AddChild(new Element("required"));
                     }
+                }
+                if (context.Sessions.SupportRegister)
+                {
+                    stream.Features.Register = new Register();
                 }
             }
             else

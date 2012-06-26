@@ -17,7 +17,7 @@
  *																					 *
  * For general enquiries visit our website at:										 *
  * http://www.ag-software.de														 *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 using System;
 
 using agsXMPP.protocol.client;
@@ -27,39 +27,34 @@ namespace agsXMPP.protocol.iq.register
     using client;
 
     /// <summary>
-	/// Used for registering new usernames on Jabber/XMPP Servers
-	/// </summary>
-	public class RegisterIq : IQ
-	{
-		private Register m_Register = new Register();
+    /// Used for registering new usernames on Jabber/XMPP Servers
+    /// </summary>
+    public class RegisterIq : IQ
+    {
+        public RegisterIq()
+        {
+            this.GenerateId();
+        }
 
-		public RegisterIq()
-		{
-			base.Query = m_Register;
-			this.GenerateId();
-		}
+        public RegisterIq(IQ iq)
+            : base(iq)
+        {
+        }
 
-		public RegisterIq(IqType type) : this()
-		{			
-			this.Type = type;		
-		}
-
-		public RegisterIq(IqType type, Jid to) : this(type)
-		{
-			this.To = to;
-		}
-
-		public RegisterIq(IqType type, Jid to, Jid from) : this(type, to)
-		{
-			this.From = from;
-		}
-
-		public new Register Query
-		{
-			get
-			{
-				return m_Register;
-			}           
-		}
-	}
+        public new Register Query
+        {
+            get
+            {
+                return SelectSingleElement(typeof(Register)) as Register;
+            }
+            set
+            {
+                RemoveTag(typeof(Register));
+                if (value != null)
+                {
+                    AddChild(value);
+                }
+            }
+        }
+    }
 }

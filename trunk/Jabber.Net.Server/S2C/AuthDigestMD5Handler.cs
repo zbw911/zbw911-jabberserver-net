@@ -51,7 +51,7 @@ namespace Jabber.Net.Server.S2C
             if (authStep.Step == AuthStep.Step1)
             {
                 var step = new Step2(element.TextBase64);
-                var user = context.Storages.Users.GetUser(new Jid(step.Username));
+                var user = context.Storages.Users.GetUser(step.Username);
 
                 if (user != null &&
                     string.Compare(session.Jid.Server, step.Realm, StringComparison.OrdinalIgnoreCase) == 0 &&

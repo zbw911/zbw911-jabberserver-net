@@ -128,6 +128,7 @@
     <Compile Include="Handlers\XmppValidationAttribute.cs" />
     <Compile Include="S2C\PrivateHandler.cs" />
     <Compile Include="S2C\IQTypeAttribute.cs" />
+    <Compile Include="S2C\RegisterHandler.cs" />
     <Compile Include="S2C\ServiceInfoHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
     <Compile Include="S2C\ServiceDiscoInfoHandler.cs" />
