@@ -27,6 +27,12 @@ namespace Jabber.Net.Server.Sessions
             set;
         }
 
+        public bool SupportRegister
+        {
+            get;
+            set;
+        }
+
 
         public XmppSessionManager()
         {
@@ -51,6 +57,11 @@ namespace Jabber.Net.Server.Sessions
             return null;
         }
 
+        public IEnumerable<XmppSession> FindSessions(Jid jid)
+        {
+            Args.NotNull(jid, "jid");
+            return new XmppSession[0];
+        }
 
         public void OpenSession(XmppSession session)
         {

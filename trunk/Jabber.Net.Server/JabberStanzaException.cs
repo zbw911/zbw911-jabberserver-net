@@ -11,6 +11,7 @@ namespace Jabber.Net.Server
     {
         private readonly ErrorCondition error;
         private readonly Stanza stanza;
+        private readonly string message;
 
 
         public override bool CloseStream
@@ -20,6 +21,11 @@ namespace Jabber.Net.Server
 
 
         public JabberStanzaException(ErrorCondition error, Stanza stanza)
+            : this(error, stanza, null)
+        {
+        }
+
+        public JabberStanzaException(ErrorCondition error, Stanza stanza, string message)
         {
             this.error = error;
             this.stanza = stanza;
@@ -38,6 +44,10 @@ namespace Jabber.Net.Server
             if (error == ErrorCondition.InternalServerError)
             {
                 e.Message = this.Message;
+            }
+            if (!string.IsNullOrEmpty(message))
+            {
+                e.Message = message;
             }
             if (stanza != null)
             {

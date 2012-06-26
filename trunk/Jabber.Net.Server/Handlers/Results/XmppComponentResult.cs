@@ -6,7 +6,7 @@ namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppComponentResult : XmppHandlerResult
     {
-        private readonly IEnumerable<XmppHandlerResult> results;
+        private readonly IList<XmppHandlerResult> results;
 
 
         public XmppComponentResult(params XmppHandlerResult[] results)
@@ -14,7 +14,12 @@ namespace Jabber.Net.Server.Handlers.Results
         {
             Args.NotNull(results, "results");
 
-            this.results = results.ToArray();
+            this.results = results.ToList();
+        }
+
+        public void AddResult(XmppHandlerResult result)
+        {
+            results.Add(result);
         }
 
 
