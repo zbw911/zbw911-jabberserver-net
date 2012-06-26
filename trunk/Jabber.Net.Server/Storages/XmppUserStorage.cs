@@ -2,7 +2,7 @@
 
 namespace Jabber.Net.Server.Storages
 {
-    public class XmppUserStorage : IXmppUserStorage
+    class XmppUserStorage : IXmppUserStorage
     {
         public XmppUser GetUser(Jid jid)
         {

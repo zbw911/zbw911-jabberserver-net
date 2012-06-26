@@ -25,28 +25,28 @@ namespace Jabber.Net.Server.S2C
 
             if (element.Type == IqType.get)
             {
-                var list = new List<Element>();
-                foreach (var e in element.ChildNodes.OfType<Element>())
+                var result = new List<Element>();
+                foreach (var e in element.Query.ChildNodes.OfType<Element>().ToArray())
                 {
-                    var restored = context.Storages.Elements.GetSingleElement(session.Jid.Bare, e.GetType());
+                    var restored = context.Storages.Elements.GetSingleElement(session.Jid, e.TagName, e.Namespace);
                     if (restored != null)
                     {
-                        list.Add(restored);
+                        result.Add(restored);
                     }
                 }
-                element.RemoveAllChildNodes();
-                foreach (var e in list)
+                element.Query.RemoveAllChildNodes();
+                foreach (var e in result)
                 {
-                    element.AddChild(e);
+                    element.Query.AddChild(e);
                 }
             }
             else if (element.Type == IqType.set)
             {
-                foreach (var e in element.ChildNodes.OfType<Element>())
+                foreach (var e in element.Query.ChildNodes.OfType<Element>())
                 {
-                    context.Storages.Elements.SaveSingleElement(session.Jid.Bare, e);
+                    context.Storages.Elements.SaveSingleElement(session.Jid, e);
                 }
-                element.RemoveAllChildNodes();
+                element.Query.RemoveAllChildNodes();
             }
 
             element.Type = IqType.result;
