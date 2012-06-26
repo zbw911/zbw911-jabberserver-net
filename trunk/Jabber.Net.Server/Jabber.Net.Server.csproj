@@ -130,6 +130,7 @@
     <Compile Include="Handlers\Results\XmppCloseResult.cs" />
     <Compile Include="Handlers\XmppDefaultHandler.cs" />
     <Compile Include="Handlers\XmppValidationAttribute.cs" />
+    <Compile Include="S2C\PrivateHandler.cs" />
     <Compile Include="S2C\IQTypeAttribute.cs" />
     <Compile Include="S2C\ServiceInfoHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Sessions\AuthMechanism.cs" />
     <Compile Include="Sessions\XmppSession.cs" />
     <Compile Include="Sessions\XmppSessionManager.cs" />
+    <Compile Include="Storages\IXmppElementStorage.cs" />
     <Compile Include="Storages\XmppUserStorage.cs" />
     <Compile Include="Storages\IXmppUserStorage.cs" />
     <Compile Include="Storages\XmppStorageBase.cs" />

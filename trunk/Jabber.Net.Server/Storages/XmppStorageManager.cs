@@ -12,6 +12,11 @@ namespace Jabber.Net.Server.Storages
             get { return GetStorage<IXmppUserStorage>("users"); }
         }
 
+        public IXmppElementStorage Elements
+        {
+            get { return GetStorage<IXmppElementStorage>("elements"); }
+        }
+
 
         public void AddStorage(string name, object storage)
         {

@@ -91,7 +91,7 @@ namespace Jabber.Net.Server.Connections
             }
             catch (Exception error)
             {
-                if (!(error is ObjectDisposedException))
+                if (!IgnoreError(error))
                 {
                     Log.Error(error);
                 }
@@ -112,7 +112,7 @@ namespace Jabber.Net.Server.Connections
             }
             catch (Exception error)
             {
-                if (!(error is ObjectDisposedException))
+                if (!IgnoreError(error))
                 {
                     Log.Error(error);
                 }
@@ -133,6 +133,11 @@ namespace Jabber.Net.Server.Connections
         private void RequiresNotClosed()
         {
             Args.Requires<ObjectDisposedException>(!closed, GetType().FullName);
+        }
+
+        private bool IgnoreError(Exception error)
+        {
+            return error is ObjectDisposedException || error is IOException;
         }
 
 
