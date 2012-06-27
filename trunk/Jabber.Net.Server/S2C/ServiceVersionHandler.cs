@@ -1,27 +1,22 @@
 ﻿using System;
 using agsXMPP.protocol.client;
-using agsXMPP.protocol.iq.last;
 using agsXMPP.protocol.iq.version;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class ServiceInfoHandler : XmppHandler,
-        IXmppHandler<LastIq>,
-        IXmppHandler<VersionIq>
+    class ServiceVersionHandler : XmppHandler, IXmppHandler<VersionIq>
     {
-        private readonly DateTime started = DateTime.UtcNow;
+        private readonly ServiceInfo serviceInfo;
 
 
-        [IQType(IqType.get)]
-        public XmppHandlerResult ProcessElement(LastIq element, XmppSession session, XmppHandlerContext context)
+        public ServiceVersionHandler(ServiceInfo serviceInfo)
         {
-            element.SwitchDirection();
-            element.Type = IqType.result;
-            element.Query.Seconds = (int)(DateTime.UtcNow - started).TotalSeconds;
-            return Send(session, element);
+            Args.NotNull(serviceInfo, "serviceInfo");
+            this.serviceInfo = serviceInfo;
         }
+
 
         [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(VersionIq element, XmppSession session, XmppHandlerContext context)
@@ -29,6 +24,8 @@ namespace Jabber.Net.Server.S2C
             element.SwitchDirection();
             element.Type = IqType.result;
             element.Query.Os = Environment.OSVersion.ToString();
+            element.Query.Name = serviceInfo.Name;
+            element.Query.Ver = "1.0";
             return Send(session, element);
         }
     }

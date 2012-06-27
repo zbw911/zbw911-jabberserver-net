@@ -132,10 +132,11 @@
       <DependentUpon>RS.resx</DependentUpon>
     </Compile>
     <Compile Include="S2C\ClientVCardHandler.cs" />
+    <Compile Include="S2C\ServiceLastHandler.cs" />
     <Compile Include="S2C\PrivateHandler.cs" />
     <Compile Include="S2C\IQTypeAttribute.cs" />
     <Compile Include="S2C\RegisterHandler.cs" />
-    <Compile Include="S2C\ServiceInfoHandler.cs" />
+    <Compile Include="S2C\ServiceVersionHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
     <Compile Include="S2C\ServiceDiscoInfoHandler.cs" />
     <Compile Include="S2C\ServiceDiscoItemsHandler.cs" />

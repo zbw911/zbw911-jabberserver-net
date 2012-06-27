@@ -10,15 +10,14 @@ namespace Jabber.Net.Server.S2C
         private readonly DiscoInfoIq iq;
 
         
-        public ServiceDiscoInfoHandler(ServiceInfo serviceInfo, string[] features)
+        public ServiceDiscoInfoHandler(ServiceInfo serviceInfo)
         {
             Args.NotNull(serviceInfo, "serviceInfo");
-            Args.NotNull(features, "features");
 
             iq = new DiscoInfoIq(IqType.result);
 
             iq.Query.AddIdentity(serviceInfo.Category, serviceInfo.Type, serviceInfo.Name);
-            foreach (var feature in features)
+            foreach (var feature in serviceInfo.Features)
             {
                 iq.Query.AddFeature(feature);
             }

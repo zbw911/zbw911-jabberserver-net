@@ -40,12 +40,18 @@ namespace Jabber.Net.Server.S2C
             set;
         }
 
+        public string[] Features
+        {
+            get;
+            set;
+        }
+
 
         public ServiceInfo(Jid jid, string name, string category, string type)
         {
             Args.NotNull(jid, "jid");
             Args.NotNull(name, "name");
-            Args.NotNull(category, "category"); 
+            Args.NotNull(category, "category");
             Args.NotNull(type, "type");
 
             Jid = jid;
