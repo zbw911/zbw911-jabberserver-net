@@ -39,7 +39,7 @@ namespace Jabber.Net.Server.Handlers
             if (stanza.HasTo && stanza.To.IsFull)
             {
                 // route stanza to client
-                var to = context.Sessions.FindSession(stanza.To);
+                var to = context.Sessions.GetSession(stanza.To);
                 if (to == null)
                 {
                     return Error(session, ErrorCondition.RecipientUnavailable, stanza);
@@ -50,7 +50,9 @@ namespace Jabber.Net.Server.Handlers
                 {
                     if (iq.Type == IqType.get || iq.Type == IqType.set)
                     {
-                        return Request(to, iq, Error(session, ErrorCondition.RecipientUnavailable, stanza));
+                        var defaultResponse = Error(session, ErrorCondition.RecipientUnavailable, stanza);
+                        iq.From = session.Jid;
+                        return Request(to, iq, defaultResponse);
                     }
                     else
                     {

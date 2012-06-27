@@ -4,7 +4,7 @@ namespace Jabber.Net.Server.Handlers
 {
     public abstract class XmppHandlerResult
     {
-        public XmppSession Session
+        protected XmppSession Session
         {
             get;
             private set;

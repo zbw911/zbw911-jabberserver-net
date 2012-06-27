@@ -28,7 +28,8 @@ namespace Jabber.Net.Server
         public JabberStanzaException(ErrorCondition error, Stanza stanza, string message)
         {
             this.error = error;
-            this.stanza = stanza;
+            this.stanza = (Stanza)stanza.Clone();
+            this.message = message;
         }
 
 

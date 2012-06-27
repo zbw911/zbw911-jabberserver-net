@@ -23,34 +23,29 @@ namespace Jabber.Net.Server.S2C
                 return Error(session, ErrorCondition.BadRequest, element);
             }
 
+            var elements = element.Query.ChildNodes.OfType<Element>().ToArray();
+            element.Query.RemoveAllChildNodes();
+
             if (element.Type == IqType.get)
             {
-                var result = new List<Element>();
-                foreach (var e in element.Query.ChildNodes.OfType<Element>().ToArray())
+                foreach (var e in elements)
                 {
                     var restored = context.Storages.Elements.GetSingleElement(session.Jid, e.TagName, e.Namespace);
                     if (restored != null)
                     {
-                        result.Add(restored);
+                        element.Query.AddChild(e);
                     }
                 }
-                element.Query.RemoveAllChildNodes();
-                foreach (var e in result)
-                {
-                    element.Query.AddChild(e);
-                }
             }
-            else if (element.Type == IqType.set)
+            else
             {
-                foreach (var e in element.Query.ChildNodes.OfType<Element>())
+                foreach (var e in elements)
                 {
                     context.Storages.Elements.SaveSingleElement(session.Jid, e);
                 }
-                element.Query.RemoveAllChildNodes();
             }
 
-            element.Type = IqType.result;
-            element.SwitchDirection();
+            element.ToResult();
             return Send(session, element);
         }
     }

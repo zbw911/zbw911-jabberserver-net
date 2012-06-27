@@ -113,17 +113,17 @@ namespace Jabber.Net.Server.Storages
 
         public IEnumerable<RosterItem> GetRosterItems(string username)
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<RosterItem>();
         }
 
         public void SaveRosterItem(string username, RosterItem ri)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void RemoveRosterItem(string username, Jid jid)
         {
-            throw new NotImplementedException();
+            
         }
 
         

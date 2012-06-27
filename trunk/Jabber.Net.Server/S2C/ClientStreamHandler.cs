@@ -49,11 +49,7 @@ namespace Jabber.Net.Server.S2C
                 stream.Features.Mechanisms = new Mechanisms();
                 foreach (var m in context.Sessions.SupportedAuthMechanisms)
                 {
-                    stream.Features.Mechanisms.AddChild(new Mechanism(m.Name));
-                    if (m.Required)
-                    {
-                        stream.Features.Mechanisms.AddChild(new Element("required"));
-                    }
+                    stream.Features.Mechanisms.AddChild(m);
                 }
                 if (context.Sessions.SupportRegister)
                 {

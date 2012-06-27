@@ -38,7 +38,12 @@ namespace Jabber.Net.Server.Handlers
 
         protected XmppHandlerResult Error(XmppSession session, ErrorCondition error, Stanza stanza)
         {
-            return Error(session, new JabberStanzaException(error, stanza));
+            return Error(session, error, stanza, null);
+        }
+
+        protected XmppHandlerResult Error(XmppSession session, ErrorCondition error, Stanza stanza, string message)
+        {
+            return Error(session, new JabberStanzaException(error, stanza, message));
         }
 
         protected XmppHandlerResult Error(XmppSession session, Exception error)

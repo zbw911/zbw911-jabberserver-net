@@ -16,7 +16,6 @@ namespace Jabber.Net.Server.Handlers.Results
             : base(session)
         {
             Args.NotNull(iq, "iq");
-            Args.Requires<InvalidOperationException>(timeoutResponse == null && (iq.Type == IqType.get || iq.Type == IqType.set), "timeoutResponce can not be null at get or set iq");
 
             this.iq = iq;
             this.timeoutResponse = timeoutResponse;
@@ -28,7 +27,7 @@ namespace Jabber.Net.Server.Handlers.Results
         {
             if (iq.Type == IqType.get || iq.Type == IqType.set)
             {
-                TaskQueue.AddTask(iq.Id, () => context.Handlers.ProcessResult(timeoutResponse));
+                TaskQueue.AddTask(iq.Id, () => context.Handlers.ProcessResult(timeoutResponse), timeout);
             }
             else
             {
