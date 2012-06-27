@@ -1,11 +1,8 @@
-using agsXMPP;
-using System.Linq;
-using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.iq.vcard;
+using Jabber.Net.Server;
 using Jabber.Net.Server.Storages;
 using NUnit.Framework;
-using Jabber.Net.Server;
-using agsXMPP.protocol.iq.vcard;
-using agsXMPP.protocol.iq.last;
 
 namespace Jabber.Net.Tests.Storages
 {
