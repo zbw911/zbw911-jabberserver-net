@@ -60,12 +60,12 @@ namespace Jabber.Net.Server.Handlers
             }
         }
 
-        public IEnumerable<IXmppHandlerInvoker> GetElementHandlers(Element e, Jid j)
+        public IEnumerable<IXmppHandlerInvoker> GetElementHandlers(Type t, Jid j)
         {
             Args.NotNull(j, "j");
-            Args.NotNull(e, "e");
+            Args.NotNull(t, "t");
 
-            return invokers.GetInvokers(e.GetType(), j);
+            return invokers.GetInvokers(t, j);
         }
 
         public IEnumerable<IXmppCloseHandler> GetCloseHandlers()

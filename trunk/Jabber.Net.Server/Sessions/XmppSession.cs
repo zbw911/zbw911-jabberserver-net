@@ -69,13 +69,12 @@ namespace Jabber.Net.Server.Sessions
         private XmppSession(string id)
         {
             Id = id;
+            Jid = Jid.Empty;
         }
 
         public XmppSession(IXmppEndPoint endpoint)
+            : this(endpoint.SessionId ?? id.CreateId())
         {
-            Args.NotNull(endpoint, "endpoint");
-
-            Id = endpoint.SessionId ?? id.CreateId();
             EndPoint = endpoint;
         }
 

@@ -14,8 +14,7 @@ namespace Jabber.Net.Server.S2C
         [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(LastIq element, XmppSession session, XmppHandlerContext context)
         {
-            element.SwitchDirection();
-            element.Type = IqType.result;
+            element.ToResult();
             element.Query.Seconds = (int)(DateTime.UtcNow - started).TotalSeconds;
             return Send(session, element);
         }

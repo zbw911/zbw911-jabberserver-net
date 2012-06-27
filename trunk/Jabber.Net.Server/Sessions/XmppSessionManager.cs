@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Jabber.Net.Server.Collections;
 using agsXMPP;
+using agsXMPP.protocol.sasl;
 
 namespace Jabber.Net.Server.Sessions
 {
@@ -9,7 +11,7 @@ namespace Jabber.Net.Server.Sessions
         private readonly ReaderWriterLockDictionary<string, XmppSession> sessions = new ReaderWriterLockDictionary<string, XmppSession>(1000);
 
 
-        public IList<AuthMechanism> SupportedAuthMechanisms
+        public IList<Mechanism> SupportedAuthMechanisms
         {
             get;
             private set;
@@ -36,7 +38,7 @@ namespace Jabber.Net.Server.Sessions
 
         public XmppSessionManager()
         {
-            SupportedAuthMechanisms = new List<AuthMechanism>();
+            SupportedAuthMechanisms = new List<Mechanism>();
         }
 
 
@@ -51,16 +53,16 @@ namespace Jabber.Net.Server.Sessions
             return sessions.TryGetValue(id, out s) ? s : null;
         }
 
-        public XmppSession FindSession(Jid jid)
+        public XmppSession GetSession(Jid jid)
         {
             Args.NotNull(jid, "jid");
-            return null;
+            return sessions.Values.SingleOrDefault(s => s.Jid == jid);
         }
 
         public IEnumerable<XmppSession> FindSessions(Jid jid)
         {
             Args.NotNull(jid, "jid");
-            return new XmppSession[0];
+            return sessions.Values.Where(s => s.Jid == jid).ToList();
         }
 
         public void OpenSession(XmppSession session)

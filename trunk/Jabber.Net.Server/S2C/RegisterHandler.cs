@@ -26,24 +26,21 @@ namespace Jabber.Net.Server.S2C
                 element.Query.Instructions = RS.RegisterInstructions;
                 element.Query.Username = string.Empty;
                 element.Query.Password = string.Empty;
-                element.Type = IqType.result;
+                element.ToResult();
                 if (session.Jid.HasUser && context.Storages.Users.GetUser(session.Jid.User) != null)
                 {
                     element.Query.Username = session.Jid.User;
                     element.Query.AddChild(new Element("registered"));
-                    element.SwitchDirection();
-                    element.From = null;
                 }
                 else
                 {
-                    element.From = element.To = null;
+                    element.To = null;
                 }
+                element.From = null;
                 return Send(session, element);
             }
             else
             {
-                element.Type = IqType.result;
-
                 if (element.Query.RemoveAccount)
                 {
                     if (!session.Authenticated || !session.Jid.HasUser)
@@ -57,34 +54,28 @@ namespace Jabber.Net.Server.S2C
                     {
                         if (!session.Equals(s))
                         {
-                            component.AddResult(Error(s, StreamErrorCondition.Conflict));
+                            component.AddResult(Error(s, StreamErrorCondition.NotAuthorized));
                         }
                     }
 
-                    element.Query.RemoveAllChildNodes();
-                    element.SwitchDirection();
+                    element.Query.Remove();
+                    element.ToResult();
+                    element.From = element.To = null;
                     component.AddResult(Send(session, element));
                     return component;
                 }
 
-                if (string.IsNullOrEmpty(element.Query.Username) ||
-                    string.IsNullOrEmpty(element.Query.Password) ||
-                    Stringprep.NamePrep(element.Query.Username) != element.Query.Username)
+                if (string.IsNullOrEmpty(element.Query.Username))
                 {
-                    var error = new JabberStanzaException(ErrorCondition.NotAcceptable, element);
-                    if (string.IsNullOrEmpty(element.Query.Username))
-                    {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterEmptyUsername);
-                    }
-                    else if (string.IsNullOrEmpty(element.Query.Password))
-                    {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterEmptyPassword);
-                    }
-                    else if (Stringprep.NamePrep(element.Query.Username) != element.Query.Username)
-                    {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterInvalidCharacter);
-                    }
-                    return Error(session, error);
+                    return Error(session, ErrorCondition.NotAcceptable, element, RS.RegisterEmptyUsername);
+                }
+                if (string.IsNullOrEmpty(element.Query.Password))
+                {
+                    return Error(session, ErrorCondition.NotAcceptable, element, RS.RegisterEmptyPassword);
+                }
+                if (Stringprep.NamePrep(element.Query.Username) != element.Query.Username)
+                {
+                    return Error(session, ErrorCondition.NotAcceptable, element, RS.RegisterInvalidCharacter);
                 }
 
                 var user = context.Storages.Users.GetUser(element.Query.Username);
@@ -95,12 +86,9 @@ namespace Jabber.Net.Server.S2C
 
                 context.Storages.Users.SaveUser(new XmppUser(element.Query.Username, element.Query.Password));
 
-                element.Query.RemoveAllChildNodes();
-                if (session.Authenticated)
-                {
-                    element.SwitchDirection();
-                }
-                else
+                element.Query.Remove();
+                element.ToResult();
+                if (!session.Authenticated)
                 {
                     element.To = null;
                 }

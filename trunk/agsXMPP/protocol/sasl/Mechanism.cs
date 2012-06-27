@@ -17,7 +17,7 @@
  *																					 *
  * For general enquiries visit our website at:										 *
  * http://www.ag-software.de														 *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using System;
 
@@ -56,69 +56,95 @@ namespace agsXMPP.protocol.sasl
 {
     using Xml.Dom;
 
-    public enum MechanismType 
-	{
-		NONE = 0,
-		KERBEROS_V4,
-		GSSAPI,
-		SKEY,
-		EXTERNAL,
-		CRAM_MD5,
-		ANONYMOUS,
-		OTP,
-		GSS_SPNEGO,
-		PLAIN,
-		SECURID,
-		NTLM,
-		NMAS_LOGIN,
-		NMAS_AUTHEN,
-		DIGEST_MD5,
-		ISO_9798_U_RSA_SHA1_ENC,
-		ISO_9798_M_RSA_SHA1_ENC,
-		ISO_9798_U_DSA_SHA1,
-		ISO_9798_M_DSA_SHA1,
-		ISO_9798_U_ECDSA_SHA1,
-		ISO_9798_M_ECDSA_SHA1,
-		KERBEROS_V5,
-		NMAS_SAMBA_AUTH,
+    public enum MechanismType
+    {
+        NONE = 0,
+        KERBEROS_V4,
+        GSSAPI,
+        SKEY,
+        EXTERNAL,
+        CRAM_MD5,
+        ANONYMOUS,
+        OTP,
+        GSS_SPNEGO,
+        PLAIN,
+        SECURID,
+        NTLM,
+        NMAS_LOGIN,
+        NMAS_AUTHEN,
+        DIGEST_MD5,
+        ISO_9798_U_RSA_SHA1_ENC,
+        ISO_9798_M_RSA_SHA1_ENC,
+        ISO_9798_U_DSA_SHA1,
+        ISO_9798_M_DSA_SHA1,
+        ISO_9798_U_ECDSA_SHA1,
+        ISO_9798_M_ECDSA_SHA1,
+        KERBEROS_V5,
+        NMAS_SAMBA_AUTH,
         X_GOOGLE_TOKEN
-	}
+    }
 
-	/// <summary>
-	/// Summary description for Mechanism.
-	/// </summary>
-	public class Mechanism : Element
-	{
-		public Mechanism()
-		{
-			this.TagName    = "mechanism";
-            this.Namespace  = Uri.SASL;
-		}
+    /// <summary>
+    /// Summary description for Mechanism.
+    /// </summary>
+    public class Mechanism : Element
+    {
+        public Mechanism()
+        {
+            this.TagName = "mechanism";
+            this.Namespace = Uri.SASL;
+        }
 
-		public Mechanism(MechanismType mechanism) : this()
-		{
-			MechanismType = mechanism;
-		}
+        public Mechanism(MechanismType mechanism)
+            : this(mechanism, false)
+        {
+        }
 
-		/// <summary>
-		/// SASL mechanis as enum
-		/// </summary>
-		public MechanismType MechanismType
-		{
-			get 
-			{
-                return GetMechanismType(this.Value);				                
-			}
-			set 
-			{
-                this.Value = GetMechanismName(value);		
-			}
-		}
-        
-		public static MechanismType GetMechanismType(string mechanism)
-		{
+        public Mechanism(MechanismType mechanism, bool required)
+            : this()
+        {
+            MechanismType = mechanism;
+            Required = required;
+        }
+
+        /// <summary>
+        /// SASL mechanis as enum
+        /// </summary>
+        public MechanismType MechanismType
+        {
+            get
+            {
+                return GetMechanismType(this.Value);
+            }
+            set
+            {
+                this.Value = GetMechanismName(value);
+            }
+        }
+
+        public bool Required
+        {
+            get
+            {
+                return SelectSingleElement("required") != null;
+            }
+            set
+            {
+                if (value)
+                {
+                    AddChild(new Element("required"));
+                }
+                else
+                {
+                    RemoveAllChildNodes();
+                }
+            }
+        }
+
+        public static MechanismType GetMechanismType(string mechanism)
+        {
             switch (mechanism)
-			{
+            {
                 //case "KERBEROS_V4":
                 //    return MechanismType.KERBEROS_V4;
                 //case "GSSAPI":
@@ -166,63 +192,63 @@ namespace agsXMPP.protocol.sasl
                 case "X-GOOGLE-TOKEN":
                     return MechanismType.X_GOOGLE_TOKEN;
                 default:
-					return MechanismType.NONE;
-			}
-		}
+                    return MechanismType.NONE;
+            }
+        }
 
-		public static string GetMechanismName(MechanismType mechanism)
-		{
-			switch (mechanism)
-			{				
-				case MechanismType.KERBEROS_V4:
-					return "KERBEROS_V4";
-				case MechanismType.GSSAPI:
-					return "GSSAPI";
-				case MechanismType.SKEY:
-					return "SKEY";
-				case MechanismType.EXTERNAL:
-					return "EXTERNAL";
-				case MechanismType.CRAM_MD5:
-					return "CRAM-MD5";
-				case MechanismType.ANONYMOUS:
-					return "ANONYMOUS";
-				case MechanismType.OTP:
-					return "OTP";
-				case MechanismType.GSS_SPNEGO:
-					return "GSS-SPNEGO";
-				case MechanismType.PLAIN:
-					return "PLAIN";
-				case MechanismType.SECURID:
-					return "SECURID";
-				case MechanismType.NTLM:
-					return "NTLM";
-				case MechanismType.NMAS_LOGIN:
-					return "NMAS_LOGIN";
-				case MechanismType.NMAS_AUTHEN:
-					return "NMAS_AUTHEN";
-				case MechanismType.DIGEST_MD5:
-					return "DIGEST-MD5";
-				case MechanismType.ISO_9798_U_RSA_SHA1_ENC:
-					return "9798-U-RSA-SHA1-ENC";
-				case MechanismType.ISO_9798_M_RSA_SHA1_ENC:
-					return "9798-M-RSA-SHA1-ENC";
-				case MechanismType.ISO_9798_U_DSA_SHA1:
-					return "9798-U-DSA-SHA1";
-				case MechanismType.ISO_9798_M_DSA_SHA1:
-					return "9798-M-DSA-SHA1";
-				case MechanismType.ISO_9798_U_ECDSA_SHA1:
-					return "9798-U-ECDSA-SHA1";
-				case MechanismType.ISO_9798_M_ECDSA_SHA1:
-					return "9798-M-ECDSA-SHA1";
-				case MechanismType.KERBEROS_V5:
-					return "KERBEROS_V5";
-				case MechanismType.NMAS_SAMBA_AUTH:
-					return "NMAS-SAMBA-AUTH";
+        public static string GetMechanismName(MechanismType mechanism)
+        {
+            switch (mechanism)
+            {
+                case MechanismType.KERBEROS_V4:
+                    return "KERBEROS_V4";
+                case MechanismType.GSSAPI:
+                    return "GSSAPI";
+                case MechanismType.SKEY:
+                    return "SKEY";
+                case MechanismType.EXTERNAL:
+                    return "EXTERNAL";
+                case MechanismType.CRAM_MD5:
+                    return "CRAM-MD5";
+                case MechanismType.ANONYMOUS:
+                    return "ANONYMOUS";
+                case MechanismType.OTP:
+                    return "OTP";
+                case MechanismType.GSS_SPNEGO:
+                    return "GSS-SPNEGO";
+                case MechanismType.PLAIN:
+                    return "PLAIN";
+                case MechanismType.SECURID:
+                    return "SECURID";
+                case MechanismType.NTLM:
+                    return "NTLM";
+                case MechanismType.NMAS_LOGIN:
+                    return "NMAS_LOGIN";
+                case MechanismType.NMAS_AUTHEN:
+                    return "NMAS_AUTHEN";
+                case MechanismType.DIGEST_MD5:
+                    return "DIGEST-MD5";
+                case MechanismType.ISO_9798_U_RSA_SHA1_ENC:
+                    return "9798-U-RSA-SHA1-ENC";
+                case MechanismType.ISO_9798_M_RSA_SHA1_ENC:
+                    return "9798-M-RSA-SHA1-ENC";
+                case MechanismType.ISO_9798_U_DSA_SHA1:
+                    return "9798-U-DSA-SHA1";
+                case MechanismType.ISO_9798_M_DSA_SHA1:
+                    return "9798-M-DSA-SHA1";
+                case MechanismType.ISO_9798_U_ECDSA_SHA1:
+                    return "9798-U-ECDSA-SHA1";
+                case MechanismType.ISO_9798_M_ECDSA_SHA1:
+                    return "9798-M-ECDSA-SHA1";
+                case MechanismType.KERBEROS_V5:
+                    return "KERBEROS_V5";
+                case MechanismType.NMAS_SAMBA_AUTH:
+                    return "NMAS-SAMBA-AUTH";
                 case MechanismType.X_GOOGLE_TOKEN:
                     return "X-GOOGLE-TOKEN";
-				default:
-					return null;
-			}
-		}
-	}
+                default:
+                    return null;
+            }
+        }
+    }
 }

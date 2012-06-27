@@ -13,14 +13,7 @@ namespace Jabber.Net.Server.S2C
             var to = element.HasTo ? element.To : session.Jid;
             if (element.Type == IqType.get)
             {
-                element.SwitchDirection();
-                element.Type = IqType.result;
-                element.Vcard = context.Storages.Users.GetVCard(to.User);
-                if (element.Vcard == null)
-                {
-                    return Error(session, ErrorCondition.ItemNotFound, element);
-                }
-                return Send(session, element);
+                element.Vcard = context.Storages.Users.GetVCard(to.User) ?? new Vcard();
             }
             else
             {
@@ -28,11 +21,11 @@ namespace Jabber.Net.Server.S2C
                 {
                     return Error(session, ErrorCondition.Forbidden, element);
                 }
-                element.SwitchDirection();
-                element.Type = IqType.result;
                 context.Storages.Users.SetVCard(to.User, element.Vcard);
-                return Send(session, element);
+                element.Vcard.Remove();
             }
+            element.ToResult();
+            return Send(session, element);
         }
     }
 }

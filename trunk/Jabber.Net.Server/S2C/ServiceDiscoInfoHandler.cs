@@ -7,30 +7,25 @@ namespace Jabber.Net.Server.S2C
 {
     class ServiceDiscoInfoHandler : XmppHandler, IXmppHandler<DiscoInfoIq>
     {
-        private readonly DiscoInfoIq iq;
+        private readonly ServiceInfo serviceInfo;
 
         
         public ServiceDiscoInfoHandler(ServiceInfo serviceInfo)
         {
             Args.NotNull(serviceInfo, "serviceInfo");
-
-            iq = new DiscoInfoIq(IqType.result);
-
-            iq.Query.AddIdentity(serviceInfo.Category, serviceInfo.Type, serviceInfo.Name);
-            foreach (var feature in serviceInfo.Features)
-            {
-                iq.Query.AddFeature(feature);
-            }
+            this.serviceInfo = serviceInfo;
         }
 
         [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(DiscoInfoIq element, XmppSession session, XmppHandlerContext context)
         {
-            var result = (DiscoInfoIq)iq.Clone();
-            result.Id = element.Id;
-            result.To = session.Jid;
-            result.From = element.To;
-            return Send(session, result);
+            element.ToResult();
+            element.Query.AddIdentity(serviceInfo.Category, serviceInfo.Type, serviceInfo.Name);
+            foreach (var feature in serviceInfo.Features)
+            {
+                element.Query.AddFeature(feature);
+            }
+            return Send(session, element);
         }
     }
 }
