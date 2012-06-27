@@ -24,43 +24,37 @@ namespace Jabber.Net.Server.Storages
         }
 
 
-        public Element GetSingleElement(Jid jid, string tag, string ns)
+        public Element GetSingleElement(Jid jid, string key)
         {
-            Args.NotNull(jid, "jid");
-            return GetElements(true, jid, tag, ns).SingleOrDefault();
+            return GetElements(true, jid, key).SingleOrDefault();
         }
 
-        public void SaveSingleElement(Jid jid, Element element)
+        public void SaveSingleElement(Jid jid, string key, Element element)
         {
-            Args.NotNull(jid, "jid");
             Args.NotNull(element, "element");
-            SaveElements(true, jid, element);
+            SaveElements(true, jid, key, element);
         }
 
-        public void RemoveSingleElement(Jid jid, string tag, string ns)
+        public void RemoveSingleElement(Jid jid, string key)
         {
-            Args.NotNull(jid, "jid");
-            RemoveElements(true, jid, tag, ns);
+            RemoveElements(true, jid, key);
         }
 
 
-        public IEnumerable<Element> GetElements(Jid jid, string tag, string ns)
+        public IEnumerable<Element> GetElements(Jid jid, string key)
         {
-            Args.NotNull(jid, "jid");
-            return GetElements(false, jid, tag, ns);
+            return GetElements(false, jid, key);
         }
 
-        public void SaveElements(Jid jid, params Element[] elements)
+        public void SaveElements(Jid jid, string key, params Element[] elements)
         {
-            Args.NotNull(jid, "jid");
             Args.NotNull(elements, "elements");
-            SaveElements(false, jid, elements);
+            SaveElements(false, jid, key, elements);
         }
 
-        public void RemoveElements(Jid jid, string tag, string ns)
+        public void RemoveElements(Jid jid, string key)
         {
-            Args.NotNull(jid, "jid");
-            RemoveElements(false, jid, tag, ns);
+            RemoveElements(false, jid, key);
         }
 
 
@@ -91,12 +85,15 @@ namespace Jabber.Net.Server.Storages
             return new DbManager(connectionStringName);
         }
 
-        private IEnumerable<Element> GetElements(bool single, Jid jid, string tag, string ns)
+        private IEnumerable<Element> GetElements(bool single, Jid jid, string key)
         {
+            Args.NotNull(jid, "jid");
+            Args.NotNull(key, "key");
+
             var q = new SqlQuery(single ? "jabber_element" : "jabber_elements")
                 .Select("element_text")
                 .Where("jid", jid.Bare)
-                .Where("element_key", tag + ns);
+                .Where("element_key", key);
             using (var db = GetDb())
             {
                 return db.ExecList(q)
@@ -105,8 +102,11 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        private void SaveElements(bool single, Jid jid, params Element[] elements)
+        private void SaveElements(bool single, Jid jid, string key, params Element[] elements)
         {
+            Args.NotNull(jid, "jid");
+            Args.NotNull(key, "key");
+            
             using (var db = GetDb())
             using (var tx = db.BeginTransaction())
             {
@@ -114,7 +114,7 @@ namespace Jabber.Net.Server.Storages
                 {
                     var i = new SqlInsert(single ? "jabber_element" : "jabber_elements", true)
                         .InColumnValue("jid", jid.Bare)
-                        .InColumnValue("element_key", e.TagName + e.Namespace)
+                        .InColumnValue("element_key", key)
                         .InColumnValue("element_text", e.ToString());
                     db.ExecuteNonQuery(i);
                 }
@@ -122,13 +122,16 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        private void RemoveElements(bool single, Jid jid, string tag, string ns)
+        private void RemoveElements(bool single, Jid jid, string key)
         {
+            Args.NotNull(jid, "jid");
+            Args.NotNull(key, "key");
+            
             using (var db = GetDb())
             {
                 var d = new SqlDelete(single ? "jabber_element" : "jabber_elements")
                     .Where("jid", jid.Bare)
-                    .Where("element_key", tag + ns);
+                    .Where("element_key", key);
                 db.ExecuteNonQuery(d);
             }
         }

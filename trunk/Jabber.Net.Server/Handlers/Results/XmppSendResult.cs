@@ -31,7 +31,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         private void Save(Element e, XmppHandlerContext context)
         {
-            //context.Storage<IOfflineStorage>().Save(e);
+            context.Storages.Elements.SaveElements(Session.Jid, "offline", e);
         }
     }
 }

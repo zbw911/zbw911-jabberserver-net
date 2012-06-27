@@ -62,7 +62,7 @@ namespace Jabber.Net.Server.S2C
                     }
                     if (!sended)
                     {
-                        context.Storages.Elements.SaveElements(ri.Jid, unsubscribe, unsubscribed);
+                        context.Storages.Elements.SaveElements(ri.Jid, "offline", unsubscribe, unsubscribed);
                     }
                 }
                 //send all available user's resources

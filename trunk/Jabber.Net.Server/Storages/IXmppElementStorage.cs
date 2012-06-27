@@ -6,17 +6,17 @@ namespace Jabber.Net.Server.Storages
 {
     public interface IXmppElementStorage
     {
-        Element GetSingleElement(Jid jid, string tag, string ns);
+        Element GetSingleElement(Jid jid, string key);
 
-        void SaveSingleElement(Jid jid, Element element);
+        void SaveSingleElement(Jid jid, string key, Element element);
 
-        void RemoveSingleElement(Jid jid, string tag, string ns);
+        void RemoveSingleElement(Jid jid, string key);
 
 
-        IEnumerable<Element> GetElements(Jid jid, string tag, string ns);
+        IEnumerable<Element> GetElements(Jid jid, string key);
 
-        void SaveElements(Jid jid, params Element[] element);
+        void SaveElements(Jid jid, string key, params Element[] element);
 
-        void RemoveElements(Jid jid, string tag, string ns);
+        void RemoveElements(Jid jid, string key);
     }
 }

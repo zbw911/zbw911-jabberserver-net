@@ -19,10 +19,6 @@ namespace Jabber.Net.Server.Storages
 
         void SetVCard(string username, Vcard vcard);
 
-        Last GetLast(string username);
-
-        void SetLast(string username, Last last);
-
 
         IEnumerable<RosterItem> GetRosterItems(string username);
 
