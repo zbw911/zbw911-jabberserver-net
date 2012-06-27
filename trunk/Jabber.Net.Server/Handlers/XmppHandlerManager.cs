@@ -43,7 +43,7 @@ namespace Jabber.Net.Server.Handlers
 
         public string RegisterHandler(object handler)
         {
-            return RegisterHandler(new Jid("{user}@{server}/{resource}"), handler);
+            return RegisterHandler(Jid.Empty, handler);
         }
 
         public void UnregisterHandler(string id)

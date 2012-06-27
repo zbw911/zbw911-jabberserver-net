@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using agsXMPP;
 using Jabber.Net.Server.Utils;
 
@@ -13,7 +14,7 @@ namespace Jabber.Net.Server.Handlers
         private readonly Dictionary<string, IXmppHandlerInvoker> handlers = new Dictionary<string, IXmppHandlerInvoker>();
         private readonly RouterStore<string> handlerIds = new RouterStore<string>();
         private readonly RouterStore<Type> types = new RouterStore<Type>();
-        private readonly RouterStore<Jid> jids = new RouterStore<Jid>();
+        private readonly RouterStore<string> jids = new RouterStore<string>();
 
 
         public void Register(Type type, Jid jid, IXmppHandlerInvoker invoker)
@@ -22,7 +23,7 @@ namespace Jabber.Net.Server.Handlers
             {
                 var id = uniqueId.CreateId();
                 types.Add(type, id);
-                jids.Add(jid, id);
+                jids.Add(jid.ToString(), id);
                 handlerIds.Add(invoker.HandlerId, id);
                 handlers.Add(id, invoker);
             }
@@ -54,19 +55,12 @@ namespace Jabber.Net.Server.Handlers
                     byType = byType.Union(types.GetIdentifiers(type));
                     type = type.BaseType;
                 }
-
-                byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}@{server}/{resource}")));
-                if (jid.HasResource)
+                foreach (var pattern in jids.Keys)
                 {
-                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.User, jid.Server, "{resource}")));
-                }
-                if (jid.HasUser)
-                {
-                    byJid = byJid.Union(jids.GetIdentifiers(new Jid("{user}", jid.Server, jid.HasResource ? "{resource}" : null)));
-                }
-                if (!string.IsNullOrEmpty(jid.Server))
-                {
-                    byJid = byJid.Union(jids.GetIdentifiers(new Jid(jid.HasUser ? "{user}" : null, jid.Server, jid.HasResource ? "{resource}" : null)));
+                    if (Regex.IsMatch(jid.ToString(), pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
+                    {
+                        byJid = byJid.Union(jids.GetIdentifiers(pattern));
+                    }
                 }
                 return byType.Reverse()
                     .Intersect(byJid)
@@ -79,6 +73,13 @@ namespace Jabber.Net.Server.Handlers
         private class RouterStore<T>
         {
             private readonly Dictionary<T, List<string>> store = new Dictionary<T, List<string>>(100);
+
+
+            public IEnumerable<T> Keys
+            {
+                get { return store.Keys; }
+            }
+
 
             public void Add(T value, string id)
             {
