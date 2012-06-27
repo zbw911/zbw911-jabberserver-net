@@ -4,6 +4,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.register;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
+using Jabber.Net.Server.Resources;
 using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
@@ -22,7 +23,9 @@ namespace Jabber.Net.Server.S2C
         {
             if (element.Type == IqType.get)
             {
-                element.Query.Username = element.Query.Password = string.Empty;
+                element.Query.Instructions = RS.RegisterInstructions;
+                element.Query.Username = string.Empty;
+                element.Query.Password = string.Empty;
                 element.Type = IqType.result;
                 if (session.Jid.HasUser && context.Storages.Users.GetUser(session.Jid.User) != null)
                 {
@@ -58,7 +61,6 @@ namespace Jabber.Net.Server.S2C
                         }
                     }
 
-                    //TODO: remove roster subscriptions
                     element.Query.RemoveAllChildNodes();
                     element.SwitchDirection();
                     component.AddResult(Send(session, element));
@@ -72,15 +74,15 @@ namespace Jabber.Net.Server.S2C
                     var error = new JabberStanzaException(ErrorCondition.NotAcceptable, element);
                     if (string.IsNullOrEmpty(element.Query.Username))
                     {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, "Empty required field Username.");
+                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterEmptyUsername);
                     }
                     else if (string.IsNullOrEmpty(element.Query.Password))
                     {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, "Empty required field Password.");
+                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterEmptyPassword);
                     }
                     else if (Stringprep.NamePrep(element.Query.Username) != element.Query.Username)
                     {
-                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, "Invalid character.");
+                        error = new JabberStanzaException(ErrorCondition.NotAcceptable, element, RS.RegisterInvalidCharacter);
                     }
                     return Error(session, error);
                 }
