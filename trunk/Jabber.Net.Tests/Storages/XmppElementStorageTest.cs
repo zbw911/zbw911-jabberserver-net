@@ -1,5 +1,5 @@
-using agsXMPP;
 using System.Linq;
+using agsXMPP;
 using agsXMPP.protocol.client;
 using Jabber.Net.Server.Storages;
 using NUnit.Framework;
