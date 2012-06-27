@@ -47,6 +47,12 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
+        public bool Rostered
+        {
+            get;
+            private set;
+        }
+
         public object AuthData
         {
             get;
@@ -80,11 +86,17 @@ namespace Jabber.Net.Server.Sessions
             AuthData = null;
         }
 
-        public void BindResource(string resource)
+        public void Bind(string resource)
         {
             Jid.Resource = resource;
             Binded = true;
         }
+
+        public void RosterRequest()
+        {
+            Rostered = true;
+        }
+
 
         public override int GetHashCode()
         {

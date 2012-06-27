@@ -41,7 +41,7 @@ namespace Jabber.Net.Server.S2C
             }
 
             var resource = ((Bind)element.Query).Resource;
-            session.BindResource(!string.IsNullOrEmpty(resource) ? resource : session.Jid.User);
+            session.Bind(!string.IsNullOrEmpty(resource) ? resource : session.Jid.User);
 
             var answer = new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) };
             var send = Send(session, new BindIq(IqType.result) { Id = element.Id, Query = new Bind(session.Jid) });

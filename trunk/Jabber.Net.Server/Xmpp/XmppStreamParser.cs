@@ -12,6 +12,7 @@ using agsXMPP.protocol.iq.version;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.iq.roster;
 
 namespace Jabber.Net.Server.Xmpp
 {
@@ -116,6 +117,10 @@ namespace Jabber.Net.Server.Xmpp
                 else if (iq.SelectSingleElement<Register>() != null)
                 {
                     return new RegisterIq(iq);
+                }
+                else if (iq.SelectSingleElement<Roster>() != null)
+                {
+                    return new RosterIq(iq);
                 }
             }
             return element;
