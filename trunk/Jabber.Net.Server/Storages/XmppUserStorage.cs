@@ -15,12 +15,16 @@ namespace Jabber.Net.Server.Storages
     public class XmppUserStorage : IXmppUserStorage
     {
         private readonly string connectionStringName;
+        private readonly IXmppElementStorage elements;
 
 
-        public XmppUserStorage(string connectionStringName)
+        public XmppUserStorage(string connectionStringName, IXmppElementStorage elements)
         {
             Args.NotNull(connectionStringName, "connectionStringName");
+            Args.NotNull(elements, "elements");
+
             this.connectionStringName = connectionStringName;
+            this.elements = elements;
 
             CreateSchema();
         }
@@ -28,8 +32,7 @@ namespace Jabber.Net.Server.Storages
 
         public XmppUser GetUser(string username)
         {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
+            CheckUsername(username);
             using (var db = GetDb())
             {
                 return db
@@ -59,8 +62,7 @@ namespace Jabber.Net.Server.Storages
 
         public void RemoveUser(string username)
         {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
+            CheckUsername(username);
             using (var db = GetDb())
             {
                 db.ExecuteNonQuery(new SqlDelete("jabber_user").Where("username", username));
@@ -70,63 +72,49 @@ namespace Jabber.Net.Server.Storages
 
         public Vcard GetVCard(string username)
         {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
-            using (var db = GetDb())
-            {
-                var s = db.ExecScalar<string>(new SqlQuery("jabber_user").Select("uservcard").Where("username", username));
-                return !string.IsNullOrEmpty(s) ? ElementSerializer.DeSerializeElement<Vcard>(s) : null;
-            }
+            CheckUsername(username); 
+            return (Vcard)elements.GetSingleElement(new Jid(username), "vcard");
         }
 
         public void SetVCard(string username, Vcard vcard)
         {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
-            using (var db = GetDb())
+            CheckUsername(username);
+            if (vcard == null)
             {
-                db.ExecuteNonQuery(new SqlUpdate("jabber_user").Set("uservcard", vcard != null ? vcard.ToString() : null).Where("username", username));
+                elements.RemoveSingleElement(new Jid(username), "vcard");
             }
-        }
-
-        public Last GetLast(string username)
-        {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
-            using (var db = GetDb())
+            else
             {
-                var s = db.ExecScalar<string>(new SqlQuery("jabber_user").Select("userlast").Where("username", username));
-                return !string.IsNullOrEmpty(s) ? ElementSerializer.DeSerializeElement<Last>(s) : null;
-            }
-        }
-
-        public void SetLast(string username, Last last)
-        {
-            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
-
-            using (var db = GetDb())
-            {
-                db.ExecuteNonQuery(new SqlUpdate("jabber_user").Set("userlast", last != null ? last.ToString() : null).Where("username", username));
+                elements.SaveSingleElement(new Jid(username), "vcard", vcard);
             }
         }
 
 
         public IEnumerable<RosterItem> GetRosterItems(string username)
         {
+            CheckUsername(username);
             return Enumerable.Empty<RosterItem>();
         }
 
         public void SaveRosterItem(string username, RosterItem ri)
         {
-            
+            CheckUsername(username);
+            Args.NotNull(ri, "ri");
+            elements.SaveElements(new Jid(username), "roster" + ri.Jid.Bare, ri);
         }
 
         public void RemoveRosterItem(string username, Jid jid)
         {
-            
+            CheckUsername(username);
+            elements.RemoveElements(new Jid(username), "roster" + ri.Jid.Bare);
         }
 
-        
+
+        private void CheckUsername(string username)
+        {
+            Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
+        }
+
         private DbManager GetDb()
         {
             return new DbManager(connectionStringName);
@@ -137,8 +125,7 @@ namespace Jabber.Net.Server.Storages
             var jabber_user = new SqlCreate.Table("jabber_user", true)
                 .AddColumn(new SqlCreate.Column("username", DbType.String, 1071).NotNull(true).PrimaryKey(true))
                 .AddColumn(new SqlCreate.Column("userpass", DbType.String, 128).NotNull(true))
-                .AddColumn(new SqlCreate.Column("uservcard", DbType.String, UInt16.MaxValue).NotNull(false))
-                .AddColumn(new SqlCreate.Column("userlast", DbType.String, UInt16.MaxValue).NotNull(false));
+                .AddColumn(new SqlCreate.Column("uservcard", DbType.String, UInt16.MaxValue).NotNull(false));
 
             using (var db = GetDb())
             {

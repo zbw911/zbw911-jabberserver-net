@@ -75,35 +75,5 @@ namespace Jabber.Net.Tests.Storages
 
             storage.RemoveUser(username);
         }
-
-        [Test]
-        public void LastTest()
-        {
-            storage.RemoveUser(username);
-
-            var last1 = new Last { Seconds = 3, Value = "value" };
-            storage.SetLast(username, last1);
-            var last2 = storage.GetLast(username);
-            Assert.IsNull(last2);
-
-            var u = new XmppUser(username, "password");
-            storage.SaveUser(u);
-
-            last2 = storage.GetLast(username);
-            Assert.IsNull(last2);
-
-            storage.SetLast(username, last1);
-            last2 = storage.GetLast(username);
-            Assert.AreEqual(last1.ToString(), last2.ToString());
-
-            last2 = storage.GetLast("sss");
-            Assert.IsNull(last2);
-
-            storage.SetLast(username, null);
-            last2 = storage.GetLast(username);
-            Assert.IsNull(last2);
-
-            storage.RemoveUser(username);
-        }
     }
 }

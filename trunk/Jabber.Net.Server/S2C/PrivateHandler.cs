@@ -30,7 +30,7 @@ namespace Jabber.Net.Server.S2C
             {
                 foreach (var e in elements)
                 {
-                    var restored = context.Storages.Elements.GetSingleElement(session.Jid, e.TagName, e.Namespace);
+                    var restored = context.Storages.Elements.GetSingleElement(session.Jid, e.TagName + e.Namespace);
                     if (restored != null)
                     {
                         element.Query.AddChild(e);
@@ -41,7 +41,7 @@ namespace Jabber.Net.Server.S2C
             {
                 foreach (var e in elements)
                 {
-                    context.Storages.Elements.SaveSingleElement(session.Jid, e);
+                    context.Storages.Elements.SaveSingleElement(session.Jid, e.TagName + e.Namespace, e);
                 }
             }
 
