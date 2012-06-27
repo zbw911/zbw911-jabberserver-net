@@ -1,0 +1,112 @@
+using agsXMPP;
+using System.Linq;
+using agsXMPP.protocol.client;
+using Jabber.Net.Server.Storages;
+using NUnit.Framework;
+using Jabber.Net.Server;
+using agsXMPP.protocol.iq.vcard;
+using agsXMPP.protocol.iq.last;
+
+namespace Jabber.Net.Tests.Storages
+{
+    [TestFixture]
+    public class XmppUserStorageTest
+    {
+        private readonly IXmppUserStorage storage;
+        private const string username = "user";
+
+
+        public XmppUserStorageTest()
+        {
+            storage = new XmppUserStorage("users");
+        }
+
+
+        [Test]
+        public void UserTest()
+        {
+            storage.RemoveUser(username);
+
+            var u1 = new XmppUser(username, "password");
+            storage.SaveUser(u1);
+
+            var u2 = storage.GetUser(username);
+            Assert.AreEqual(u1.Name, u2.Name);
+            Assert.AreEqual(u1.Password, u2.Password);
+
+            u1 = new XmppUser(username, "password2");
+            storage.SaveUser(u1);
+
+            u2 = storage.GetUser(username);
+            Assert.AreEqual(u1.Name, u2.Name);
+            Assert.AreEqual(u1.Password, u2.Password);
+
+            u2 = storage.GetUser("sss");
+            Assert.IsNull(u2);
+
+            storage.RemoveUser(username);
+            u2 = storage.GetUser(username);
+            Assert.IsNull(u2);
+        }
+
+        [Test]
+        public void VCardTest()
+        {
+            storage.RemoveUser(username);
+
+            var vcard1 = new Vcard { Fullname = username };
+            storage.SetVCard(username, vcard1);
+            var vcard2 = storage.GetVCard(username);
+            Assert.IsNull(vcard2);
+
+            var u = new XmppUser(username, "password");
+            storage.SaveUser(u);
+
+            vcard2 = storage.GetVCard(username);
+            Assert.IsNull(vcard2);
+
+            storage.SetVCard(username, vcard1);
+            vcard2 = storage.GetVCard(username);
+            Assert.AreEqual(vcard1.ToString(), vcard2.ToString());
+
+            vcard2 = storage.GetVCard("sss");
+            Assert.IsNull(vcard2);
+
+            storage.SetVCard(username, null);
+            vcard2 = storage.GetVCard(username);
+            Assert.IsNull(vcard2);
+
+            storage.RemoveUser(username);
+        }
+
+        [Test]
+        public void LastTest()
+        {
+            storage.RemoveUser(username);
+
+            var last1 = new Last { Seconds = 3, Value = "value" };
+            storage.SetLast(username, last1);
+            var last2 = storage.GetLast(username);
+            Assert.IsNull(last2);
+
+            var u = new XmppUser(username, "password");
+            storage.SaveUser(u);
+
+            last2 = storage.GetLast(username);
+            Assert.IsNull(last2);
+
+            storage.SetLast(username, last1);
+            last2 = storage.GetLast(username);
+            Assert.AreEqual(last1.ToString(), last2.ToString());
+
+            last2 = storage.GetLast("sss");
+            Assert.IsNull(last2);
+
+            storage.SetLast(username, null);
+            last2 = storage.GetLast(username);
+            Assert.IsNull(last2);
+
+            storage.RemoveUser(username);
+        }
+    }
+}
