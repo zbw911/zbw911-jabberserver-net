@@ -18,6 +18,6 @@ namespace Jabber.Net.Server.Storages
 
         Last GetLast(string username);
 
-        void SetLast(string username, Last vcard);
+        void SetLast(string username, Last last);
     }
 }
