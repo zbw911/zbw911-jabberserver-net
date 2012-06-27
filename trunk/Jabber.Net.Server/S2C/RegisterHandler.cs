@@ -87,7 +87,8 @@ namespace Jabber.Net.Server.S2C
                     return Error(session, error);
                 }
 
-                if (context.Storages.Users.GetUser(element.Query.Username) != null)
+                var user = context.Storages.Users.GetUser(element.Query.Username);
+                if (user != null && user.Name != session.Jid.User)
                 {
                     return Error(session, ErrorCondition.Conflict, element);
                 }

@@ -132,6 +132,7 @@
       <DependentUpon>RS.resx</DependentUpon>
     </Compile>
     <Compile Include="S2C\ClientVCardHandler.cs" />
+    <Compile Include="S2C\RosterHandler.cs" />
     <Compile Include="S2C\ServiceLastHandler.cs" />
     <Compile Include="S2C\PrivateHandler.cs" />
     <Compile Include="S2C\IQTypeAttribute.cs" />

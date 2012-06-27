@@ -1,4 +1,7 @@
-﻿using agsXMPP.protocol.iq.last;
+﻿using System.Collections.Generic;
+using agsXMPP;
+using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 
 namespace Jabber.Net.Server.Storages
@@ -19,5 +22,12 @@ namespace Jabber.Net.Server.Storages
         Last GetLast(string username);
 
         void SetLast(string username, Last last);
+
+
+        IEnumerable<RosterItem> GetRosterItems(string username);
+
+        void SaveRosterItem(string username, RosterItem ri);
+
+        void RemoveRosterItem(string username, Jid jid);
     }
 }

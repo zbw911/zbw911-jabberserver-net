@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using agsXMPP;
 using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.util;
 using Jabber.Net.Server.Data;
@@ -64,6 +67,7 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
+
         public Vcard GetVCard(string username)
         {
             Args.Requires<ArgumentException>(!string.IsNullOrEmpty(username), "User name can not be empty.");
@@ -107,6 +111,22 @@ namespace Jabber.Net.Server.Storages
         }
 
 
+        public IEnumerable<RosterItem> GetRosterItems(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveRosterItem(string username, RosterItem ri)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveRosterItem(string username, Jid jid)
+        {
+            throw new NotImplementedException();
+        }
+
+        
         private DbManager GetDb()
         {
             return new DbManager(connectionStringName);
