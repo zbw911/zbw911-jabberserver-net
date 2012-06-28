@@ -15,7 +15,7 @@ namespace Jabber.Net.Tests.Storages
 
         public XmppUserStorageTest()
         {
-            storage = new XmppUserStorage("users");
+            storage = new XmppUserStorage("users", new XmppElementStorage("elements"));
         }
 
 

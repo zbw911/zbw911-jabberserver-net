@@ -93,7 +93,7 @@ namespace Jabber.Net.Server.Storages
             var q = new SqlQuery(single ? "jabber_element" : "jabber_elements")
                 .Select("element_text")
                 .Where("jid", jid.Bare)
-                .Where("element_key", key);
+                .Where(key.Contains('%') ? Exp.Like("element_key", key) : Exp.Eq("element_key", key));
             using (var db = GetDb())
             {
                 return db.ExecList(q)
@@ -131,7 +131,7 @@ namespace Jabber.Net.Server.Storages
             {
                 var d = new SqlDelete(single ? "jabber_element" : "jabber_elements")
                     .Where("jid", jid.Bare)
-                    .Where("element_key", key);
+                    .Where(key.Contains('%') ? Exp.Like("element_key", key) : Exp.Eq("element_key", key));
                 db.ExecuteNonQuery(d);
             }
         }
