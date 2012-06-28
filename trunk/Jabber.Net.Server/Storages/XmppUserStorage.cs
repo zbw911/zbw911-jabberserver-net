@@ -98,7 +98,7 @@ namespace Jabber.Net.Server.Storages
         public IEnumerable<RosterItem> GetRosterItems(string username)
         {
             CheckUsername(username);
-            return elements.Get(new Jid(username), "roster|%").OfType<RosterItem>();
+            return elements.GetElements(new Jid(username), "roster|%").OfType<RosterItem>();
         }
 
         public RosterItem GetRosterItem(string username, Jid jid)
