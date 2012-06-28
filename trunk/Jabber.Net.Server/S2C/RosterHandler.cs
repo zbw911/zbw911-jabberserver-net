@@ -17,26 +17,31 @@ namespace Jabber.Net.Server.S2C
                 return Error(session, ErrorCondition.Forbidden, element);
             }
 
-            var copy = (Element)element.Clone();
-            var component = Component();
-
             if (element.Type == IqType.get)
             {
                 foreach (var ri in context.Storages.Users.GetRosterItems(to.User))
                 {
                     element.Query.AddRosterItem(ri);
                 }
+                element.ToResult();
                 session.RosterRequest();
+                return Send(session, element);
             }
             else
             {
-                var roster = element.Query.GetRoster();
-                if (roster.Length != 1)
+                if (element.Query.GetRoster().Length != 1)
                 {
                     return Error(session, ErrorCondition.BadRequest, element);
                 }
-                
-                var ri = roster[0];
+
+                var result = Component();
+                var ri = element.Query.GetRoster()[0];
+
+                // send all available user's resources
+                foreach (var s in context.Sessions.FindSessions(session.Jid.BareJid))
+                {
+                    result.AddResult(Send(s, (Element)element.Clone()));
+                }
 
                 if (ri.Subscription != SubscriptionType.remove)
                 {
@@ -54,22 +59,22 @@ namespace Jabber.Net.Server.S2C
                     {
                         if (s.Rostered)
                         {
-                            component.AddResult(Send(s, unsubscribe, true));
-                            component.AddResult(Send(s, unsubscribed, true));
+                            result.AddResult(Send(s, unsubscribe, true));
+                            result.AddResult(Send(s, unsubscribed, true));
                             sended = true;
                         }
-                        component.AddResult(Send(s, unavailable));
+                        result.AddResult(Send(s, unavailable));
                     }
                     if (!sended)
                     {
                         context.Storages.Elements.SaveElements(ri.Jid, "offline", unsubscribe, unsubscribed);
                     }
                 }
+                
+                element.ToResult();
+                result.AddResult(Send(session, element));
+                return result;
                 //send all available user's resources
-                foreach (var s in context.Sessions.FindSessions(session.Jid.BareJid))
-                {
-                    component.AddResult(Send(s, copy));
-                }
 
                 /*catch (Exception)
                 {
@@ -84,11 +89,6 @@ namespace Jabber.Net.Server.S2C
                     throw;
                 }*/
             }
-
-            element.SwitchDirection();
-            element.Type = IqType.result;
-            component.AddResult(Send(session, element));
-            return component;
         }
     }
 }

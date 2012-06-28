@@ -57,7 +57,7 @@ namespace Jabber.Net.Server.Data.Sql
 
         public static Exp Like(string column, string value)
         {
-            return Like(column, value, SqlLike.AnyWhere);
+            return Like(column, value, SqlLike.None);
         }
 
         public static Exp Like(string column, string value, SqlLike like)

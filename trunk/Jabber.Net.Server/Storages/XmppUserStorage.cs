@@ -67,6 +67,8 @@ namespace Jabber.Net.Server.Storages
             {
                 db.ExecuteNonQuery(new SqlDelete("jabber_user").Where("username", username));
             }
+            elements.RemoveSingleElement(new Jid(username), "%");
+            elements.RemoveElements(new Jid(username), "%");
         }
 
 
@@ -93,20 +95,20 @@ namespace Jabber.Net.Server.Storages
         public IEnumerable<RosterItem> GetRosterItems(string username)
         {
             CheckUsername(username);
-            return Enumerable.Empty<RosterItem>();
+            return elements.GetElements(new Jid(username), "roster|%").OfType<RosterItem>();
         }
 
         public void SaveRosterItem(string username, RosterItem ri)
         {
             CheckUsername(username);
             Args.NotNull(ri, "ri");
-            elements.SaveElements(new Jid(username), "roster" + ri.Jid.Bare, ri);
+            elements.SaveElements(new Jid(username), "roster|" + ri.Jid.Bare, ri);
         }
 
         public void RemoveRosterItem(string username, Jid jid)
         {
             CheckUsername(username);
-            elements.RemoveElements(new Jid(username), "roster" + ri.Jid.Bare);
+            elements.RemoveElements(new Jid(username), "roster|" + jid.Bare);
         }
 
 
