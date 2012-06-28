@@ -9,9 +9,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class RegisterHandler : XmppHandler,
-        IXmppHandler<RegisterIq>,
-        IXmppRegisterHandler
+    class RegisterHandler : XmppHandler, IXmppHandler<RegisterIq>, IXmppRegisterHandler
     {
         public void OnRegister(XmppHandlerContext context)
         {
@@ -49,20 +47,19 @@ namespace Jabber.Net.Server.S2C
                     }
 
                     context.Storages.Users.RemoveUser(session.Jid.User);
-                    var component = Component();
+                    var errors = Component();
                     foreach (var s in context.Sessions.FindSessions(session.Jid.BareJid))
                     {
                         if (!session.Equals(s))
                         {
-                            component.AddResult(Error(s, StreamErrorCondition.NotAuthorized));
+                            errors.Add(Error(s, StreamErrorCondition.NotAuthorized));
                         }
                     }
 
                     element.Query.Remove();
                     element.ToResult();
                     element.From = element.To = null;
-                    component.AddResult(Send(session, element));
-                    return component;
+                    return Component(Send(session, element), errors);
                 }
 
                 if (string.IsNullOrEmpty(element.Query.Username))

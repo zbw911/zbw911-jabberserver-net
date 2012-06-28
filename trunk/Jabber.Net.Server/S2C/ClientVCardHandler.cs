@@ -24,8 +24,7 @@ namespace Jabber.Net.Server.S2C
                 context.Storages.Users.SetVCard(to.User, element.Vcard);
                 element.Vcard.Remove();
             }
-            element.ToResult();
-            return Send(session, element);
+            return Send(session, element.ToResult());
         }
     }
 }

@@ -26,6 +26,7 @@ using agsXMPP.Xml.Dom;
 namespace agsXMPP.protocol.iq.roster
 {
     using Xml.Dom;
+    using System.Collections.Generic;
 
     /// <summary>
 	/// Zusammenfassung für Roster.
@@ -43,22 +44,25 @@ namespace agsXMPP.protocol.iq.roster
 			this.Namespace	= Uri.IQ_ROSTER;
 		}
 
-		public RosterItem[] GetRoster()
-		{
-            ElementList nl = SelectElements(typeof(RosterItem));
-			int i = 0;
-			RosterItem[] result = new RosterItem[nl.Count];
-			foreach (RosterItem ri in nl)
-			{				
-				result[i] = (RosterItem) ri;
-				i++;
-			}
-			return result;
+		public IEnumerable<RosterItem> Items
+        {
+            get
+            {
+                ElementList nl = SelectElements(typeof(RosterItem));
+                int i = 0;
+                RosterItem[] result = new RosterItem[nl.Count];
+                foreach (RosterItem ri in nl)
+                {
+                    result[i] = (RosterItem)ri;
+                    i++;
+                }
+                return result;
+            }
 		}
 		
 		public void AddRosterItem(RosterItem r)
 		{
-			this.ChildNodes.Add(r);
+			ChildNodes.Add(r);
 		}		
 	}
 }

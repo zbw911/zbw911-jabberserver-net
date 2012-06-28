@@ -20,12 +20,11 @@ namespace Jabber.Net.Server.S2C
         [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(DiscoItemsIq element, XmppSession session, XmppHandlerContext context)
         {
-            element.ToResult();
             foreach (var item in items)
             {
                 element.Query.AddDiscoItem(item.Jid, item.Name);
             }
-            return Send(session, element);
+            return Send(session, element.ToResult());
         }
     }
 }

@@ -45,8 +45,7 @@ namespace Jabber.Net.Server.S2C
                 }
             }
 
-            element.ToResult();
-            return Send(session, element);
+            return Send(session, element.ToResult());
         }
     }
 }

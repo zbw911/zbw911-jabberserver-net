@@ -17,7 +17,7 @@ namespace Jabber.Net.Server.Handlers.Results
             this.results = results.ToList();
         }
 
-        public void AddResult(XmppHandlerResult result)
+        public void Add(XmppHandlerResult result)
         {
             results.Add(result);
         }

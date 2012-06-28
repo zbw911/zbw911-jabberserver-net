@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.Xml.Dom;
@@ -12,6 +13,8 @@ namespace Jabber.Net.Server.S2C
         [IQType(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(RosterIq element, XmppSession session, XmppHandlerContext context)
         {
+            //NOTE: 'ver' attribute
+
             var to = element.HasTo ? element.To : session.Jid;
             if (to != session.Jid)
             {
@@ -30,54 +33,56 @@ namespace Jabber.Net.Server.S2C
             }
             else
             {
-                if (element.Query.GetRoster().Length != 1)
+                if (element.Query.Items.Count() != 1)
                 {
                     return Error(session, ErrorCondition.BadRequest, element);
                 }
 
-                var ri = element.Query.GetRoster()[0];
-                var sessions = context.Sessions.FindSessions(session.Jid.BareJid);
-                var result = Component(Send(sessions, (Element)element.Clone())); // send all available user's resources
-
-                if (ri.Subscription != SubscriptionType.remove)
+                var ri = element.Query.Items.ElementAt(0);
+                try
                 {
-                    context.Storages.Users.SaveRosterItem(to.User, ri);
-                }
-                else
-                {
-                    context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);
+                    var sessions = context.Sessions.FindSessions(session.Jid.BareJid);
+                    var result = Component(Send(sessions, (Element)element.Clone())); // send all available user's resources
 
-                    var unsubscribe = new Presence(session.Jid, ri.Jid, PresenceType.unsubscribe);
-                    var unsubscribed = new Presence(session.Jid, ri.Jid, PresenceType.unsubscribed);
-                    var rostered = sessions.Where(s => s.Rostered);
-                    if (rostered.Any())
+                    if (ri.Subscription != SubscriptionType.remove)
                     {
-                        result.AddResult(Send(rostered, unsubscribe, unsubscribed));
+                        context.Storages.Users.SaveRosterItem(to.User, ri);
                     }
-                    else if (sessions.Any())
+                    else
                     {
-                        context.Storages.Elements.SaveElements(ri.Jid, "offline", unsubscribe, unsubscribed);
+                        context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);
+
+                        var unsub = Presence.Unsubscribe(session.Jid, ri.Jid);
+                        var unsubed = Presence.Unsubscribed(session.Jid, ri.Jid);
+                        var rostered = sessions.Where(s => s.Rostered);
+                        if (rostered.Any())
+                        {
+                            result.Add(Send(rostered, unsub, unsubed));
+                        }
+                        else if (sessions.Any())
+                        {
+                            context.Storages.Elements.SaveElements(ri.Jid, "offline", unsub, unsubed);
+                        }
+                        result.Add(Send(sessions, Presence.Unavailable(session.Jid, ri.Jid)));
                     }
-                    result.AddResult(Send(sessions, new Presence(session.Jid, ri.Jid, PresenceType.unavailable)));
+
+                    element.ToResult();
+                    result.Add(Send(session, element));
+                    return result;
                 }
-
-                element.ToResult();
-                result.AddResult(Send(session, element));
-                return result;
-                //send all available user's resources
-
-                /*catch (Exception)
+                catch (Exception ex)
                 {
                     // restore
-                    roster.RemoveAllChildNodes();
-                    item = context.StorageManager.RosterStorage.GetRosterItem(iq.From, item.Jid);
+                    var error = Error(session, ErrorCondition.InternalServerError, element, ex.Message);
+                    element.RemoveAllChildNodes();
+                    var item = context.Storages.Users.GetRosterItems(session.Jid.User).FirstOrDefault(r => r.Jid == ri.Jid);
                     if (item != null)
                     {
-                        roster.AddRosterItem(item.ToRosterItem());
-                        context.Sender.Broadcast(context.SessionManager.GetBareJidSessions(iq.From), iq);
+                        element.Query.AddRosterItem(item);
+                        return Component(error, Send(context.Sessions.FindSessions(session.Jid.BareJid), element));
                     }
-                    throw;
-                }*/
+                    return error;
+                }
             }
         }
     }
