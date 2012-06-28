@@ -6,7 +6,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class RosterHandler : XmppHandler, IXmppHandler<RosterIq>
+    class ClientRosterHandler : XmppHandler, IXmppHandler<RosterIq>
     {
         [IQType(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(RosterIq element, XmppSession session, XmppHandlerContext context)
@@ -35,13 +35,14 @@ namespace Jabber.Net.Server.S2C
                     return Error(session, ErrorCondition.BadRequest, element);
                 }
 
+                //TODO: ignore ask, subscription
                 var ri = element.Query.Items.ElementAt(0);
                 var result = Component();
 
                 // roster push
                 foreach (var s in context.Sessions.BareSessions(session.Jid))
                 {
-                    var push = new RosterIq { Type = element.Type, To = s.Jid, Query = new Roster() };
+                    var push = new RosterIq { Type = IqType.set, To = s.Jid, Query = new Roster() };
                     push.Query.AddRosterItem(ri);
                     result.Add(Send(s, push));
                 }
