@@ -187,10 +187,11 @@ namespace agsXMPP.protocol.client
 
         #endregion
 
-        public void ToResult()
+        public IQ ToResult()
         {
             Type = IqType.result;
             SwitchDirection();
+            return this;
         }
     }
 }

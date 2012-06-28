@@ -31,7 +31,7 @@ namespace Jabber.Net.Server.S2C
                 {
                     if (!session.Equals(s))
                     {
-                        result.AddResult(Close(s));
+                        result.Add(Close(s));
                     }
                 }
                 return result;

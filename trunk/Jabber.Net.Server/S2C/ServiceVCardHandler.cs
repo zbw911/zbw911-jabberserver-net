@@ -20,15 +20,13 @@ namespace Jabber.Net.Server.S2C
         [IQType(IqType.get)]
         public XmppHandlerResult ProcessElement(VcardIq element, XmppSession session, XmppHandlerContext context)
         {
-            element.ToResult();
             element.Query = new Vcard
             {
                 Fullname = serviceInfo.Name,
                 Description = serviceInfo.Copyrigth,
                 Url = serviceInfo.Url
             };
-
-            return Send(session, element);
+            return Send(session, element.ToResult());
         }
     }
 }
