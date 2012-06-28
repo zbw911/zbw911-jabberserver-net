@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using agsXMPP.protocol;
 using agsXMPP.protocol.Base;
 using agsXMPP.protocol.client;
@@ -23,6 +25,16 @@ namespace Jabber.Net.Server.Handlers
         protected XmppHandlerResult Send(XmppSession session, Element element, bool offline)
         {
             return new XmppSendResult(session, element, offline);
+        }
+
+        protected XmppHandlerResult Send(IEnumerable<XmppSession> sessions, params Element[] elements)
+        {
+            return Send(sessions, false, elements);
+        }
+
+        protected XmppHandlerResult Send(IEnumerable<XmppSession> sessions, bool offline, params Element[] elements)
+        {
+            return Component((from s in sessions from e in elements select Send(s, e, offline)).ToArray());
         }
 
 
