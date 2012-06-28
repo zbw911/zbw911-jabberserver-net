@@ -1,4 +1,5 @@
-﻿using agsXMPP.protocol.client;
+﻿using System.Linq;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
@@ -34,14 +35,9 @@ namespace Jabber.Net.Server.S2C
                     return Error(session, ErrorCondition.BadRequest, element);
                 }
 
-                var result = Component();
                 var ri = element.Query.GetRoster()[0];
-
-                // send all available user's resources
-                foreach (var s in context.Sessions.FindSessions(session.Jid.BareJid))
-                {
-                    result.AddResult(Send(s, (Element)element.Clone()));
-                }
+                var sessions = context.Sessions.FindSessions(session.Jid.BareJid);
+                var result = Component(Send(sessions, (Element)element.Clone())); // send all available user's resources
 
                 if (ri.Subscription != SubscriptionType.remove)
                 {
@@ -51,26 +47,20 @@ namespace Jabber.Net.Server.S2C
                 {
                     context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);
 
-                    var unsubscribe = new Presence { Type = PresenceType.unsubscribe, To = ri.Jid, From = session.Jid };
-                    var unsubscribed = new Presence { Type = PresenceType.unsubscribed, To = ri.Jid, From = session.Jid };
-                    var unavailable = new Presence { Type = PresenceType.unavailable, To = ri.Jid, From = session.Jid };
-                    var sended = false;
-                    foreach (var s in context.Sessions.FindSessions(ri.Jid.BareJid))
+                    var unsubscribe = new Presence(session.Jid, ri.Jid, PresenceType.unsubscribe);
+                    var unsubscribed = new Presence(session.Jid, ri.Jid, PresenceType.unsubscribed);
+                    var rostered = sessions.Where(s => s.Rostered);
+                    if (rostered.Any())
                     {
-                        if (s.Rostered)
-                        {
-                            result.AddResult(Send(s, unsubscribe, true));
-                            result.AddResult(Send(s, unsubscribed, true));
-                            sended = true;
-                        }
-                        result.AddResult(Send(s, unavailable));
+                        result.AddResult(Send(rostered, unsubscribe, unsubscribed));
                     }
-                    if (!sended)
+                    else if (sessions.Any())
                     {
                         context.Storages.Elements.SaveElements(ri.Jid, "offline", unsubscribe, unsubscribed);
                     }
+                    result.AddResult(Send(sessions, new Presence(session.Jid, ri.Jid, PresenceType.unavailable)));
                 }
-                
+
                 element.ToResult();
                 result.AddResult(Send(session, element));
                 return result;
