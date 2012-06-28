@@ -10,13 +10,13 @@ namespace Jabber.Net.Server.Storages
 
         void SaveSingleElement(Jid jid, string key, Element element);
 
-        void RemoveSingleElement(Jid jid, string key);
+        bool RemoveSingleElement(Jid jid, string key);
 
 
         IEnumerable<Element> GetElements(Jid jid, string key);
 
         void SaveElements(Jid jid, string key, params Element[] element);
 
-        void RemoveElements(Jid jid, string key);
+        bool RemoveElements(Jid jid, string key);
     }
 }

@@ -12,7 +12,7 @@ namespace Jabber.Net.Server.Storages
 
         void SaveUser(XmppUser user);
 
-        void RemoveUser(string username);
+        bool RemoveUser(string username);
 
 
         Vcard GetVCard(string username);
@@ -22,8 +22,10 @@ namespace Jabber.Net.Server.Storages
 
         IEnumerable<RosterItem> GetRosterItems(string username);
 
+        RosterItem GetRosterItem(string username, Jid jid);
+
         void SaveRosterItem(string username, RosterItem ri);
 
-        void RemoveRosterItem(string username, Jid jid);
+        bool RemoveRosterItem(string username, Jid jid);
     }
 }
