@@ -48,7 +48,7 @@ namespace Jabber.Net.Server.S2C
 
                     context.Storages.Users.RemoveUser(session.Jid.User);
                     var errors = Component();
-                    foreach (var s in context.Sessions.FindSessions(session.Jid.BareJid))
+                    foreach (var s in context.Sessions.BareSessions(session.Jid))
                     {
                         if (!session.Equals(s))
                         {

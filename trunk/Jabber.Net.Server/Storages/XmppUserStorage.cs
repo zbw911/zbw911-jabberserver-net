@@ -60,21 +60,24 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        public void RemoveUser(string username)
+        public bool RemoveUser(string username)
         {
             CheckUsername(username);
+
+            var affected = 0;
             using (var db = GetDb())
             {
-                db.ExecuteNonQuery(new SqlDelete("jabber_user").Where("username", username));
+                affected = db.ExecuteNonQuery(new SqlDelete("jabber_user").Where("username", username));
             }
             elements.RemoveSingleElement(new Jid(username), "%");
             elements.RemoveElements(new Jid(username), "%");
+            return 0 < affected;
         }
 
 
         public Vcard GetVCard(string username)
         {
-            CheckUsername(username); 
+            CheckUsername(username);
             return (Vcard)elements.GetSingleElement(new Jid(username), "vcard");
         }
 
@@ -95,7 +98,14 @@ namespace Jabber.Net.Server.Storages
         public IEnumerable<RosterItem> GetRosterItems(string username)
         {
             CheckUsername(username);
-            return elements.GetElements(new Jid(username), "roster|%").OfType<RosterItem>();
+            return elements.Get(new Jid(username), "roster|%").OfType<RosterItem>();
+        }
+
+        public RosterItem GetRosterItem(string username, Jid jid)
+        {
+            CheckUsername(username);
+            Args.NotNull(jid, "jid");
+            return elements.GetSingleElement(new Jid(username), "roster|" + jid.Bare) as RosterItem;
         }
 
         public void SaveRosterItem(string username, RosterItem ri)
@@ -105,10 +115,10 @@ namespace Jabber.Net.Server.Storages
             elements.SaveElements(new Jid(username), "roster|" + ri.Jid.Bare, ri);
         }
 
-        public void RemoveRosterItem(string username, Jid jid)
+        public bool RemoveRosterItem(string username, Jid jid)
         {
             CheckUsername(username);
-            elements.RemoveElements(new Jid(username), "roster|" + jid.Bare);
+            return elements.RemoveElements(new Jid(username), "roster|" + jid.Bare);
         }
 
 

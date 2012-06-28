@@ -59,10 +59,10 @@ namespace Jabber.Net.Server.Sessions
             return sessions.Values.SingleOrDefault(s => s.Jid == jid);
         }
 
-        public IEnumerable<XmppSession> FindSessions(Jid jid)
+        public IEnumerable<XmppSession> BareSessions(Jid jid)
         {
             Args.NotNull(jid, "jid");
-            return sessions.Values.Where(s => s.Jid == jid).ToList();
+            return sessions.Values.Where(s => s.Jid.BareJid == jid.BareJid).ToList();
         }
 
         public void OpenSession(XmppSession session)

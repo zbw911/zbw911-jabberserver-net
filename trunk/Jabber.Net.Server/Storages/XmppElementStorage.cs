@@ -35,9 +35,9 @@ namespace Jabber.Net.Server.Storages
             SaveElements(true, jid, key, element);
         }
 
-        public void RemoveSingleElement(Jid jid, string key)
+        public bool RemoveSingleElement(Jid jid, string key)
         {
-            RemoveElements(true, jid, key);
+            return RemoveElements(true, jid, key);
         }
 
 
@@ -52,9 +52,9 @@ namespace Jabber.Net.Server.Storages
             SaveElements(false, jid, key, elements);
         }
 
-        public void RemoveElements(Jid jid, string key)
+        public bool RemoveElements(Jid jid, string key)
         {
-            RemoveElements(false, jid, key);
+            return RemoveElements(false, jid, key);
         }
 
 
@@ -122,18 +122,20 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        private void RemoveElements(bool single, Jid jid, string key)
+        private bool RemoveElements(bool single, Jid jid, string key)
         {
             Args.NotNull(jid, "jid");
             Args.NotNull(key, "key");
-            
+
+            var affected = 0;
             using (var db = GetDb())
             {
                 var d = new SqlDelete(single ? "jabber_element" : "jabber_elements")
                     .Where("jid", jid.Bare)
                     .Where(key.Contains('%') ? Exp.Like("element_key", key) : Exp.Eq("element_key", key));
-                db.ExecuteNonQuery(d);
+                affected = db.ExecuteNonQuery(d);
             }
+            return 0 < affected;
         }
     }
 }
