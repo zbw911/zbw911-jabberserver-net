@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using agsXMPP;
-using agsXMPP.protocol.iq.last;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 

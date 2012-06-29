@@ -46,7 +46,7 @@ namespace Jabber.Net.Server.S2C
 
                 if (ri.Subscription == SubscriptionType.remove)
                 {
-                    var item = context.Storages.Users.GetRosterItems(to.User).FirstOrDefault(r => r.Jid.BareJid == ri.Jid.BareJid);
+                    var item = context.Storages.Users.GetRosterItem(to.User, ri.Jid.BareJid);
                     if (item != null)
                     {
                         context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);

@@ -41,12 +41,12 @@ namespace Jabber.Net.Server.S2C
                         return Error(session, ErrorCondition.ItemNotFound, element);
                     }
                 }
-                var ri = new RosterItem(session.Jid.BareJid)
+                var ri = new RosterItem(element.To.BareJid)
                 {
                     Ask = AskType.subscribe,
                     Subscription = SubscriptionType.none,
                 };
-                var push = RosterPush(element.To, ri, context);
+                var push = RosterPush(session.Jid, ri, context);
             }
 
             return Void();
