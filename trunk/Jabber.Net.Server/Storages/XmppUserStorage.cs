@@ -69,7 +69,6 @@ namespace Jabber.Net.Server.Storages
             {
                 affected = db.ExecuteNonQuery(new SqlDelete("jabber_user").Where("username", username));
             }
-            elements.RemoveSingleElement(new Jid(username), "%");
             elements.RemoveElements(new Jid(username), "%");
             return 0 < affected;
         }
@@ -78,7 +77,7 @@ namespace Jabber.Net.Server.Storages
         public Vcard GetVCard(string username)
         {
             CheckUsername(username);
-            return (Vcard)elements.GetSingleElement(new Jid(username), "vcard");
+            return (Vcard)elements.GetElement(new Jid(username), "vcard");
         }
 
         public void SetVCard(string username, Vcard vcard)
@@ -86,11 +85,11 @@ namespace Jabber.Net.Server.Storages
             CheckUsername(username);
             if (vcard == null)
             {
-                elements.RemoveSingleElement(new Jid(username), "vcard");
+                elements.RemoveElements(new Jid(username), "vcard");
             }
             else
             {
-                elements.SaveSingleElement(new Jid(username), "vcard", vcard);
+                elements.SaveElement(new Jid(username), "vcard", vcard);
             }
         }
 
@@ -105,14 +104,14 @@ namespace Jabber.Net.Server.Storages
         {
             CheckUsername(username);
             Args.NotNull(jid, "jid");
-            return elements.GetSingleElement(new Jid(username), "roster|" + jid.Bare) as RosterItem;
+            return elements.GetElement(new Jid(username), "roster|" + jid.Bare) as RosterItem;
         }
 
         public void SaveRosterItem(string username, RosterItem ri)
         {
             CheckUsername(username);
             Args.NotNull(ri, "ri");
-            elements.SaveElements(new Jid(username), "roster|" + ri.Jid.Bare, ri);
+            elements.SaveElement(new Jid(username), "roster|" + ri.Jid.Bare, ri);
         }
 
         public bool RemoveRosterItem(string username, Jid jid)

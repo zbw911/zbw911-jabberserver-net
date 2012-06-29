@@ -24,73 +24,12 @@ namespace Jabber.Net.Server.Storages
         }
 
 
-        public Element GetSingleElement(Jid jid, string key)
-        {
-            return GetElements(true, jid, key).SingleOrDefault();
-        }
-
-        public void SaveSingleElement(Jid jid, string key, Element element)
-        {
-            Args.NotNull(element, "element");
-            SaveElements(true, jid, key, element);
-        }
-
-        public bool RemoveSingleElement(Jid jid, string key)
-        {
-            return RemoveElements(true, jid, key);
-        }
-
-
         public IEnumerable<Element> GetElements(Jid jid, string key)
-        {
-            return GetElements(false, jid, key);
-        }
-
-        public void SaveElements(Jid jid, string key, params Element[] elements)
-        {
-            Args.NotNull(elements, "elements");
-            SaveElements(false, jid, key, elements);
-        }
-
-        public bool RemoveElements(Jid jid, string key)
-        {
-            return RemoveElements(false, jid, key);
-        }
-
-
-        private void CreateSchema()
-        {
-            var jabber_element = new SqlCreate.Table("jabber_element", true)
-                .AddColumn(new SqlCreate.Column("jid", DbType.String, 3071).NotNull(true))
-                .AddColumn(new SqlCreate.Column("element_key", DbType.String, 1024).NotNull(true))
-                .AddColumn(new SqlCreate.Column("element_text", DbType.String, UInt16.MaxValue).NotNull(false))
-                .PrimaryKey("jid", "element_key");
-
-            var jabber_elements = new SqlCreate.Table("jabber_elements", true)
-                .AddColumn(new SqlCreate.Column("id", DbType.Int32).NotNull(true).Autoincrement(true).PrimaryKey(true))
-                .AddColumn(new SqlCreate.Column("jid", DbType.String, 3071).NotNull(true))
-                .AddColumn(new SqlCreate.Column("element_key", DbType.String, 1024).NotNull(true))
-                .AddColumn(new SqlCreate.Column("element_text", DbType.String, UInt16.MaxValue).NotNull(false))
-                .AddIndex(new SqlCreate.Index("elements_index", "jabber_elements", "jid", "element_key"));
-
-            using (var db = GetDb())
-            {
-                db.ExecuteNonQuery(jabber_element);
-                db.ExecuteNonQuery(jabber_elements);
-            }
-        }
-
-        private DbManager GetDb()
-        {
-            return new DbManager(connectionStringName);
-        }
-
-        private IEnumerable<Element> GetElements(bool single, Jid jid, string key)
         {
             Args.NotNull(jid, "jid");
             Args.NotNull(key, "key");
 
-            var q = new SqlQuery(single ? "jabber_element" : "jabber_elements")
+            var q = new SqlQuery("jabber_element")
                 .Select("element_text")
                 .Where("jid", jid.Bare)
                 .Where(key.Contains('%') ? Exp.Like("element_key", key) : Exp.Eq("element_key", key));
@@ -102,40 +41,60 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        private void SaveElements(bool single, Jid jid, string key, params Element[] elements)
+        public Element GetElement(Jid jid, string key)
+        {
+            return GetElements(jid, key).FirstOrDefault();
+        }
+
+        public void SaveElement(Jid jid, string key, Element element)
         {
             Args.NotNull(jid, "jid");
             Args.NotNull(key, "key");
-            
+            Args.NotNull(element, "element");
+
             using (var db = GetDb())
-            using (var tx = db.BeginTransaction())
             {
-                foreach (var e in elements)
-                {
-                    var i = new SqlInsert(single ? "jabber_element" : "jabber_elements", true)
-                        .InColumnValue("jid", jid.Bare)
-                        .InColumnValue("element_key", key)
-                        .InColumnValue("element_text", e.ToString());
-                    db.ExecuteNonQuery(i);
-                }
-                tx.Commit();
+                var i = new SqlInsert("jabber_element", true)
+                    .InColumnValue("jid", jid.Bare)
+                    .InColumnValue("element_key", key)
+                    .InColumnValue("element_text", element.ToString());
+                db.ExecuteNonQuery(i);
             }
         }
 
-        private bool RemoveElements(bool single, Jid jid, string key)
+
+        public bool RemoveElements(Jid jid, string key)
         {
             Args.NotNull(jid, "jid");
             Args.NotNull(key, "key");
 
-            var affected = 0;
             using (var db = GetDb())
             {
-                var d = new SqlDelete(single ? "jabber_element" : "jabber_elements")
+                var d = new SqlDelete("jabber_element")
                     .Where("jid", jid.Bare)
                     .Where(key.Contains('%') ? Exp.Like("element_key", key) : Exp.Eq("element_key", key));
-                affected = db.ExecuteNonQuery(d);
+                return 0 < db.ExecuteNonQuery(d);
             }
-            return 0 < affected;
+        }
+
+
+        private void CreateSchema()
+        {
+            var jabber_element = new SqlCreate.Table("jabber_element", true)
+                .AddColumn(new SqlCreate.Column("jid", DbType.String, 3071).NotNull(true))
+                .AddColumn(new SqlCreate.Column("element_key", DbType.String, 1024).NotNull(true))
+                .AddColumn(new SqlCreate.Column("element_text", DbType.String, UInt16.MaxValue).NotNull(false))
+                .PrimaryKey("jid", "element_key");
+
+            using (var db = GetDb())
+            {
+                db.ExecuteNonQuery(jabber_element);
+            }
+        }
+
+        private DbManager GetDb()
+        {
+            return new DbManager(connectionStringName);
         }
     }
 }
