@@ -11,8 +11,6 @@ namespace Jabber.Net.Server.S2C
         [IQType(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(RosterIq element, XmppSession session, XmppHandlerContext context)
         {
-            //NOTE: 'ver' attribute
-
             var to = element.HasTo ? element.To : session.Jid;
             if (to != session.Jid)
             {
@@ -35,59 +33,43 @@ namespace Jabber.Net.Server.S2C
                     return Error(session, ErrorCondition.BadRequest, element);
                 }
 
-                //TODO: ignore ask, subscription
                 var ri = element.Query.Items.ElementAt(0);
                 var result = Component();
 
                 // roster push
                 foreach (var s in context.Sessions.BareSessions(session.Jid))
                 {
-                    var push = new RosterIq { Type = IqType.set, To = s.Jid, Query = new Roster() };
+                    var push = new RosterIq { Type = IqType.set, From = session.Jid.BareJid, To = s.Jid, Query = new Roster() };
                     push.Query.AddRosterItem(ri);
                     result.Add(Send(s, push));
                 }
 
-                if (ri.Subscription != SubscriptionType.remove)
-                {
-                    context.Storages.Users.SaveRosterItem(to.User, ri);
-                }
-                else
+                if (ri.Subscription == SubscriptionType.remove)
                 {
                     var item = context.Storages.Users.GetRosterItems(to.User).FirstOrDefault(r => r.Jid.BareJid == ri.Jid.BareJid);
                     if (item != null)
                     {
-                        var unsub = Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid);
-                        var unsubed = Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid);
-                        var sessions = context.Sessions.BareSessions(item.Jid);
-                        var rostered = sessions.Where(s => s.Rostered);
-                        if (rostered.Any())
+                        context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);
+
+                        if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.to)
                         {
-                            if (item.Subscription == SubscriptionType.to || item.Subscription == SubscriptionType.both)
-                            {
-                                result.Add(Send(rostered, unsub));
-                            }
-                            if (item.Subscription == SubscriptionType.from || item.Subscription == SubscriptionType.both)
-                            {
-                                result.Add(Send(rostered, unsubed));
-                            }
+                            context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid));
                         }
-                        else if (sessions.Any())
+                        if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.from)
                         {
-                            if (item.Subscription == SubscriptionType.to || item.Subscription == SubscriptionType.both)
-                            {
-                                context.Storages.Elements.SaveElements(ri.Jid, "offline", unsub);
-                            }
-                            if (item.Subscription == SubscriptionType.from || item.Subscription == SubscriptionType.both)
-                            {
-                                context.Storages.Elements.SaveElements(ri.Jid, "offline", unsubed);
-                            }
+                            context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid));
                         }
-                        result.Add(Send(sessions, Presence.Unavailable(session.Jid.BareJid, ri.Jid.BareJid)));
                     }
                     else
                     {
                         return Error(session, ErrorCondition.ItemNotFound, element);
                     }
+                }
+                else
+                {
+                    ri.RemoveTag("subscription"); // ignore subscription
+                    ri.RemoveTag("ask"); // ignore ask
+                    context.Storages.Users.SaveRosterItem(to.User, ri);
                 }
 
                 element.Query.Remove();
