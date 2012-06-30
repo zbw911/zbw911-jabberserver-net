@@ -5,3 +5,4 @@ syntax: glob
 *.user
 code.google
 trunk/_ReSharper.Jabber.Net/*
+trunk/Data/*.db3-journal
