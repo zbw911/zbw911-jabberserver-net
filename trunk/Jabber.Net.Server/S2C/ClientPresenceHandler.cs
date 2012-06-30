@@ -16,6 +16,8 @@ namespace Jabber.Net.Server.S2C
             {
                 element.To = element.To.BareJid;
             }
+            element.From = session.Jid.BareJid;
+
             if (element.HasTo && element.Type == PresenceType.subscribe)
             {
                 if (element.To.Server != session.Jid.Server)
@@ -33,7 +35,6 @@ namespace Jabber.Net.Server.S2C
                 {
                     if (context.Storages.Users.GetUser(element.To.User) != null)
                     {
-
 
                     }
                     else
