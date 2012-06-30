@@ -278,9 +278,9 @@ namespace agsXMPP.protocol.client
             return new Presence(from, to, PresenceType.unavailable);
         }
 
-        public string GetNickname()
+        public static Presence Available(Jid from, Jid to)
         {
-            return Nickname != null && !string.IsNullOrEmpty(Nickname.Value) ? Nickname.Value : null;
+            return new Presence(from, to, PresenceType.available);
         }
     }
 }

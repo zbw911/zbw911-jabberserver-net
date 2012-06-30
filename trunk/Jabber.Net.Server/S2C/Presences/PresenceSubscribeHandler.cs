@@ -4,7 +4,7 @@ using agsXMPP.protocol.iq.roster;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
-namespace Jabber.Net.Server.S2C
+namespace Jabber.Net.Server.S2C.Presences
 {
     class PresenceSubscribeHandler : XmppHandler, IXmppHandler<Presence>
     {
@@ -23,25 +23,15 @@ namespace Jabber.Net.Server.S2C
                 element.Type = PresenceType.subscribed;
                 return Send(session, element);
             }
-
-            ri.Ask = AskType.subscribe;
-            context.Storages.Users.SaveRosterItem(session.Jid.User, ri);
-
-            var result = Component(Send(context.Sessions.BareSessions(element.To), element));
-            result.Add(RosterPush(session.Jid, ri, context));
-            return result;
-        }
-
-        private XmppHandlerResult RosterPush(Jid to, RosterItem ri, XmppHandlerContext context)
-        {
-            var result = Component();
-            foreach (var s in context.Sessions.BareSessions(to))
+            else
             {
-                var push = new RosterIq { Type = IqType.set, To = s.Jid, Query = new Roster() };
-                push.Query.AddRosterItem(ri);
-                result.Add(Send(s, push));
+                ri.Ask = AskType.subscribe;
+                context.Storages.Users.SaveRosterItem(session.Jid.User, ri);
+
+                var result = Component(Send(context.Sessions.BareSessions(element.To), element));
+                result.Add(new RosterPush(session.Jid, ri, context));
+                return result;
             }
-            return result;
         }
     }
 }
