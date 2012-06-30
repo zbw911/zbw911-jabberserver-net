@@ -132,10 +132,11 @@
       <DependentUpon>RS.resx</DependentUpon>
     </Compile>
     <Compile Include="S2C\ClientVCardHandler.cs" />
-    <Compile Include="S2C\PresenceSubscribedHandler.cs" />
-    <Compile Include="S2C\PresenceSubscribeHandler.cs" />
+    <Compile Include="S2C\Presences\PresenceSubscribedHandler.cs" />
+    <Compile Include="S2C\Presences\PresenceSubscribeHandler.cs" />
     <Compile Include="S2C\ClientRosterHandler.cs" />
-    <Compile Include="S2C\PresenceFilterAttribute.cs" />
+    <Compile Include="S2C\Presences\PresenceFilterAttribute.cs" />
+    <Compile Include="S2C\RosterPush.cs" />
     <Compile Include="S2C\ServiceLastHandler.cs" />
     <Compile Include="S2C\PrivateHandler.cs" />
     <Compile Include="S2C\IQTypeAttribute.cs" />

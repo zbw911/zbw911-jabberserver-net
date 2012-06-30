@@ -72,6 +72,7 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult OnError(Exception error, XmppSession session, XmppHandlerContext context)
         {
+            Log.Error(error);
             return Error(session, error);
         }
 

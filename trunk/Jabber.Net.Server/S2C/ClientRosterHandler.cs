@@ -34,15 +34,7 @@ namespace Jabber.Net.Server.S2C
                 }
 
                 var ri = element.Query.Items.ElementAt(0);
-                var result = Component();
-
-                // roster push
-                foreach (var s in context.Sessions.BareSessions(session.Jid))
-                {
-                    var push = new RosterIq { Type = IqType.set, From = session.Jid.BareJid, To = s.Jid, Query = new Roster() };
-                    push.Query.AddRosterItem(ri);
-                    result.Add(Send(s, push));
-                }
+                var result = Component(new RosterPush(session.Jid, ri, context));
 
                 if (ri.Subscription == SubscriptionType.remove)
                 {
@@ -67,8 +59,17 @@ namespace Jabber.Net.Server.S2C
                 }
                 else
                 {
-                    ri.RemoveTag("subscription"); // ignore subscription
-                    ri.RemoveTag("ask"); // ignore ask
+                    var old = context.Storages.Users.GetRosterItem(to.User, ri.Jid);
+                    if (old != null)
+                    {
+                        ri.Subscription = old.Subscription;
+                        ri.Ask = old.Ask;
+                    }
+                    else
+                    {
+                        ri.Subscription = SubscriptionType.none;
+                        ri.Ask = AskType.NONE;
+                    }
                     context.Storages.Users.SaveRosterItem(to.User, ri);
                 }
 

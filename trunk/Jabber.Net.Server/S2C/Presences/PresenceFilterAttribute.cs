@@ -1,17 +1,16 @@
-﻿using System.Linq;
-using agsXMPP.protocol.client;
+﻿using agsXMPP.protocol.client;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
-namespace Jabber.Net.Server.S2C
+namespace Jabber.Net.Server.S2C.Presences
 {
     public class PresenceFilterAttribute : XmppValidationAttribute
     {
-        private readonly PresenceType[] allowed;
+        private readonly PresenceType allowed;
 
 
-        public PresenceFilterAttribute(params PresenceType[] allowed)
+        public PresenceFilterAttribute(PresenceType allowed)
         {
             this.allowed = allowed;
         }
@@ -25,17 +24,12 @@ namespace Jabber.Net.Server.S2C
             }
             presence.From = session.Jid.BareJid;
 
-            if (presence.HasTo && !allowed.Contains(presence.Type))
+            if (presence.HasTo && presence.Type == allowed)
             {
-                return Fail();
+                return Success();
             }
 
-            if (presence.To.Server != session.Jid.Server)
-            {
-                return Error(session, ErrorCondition.RemoteServerNotFound, presence);
-            }
-
-            return Success();
+            return Fail();
         }
     }
 }
