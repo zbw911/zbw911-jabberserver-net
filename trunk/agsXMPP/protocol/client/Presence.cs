@@ -16,6 +16,7 @@ namespace agsXMPP.protocol.client
     using extensions.primary;
     using x;
     using x.muc;
+    using agsXMPP.protocol.iq.roster;
 
     #endregion
 
@@ -275,6 +276,11 @@ namespace agsXMPP.protocol.client
         public static Presence Unavailable(Jid from, Jid to)
         {
             return new Presence(from, to, PresenceType.unavailable);
+        }
+
+        public string GetNickname()
+        {
+            return Nickname != null && !string.IsNullOrEmpty(Nickname.Value) ? Nickname.Value : null;
         }
     }
 }

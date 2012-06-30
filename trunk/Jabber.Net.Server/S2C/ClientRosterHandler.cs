@@ -53,11 +53,11 @@ namespace Jabber.Net.Server.S2C
 
                         if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.to)
                         {
-                            context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid));
+                            //context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid));
                         }
                         if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.from)
                         {
-                            context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid));
+                            //context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid));
                         }
                     }
                     else
