@@ -10,20 +10,20 @@ namespace Jabber.Net.Server.Utils
 
         public IDisposable ReadLock()
         {
-            return new ReaderLocker(locker);
+            return new ReaderLock(locker);
         }
 
         public IDisposable WriteLock()
         {
-            return new WriterLocker(locker);
+            return new WriterLock(locker);
         }
 
 
-        private class ReaderLocker : IDisposable
+        private class ReaderLock : IDisposable
         {
             private readonly ReaderWriterLockSlim _locker;
 
-            public ReaderLocker(ReaderWriterLockSlim locker)
+            public ReaderLock(ReaderWriterLockSlim locker)
             {
                 _locker = locker;
                 _locker.EnterReadLock();
@@ -35,11 +35,11 @@ namespace Jabber.Net.Server.Utils
             }
         }
 
-        private class WriterLocker : IDisposable
+        private class WriterLock : IDisposable
         {
             private readonly ReaderWriterLockSlim _locker;
 
-            public WriterLocker(ReaderWriterLockSlim locker)
+            public WriterLock(ReaderWriterLockSlim locker)
             {
                 _locker = locker;
                 _locker.EnterWriteLock();

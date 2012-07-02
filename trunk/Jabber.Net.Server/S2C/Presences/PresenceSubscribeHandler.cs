@@ -28,7 +28,7 @@ namespace Jabber.Net.Server.S2C.Presences
                 ri.Ask = AskType.subscribe;
                 context.Storages.Users.SaveRosterItem(session.Jid.User, ri);
 
-                var result = Component(Send(context.Sessions.BareSessions(element.To), element));
+                var result = Component(Send(context.Sessions.GetBareSessions(element.To), element));
                 result.Add(new RosterPush(session.Jid, ri, context));
                 return result;
             }

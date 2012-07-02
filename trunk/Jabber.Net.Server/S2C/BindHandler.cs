@@ -27,7 +27,7 @@ namespace Jabber.Net.Server.S2C
                 element.ToResult();
                 element.Query = new Bind(session.Jid);
                 var result = Component(Send(session, element));
-                foreach (var s in context.Sessions.BareSessions(session.Jid))
+                foreach (var s in context.Sessions.GetSessions(session.Jid))
                 {
                     if (!session.Equals(s))
                     {
