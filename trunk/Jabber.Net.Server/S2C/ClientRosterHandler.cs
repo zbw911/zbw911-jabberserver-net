@@ -19,7 +19,7 @@ namespace Jabber.Net.Server.S2C
 
             if (element.Type == IqType.get)
             {
-                foreach (var ri in context.Storages.Users.GetRosterItems(to.User))
+                foreach (var ri in context.Storages.Users.GetRosterItems(to))
                 {
                     element.Query.AddRosterItem(ri);
                 }
@@ -38,10 +38,10 @@ namespace Jabber.Net.Server.S2C
 
                 if (ri.Subscription == SubscriptionType.remove)
                 {
-                    var item = context.Storages.Users.GetRosterItem(to.User, ri.Jid.BareJid);
+                    var item = context.Storages.Users.GetRosterItem(to, ri.Jid);
                     if (item != null)
                     {
-                        context.Storages.Users.RemoveRosterItem(to.User, ri.Jid);
+                        context.Storages.Users.RemoveRosterItem(to, ri.Jid);
 
                         if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.to)
                         {
@@ -59,7 +59,7 @@ namespace Jabber.Net.Server.S2C
                 }
                 else
                 {
-                    var old = context.Storages.Users.GetRosterItem(to.User, ri.Jid);
+                    var old = context.Storages.Users.GetRosterItem(to, ri.Jid);
                     if (old != null)
                     {
                         ri.Subscription = old.Subscription;
@@ -70,7 +70,7 @@ namespace Jabber.Net.Server.S2C
                         ri.Subscription = SubscriptionType.none;
                         ri.Ask = AskType.NONE;
                     }
-                    context.Storages.Users.SaveRosterItem(to.User, ri);
+                    context.Storages.Users.SaveRosterItem(to, ri);
                 }
 
                 element.Query.Remove();

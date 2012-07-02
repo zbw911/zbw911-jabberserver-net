@@ -13,7 +13,8 @@ namespace Jabber.Net.Server.S2C.Presences
         {
             var result = Component();
 
-            var ri = context.Storages.Users.GetRosterItem(session.Jid.User, element.To);
+            // contact server
+            var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
             if (ri == null)
             {
                 ri = new RosterItem(element.To);
@@ -32,18 +33,12 @@ namespace Jabber.Net.Server.S2C.Presences
                 {
                     ri.Subscription = SubscriptionType.both;
                 }
-                context.Storages.Users.SaveRosterItem(session.Jid.User, ri);
+                context.Storages.Users.SaveRosterItem(session.Jid, ri);
                 result.Add(new RosterPush(session.Jid, ri, context));
-
-                /*
-                foreach (var s in context.Sessions.BareSessions(session.Jid))
-                {
-                    // available
-                    result.Add(Send(context.Sessions.BareSessions(element.To), new Presence { To = element.To, From = s.Jid }));
-                }*/
             }
 
-            ri = context.Storages.Users.GetRosterItem(element.To.User, session.Jid);
+            // user server
+            ri = context.Storages.Users.GetRosterItem(element.To, session.Jid);
             if (ri != null && (ri.Subscription == SubscriptionType.none || ri.Subscription == SubscriptionType.from) && ri.Ask == AskType.subscribe)
             {
                 if (ri.Subscription == SubscriptionType.none)
@@ -55,7 +50,7 @@ namespace Jabber.Net.Server.S2C.Presences
                     ri.Subscription = SubscriptionType.both;
                 }
                 ri.Ask = AskType.NONE;
-                context.Storages.Users.SaveRosterItem(element.To.User, ri);
+                context.Storages.Users.SaveRosterItem(element.To, ri);
 
                 result.Add(Send(context.Sessions.GetSessions(element.To.BareJid), element));
                 result.Add(new RosterPush(element.To, ri, context));

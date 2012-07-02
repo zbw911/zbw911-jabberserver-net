@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using agsXMPP;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 
@@ -19,12 +20,14 @@ namespace Jabber.Net.Server.Storages
         void SetVCard(string username, Vcard vcard);
 
 
-        IEnumerable<RosterItem> GetRosterItems(string username);
+        IEnumerable<RosterItem> GetRosterItems(Jid user);
 
-        RosterItem GetRosterItem(string username, Jid jid);
+        IEnumerable<Presence> GetPendingPresences(Jid contact);
 
-        void SaveRosterItem(string username, RosterItem ri);
+        RosterItem GetRosterItem(Jid user, Jid contact);
 
-        bool RemoveRosterItem(string username, Jid jid);
+        void SaveRosterItem(Jid user, RosterItem ri);
+
+        bool RemoveRosterItem(Jid user, Jid contact);
     }
 }

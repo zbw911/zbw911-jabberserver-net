@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using agsXMPP;
-using agsXMPP.protocol.iq.last;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.util;
@@ -94,30 +94,71 @@ namespace Jabber.Net.Server.Storages
         }
 
 
-        public IEnumerable<RosterItem> GetRosterItems(string username)
+        public IEnumerable<RosterItem> GetRosterItems(Jid user)
         {
-            CheckUsername(username);
-            return elements.GetElements(new Jid(username), "roster|%").OfType<RosterItem>();
+            Args.NotNull(user, "user");
+            using (var db = GetDb())
+            {
+                return db.ExecList(new SqlQuery("jabber_roster").Select("item").Where("user_jid", user.Bare))
+                    .Select(r => ElementSerializer.DeSerializeElement<RosterItem>((string)r[0]))
+                    .ToArray();
+            }
         }
 
-        public RosterItem GetRosterItem(string username, Jid jid)
+        public RosterItem GetRosterItem(Jid user, Jid contact)
         {
-            CheckUsername(username);
-            Args.NotNull(jid, "jid");
-            return elements.GetElement(new Jid(username), "roster|" + jid.Bare) as RosterItem;
+            Args.NotNull(user, "user");
+            Args.NotNull(contact, "contact");
+            using (var db = GetDb())
+            {
+                var s = db.ExecScalar<string>(new SqlQuery("jabber_roster").Select("item").Where("user_jid", user.Bare).Where("contact_jid", contact.Bare));
+                return !string.IsNullOrEmpty(s) ? ElementSerializer.DeSerializeElement<RosterItem>(s) : null;
+            }
         }
 
-        public void SaveRosterItem(string username, RosterItem ri)
+        public void SaveRosterItem(Jid user, RosterItem ri)
         {
-            CheckUsername(username);
+            Args.NotNull(user, "user");
             Args.NotNull(ri, "ri");
-            elements.SaveElement(new Jid(username), "roster|" + ri.Jid.Bare, ri);
+            using (var db = GetDb())
+            {
+                var i = new SqlInsert("jabber_roster", true)
+                    .InColumnValue("user_jid", user.Bare)
+                    .InColumnValue("contact_jid", ri.Jid.Bare)
+                    .InColumnValue("subs", (int)ri.Subscription)
+                    .InColumnValue("ask", (int)ri.Ask)
+                    .InColumnValue("item", ri.ToString());
+                db.ExecuteNonQuery(i);
+            }
         }
 
-        public bool RemoveRosterItem(string username, Jid jid)
+        public bool RemoveRosterItem(Jid user, Jid contact)
         {
-            CheckUsername(username);
-            return elements.RemoveElements(new Jid(username), "roster|" + jid.Bare);
+            Args.NotNull(user, "user");
+            Args.NotNull(contact, "contact");
+            using (var db = GetDb())
+            {
+                var d = new SqlDelete("jabber_roster").Where("user_jid", user.Bare).Where("contact_jid", contact.Bare);
+                return 0 < db.ExecuteNonQuery(d);
+            }
+        }
+
+        public IEnumerable<Presence> GetPendingPresences(Jid contact)
+        {
+            Args.NotNull(contact, "contact");
+            using (var db = GetDb())
+            {
+                return db.ExecList(new SqlQuery("jabber_roster").Select("user_jid", "ask").Where("contact_jid", contact.Bare).Where(!Exp.Eq("ask", AskType.NONE)))
+                    .Select(r =>
+                    {
+                        var user = new Jid((string)r[0]);
+                        var ask = (AskType)Convert.ToInt32(r[1]);
+                        return ask == AskType.subscribe ?
+                            Presence.Subscribe(user, contact.BareJid) :
+                            Presence.Unsubscribe(user, contact.BareJid);
+                    })
+                    .ToArray();
+            }
         }
 
 
@@ -138,9 +179,19 @@ namespace Jabber.Net.Server.Storages
                 .AddColumn(new SqlCreate.Column("userpass", DbType.String, 128).NotNull(true))
                 .AddColumn(new SqlCreate.Column("uservcard", DbType.String, UInt16.MaxValue).NotNull(false));
 
+            var jabber_roster = new SqlCreate.Table("jabber_roster", true)
+               .AddColumn(new SqlCreate.Column("user_jid", DbType.String, 3071).NotNull(true))
+               .AddColumn(new SqlCreate.Column("contact_jid", DbType.String, 3071).NotNull(true))
+               .AddColumn(new SqlCreate.Column("subs", DbType.Int32).NotNull(true))
+               .AddColumn(new SqlCreate.Column("ask", DbType.Int32).NotNull(true))
+               .AddColumn(new SqlCreate.Column("item", DbType.String, UInt16.MaxValue).NotNull(false))
+               .PrimaryKey("user_jid", "contact_jid")
+               .AddIndex(new SqlCreate.Index("contact_ask", "jabber_roster", "contact_jid", "ask"));
+
             using (var db = GetDb())
             {
                 db.ExecuteNonQuery(jabber_user);
+                db.ExecuteNonQuery(jabber_roster);
             }
         }
     }

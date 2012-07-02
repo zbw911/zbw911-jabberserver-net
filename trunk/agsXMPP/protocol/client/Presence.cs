@@ -263,6 +263,11 @@ namespace agsXMPP.protocol.client
 
         #endregion
 
+        public static Presence Subscribe(Jid from, Jid to)
+        {
+            return new Presence(from, to, PresenceType.unsubscribe);
+        }
+
         public static Presence Unsubscribe(Jid from, Jid to)
         {
             return new Presence(from, to, PresenceType.unsubscribe);

@@ -6,9 +6,9 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C.Presences
 {
-    class PresenceSubscribeHandler : XmppHandler, IXmppHandler<Presence>
+    class PresenceUnsubscribeHandler : XmppHandler, IXmppHandler<Presence>
     {
-        [PresenceFilter(PresenceType.subscribe)]
+        [PresenceFilter(PresenceType.unsubscribe)]
         public XmppHandlerResult ProcessElement(Presence element, XmppSession session, XmppHandlerContext context)
         {
             var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
