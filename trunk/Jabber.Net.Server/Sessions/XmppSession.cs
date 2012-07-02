@@ -53,6 +53,12 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
+        public bool Available
+        {
+            get;
+            set;
+        }
+
         public object AuthData
         {
             get;
@@ -60,6 +66,12 @@ namespace Jabber.Net.Server.Sessions
         }
 
         public string Language
+        {
+            get;
+            set;
+        }
+
+        public int Priority
         {
             get;
             set;
@@ -95,7 +107,6 @@ namespace Jabber.Net.Server.Sessions
         {
             Rostered = true;
         }
-
 
         public override int GetHashCode()
         {
