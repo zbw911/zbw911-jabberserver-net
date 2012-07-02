@@ -99,7 +99,15 @@ namespace Jabber.Net.Server.Data
                 var provider = DbProviderFactories.GetFactory(cs.ProviderName);
                 connection = provider.CreateConnection();
                 connection.ConnectionString = cs.ConnectionString;
-                connection.Open();
+                // 2 tries
+                try
+                {
+                    connection.Open();
+                }
+                catch
+                {
+                    connection.Open();
+                }
 
                 dialect = SqlDialect.GetDialect(cs.ProviderName);
             }

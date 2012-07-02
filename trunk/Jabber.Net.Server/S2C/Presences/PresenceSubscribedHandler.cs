@@ -57,12 +57,12 @@ namespace Jabber.Net.Server.S2C.Presences
                 ri.Ask = AskType.NONE;
                 context.Storages.Users.SaveRosterItem(element.To.User, ri);
 
-                result.Add(Send(context.Sessions.BareSessions(element.To), element));
+                result.Add(Send(context.Sessions.GetBareSessions(element.To), element));
                 result.Add(new RosterPush(element.To, ri, context));
-                foreach (var s in context.Sessions.BareSessions(session.Jid))
+                foreach (var s in context.Sessions.GetBareSessions(session.Jid))
                 {
                     // available
-                    result.Add(Send(context.Sessions.BareSessions(element.To), Presence.Available(s.Jid, element.To)));
+                    result.Add(Send(context.Sessions.GetBareSessions(element.To), Presence.Available(s.Jid, element.To)));
                 }
             }
 
