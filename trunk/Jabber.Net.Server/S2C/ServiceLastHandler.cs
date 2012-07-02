@@ -8,7 +8,7 @@ namespace Jabber.Net.Server.S2C
 {
     class ServiceLastHandler : XmppHandler, IXmppHandler<LastIq>
     {
-        private readonly DateTime started = DateTime.UtcNow;
+        private static readonly DateTime started = DateTime.UtcNow;
 
 
         [IQType(IqType.get)]

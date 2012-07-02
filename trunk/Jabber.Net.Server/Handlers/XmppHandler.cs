@@ -64,7 +64,7 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        protected XmppCloseResult Close(XmppSession session)
+        protected XmppHandlerResult Close(XmppSession session)
         {
             return new XmppCloseResult(session);
         }
@@ -79,16 +79,20 @@ namespace Jabber.Net.Server.Handlers
             return null;
         }
 
-        protected XmppRequestResult Request(XmppSession session, IQ iq, XmppHandlerResult timeoutResponse)
+        protected XmppHandlerResult Request(XmppSession session, IQ iq, XmppHandlerResult timeoutResponse)
         {
             return new XmppRequestResult(session, iq, timeoutResponse, TimeSpan.FromSeconds(10));
         }
 
-        protected XmppRequestResult Response(XmppSession session, IQ iq)
+        protected XmppHandlerResult Response(XmppSession session, IQ iq)
         {
             return new XmppRequestResult(session, iq, null, TimeSpan.Zero);
         }
 
+        protected XmppHandlerResult Process(XmppSession session, Element element)
+        {
+            return new XmppProcessResult(session, element);
+        }
 
         protected string CreateId()
         {
