@@ -14,7 +14,7 @@ namespace Jabber.Net.Server.S2C
             Args.NotNull(ri, "ri");
             Args.NotNull(context, "context");
 
-            foreach (var s in context.Sessions.GetBareSessions(to))
+            foreach (var s in context.Sessions.GetSessions(to.BareJid))
             {
                 var push = new RosterIq { Type = IqType.set, From = to.BareJid, To = s.Jid, Query = new Roster() };
                 push.Query.AddRosterItem(ri);
