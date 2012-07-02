@@ -120,6 +120,7 @@
     <Compile Include="Data\Sql\SqlUpdate.cs" />
     <Compile Include="Data\Sql\SubExp.cs" />
     <Compile Include="Handlers\IXmppHandlerInvoker.cs" />
+    <Compile Include="Handlers\Results\XmppProcessResult.cs" />
     <Compile Include="Handlers\Results\XmppErrorResult.cs" />
     <Compile Include="Handlers\Results\XmppRequestResult.cs" />
     <Compile Include="Handlers\Results\XmppComponentResult.cs" />

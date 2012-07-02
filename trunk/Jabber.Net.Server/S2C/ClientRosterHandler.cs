@@ -35,6 +35,8 @@ namespace Jabber.Net.Server.S2C
 
                 var ri = element.Query.Items.ElementAt(0);
                 var result = Component(new RosterPush(session.Jid, ri, context));
+                element.Query.Remove();
+                result.Add(Send(session, element.ToResult()));
 
                 if (ri.Subscription == SubscriptionType.remove)
                 {
@@ -45,11 +47,11 @@ namespace Jabber.Net.Server.S2C
 
                         if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.to)
                         {
-                            //context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid));
+                            result.Add(Process(session, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid)));
                         }
                         if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.from)
                         {
-                            //context.Handlers.ProcessElement(session.EndPoint, Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid));
+                            result.Add(Process(session, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid)));
                         }
                     }
                     else
@@ -73,8 +75,6 @@ namespace Jabber.Net.Server.S2C
                     context.Storages.Users.SaveRosterItem(to, ri);
                 }
 
-                element.Query.Remove();
-                result.Add(Send(session, element.ToResult()));
                 return result;
             }
         }
