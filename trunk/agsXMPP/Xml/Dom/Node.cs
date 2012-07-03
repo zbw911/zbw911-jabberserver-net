@@ -149,8 +149,7 @@ namespace agsXMPP.Xml.Dom
             if (Parent != null)
             {
                 int idx = m_Index;
-                Parent.ChildNodes.RemoveAt(idx);
-                Parent.ChildNodes.RebuildIndex(idx);
+                Parent.ChildNodes.Remove(idx);
             }
         }
 
@@ -317,7 +316,10 @@ namespace agsXMPP.Xml.Dom
             }
             else if (e.NodeType == NodeType.Text)
             {
-                tw.WriteString(e.Value);
+                if (!string.IsNullOrEmpty(e.Value) && 0 < e.Value.Trim().Length)
+                {
+                    tw.WriteString(e.Value);
+                }
             }
             else if (e.NodeType == NodeType.Comment)
             {

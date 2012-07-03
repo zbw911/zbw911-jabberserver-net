@@ -45,13 +45,13 @@ namespace Jabber.Net.Server.S2C
                     {
                         context.Storages.Users.RemoveRosterItem(to, ri.Jid);
 
-                        if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.to)
+                        if (item.HasToSubscription())
                         {
                             result.Add(Process(session, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid)));
                         }
-                        if (item.Subscription == SubscriptionType.both || item.Subscription == SubscriptionType.from)
+                        if (item.HasFromSubscription())
                         {
-                            result.Add(Process(session, Presence.Unsubscribe(session.Jid.BareJid, ri.Jid.BareJid)));
+                            result.Add(Process(session, Presence.Unsubscribed(session.Jid.BareJid, ri.Jid.BareJid)));
                         }
                     }
                     else
