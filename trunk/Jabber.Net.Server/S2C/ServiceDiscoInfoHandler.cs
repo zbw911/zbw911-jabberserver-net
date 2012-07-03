@@ -16,7 +16,7 @@ namespace Jabber.Net.Server.S2C
             this.serviceInfo = serviceInfo;
         }
 
-        [IQType(IqType.get)]
+        [IQ(IqType.get)]
         public XmppHandlerResult ProcessElement(DiscoInfoIq element, XmppSession session, XmppHandlerContext context)
         {
             element.Query.AddIdentity(serviceInfo.Category, serviceInfo.Type, serviceInfo.Name);

@@ -11,7 +11,7 @@ namespace Jabber.Net.Server.S2C
         private static readonly DateTime started = DateTime.UtcNow;
 
 
-        [IQType(IqType.get)]
+        [IQ(IqType.get)]
         public XmppHandlerResult ProcessElement(LastIq element, XmppSession session, XmppHandlerContext context)
         {
             element.Query.Seconds = (int)(DateTime.UtcNow - started).TotalSeconds;
