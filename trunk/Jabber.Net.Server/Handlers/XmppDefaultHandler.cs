@@ -101,6 +101,10 @@ namespace Jabber.Net.Server.Handlers
                     {
                         return Error(session, StreamErrorCondition.InvalidFrom);
                     }
+                    if (!stanza.HasFrom)
+                    {
+                        stanza.From = session.Jid;
+                    }
                 }
                 return Success();
             }

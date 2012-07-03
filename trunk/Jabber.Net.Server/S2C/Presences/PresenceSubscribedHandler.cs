@@ -13,47 +13,31 @@ namespace Jabber.Net.Server.S2C.Presences
         {
             var result = Component();
 
-            // contact server
-            var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
-            if (ri == null)
+            var userItem = context.Storages.Users.GetRosterItem(element.To, session.Jid);
+            if (userItem != null && !userItem.HasToSubscription() && userItem.Ask == AskType.subscribe)
             {
-                ri = new RosterItem(element.To);
-                if (element.Nickname != null && !string.IsNullOrEmpty(element.Nickname.Value))
+                var contactItem = context.Storages.Users.GetRosterItem(session.Jid, element.To);
+                if (contactItem == null)
                 {
-                    ri.Name = element.Nickname.Value;
+                    contactItem = new RosterItem(element.To);
+                    if (element.Nickname != null && !string.IsNullOrEmpty(element.Nickname.Value))
+                    {
+                        contactItem.Name = element.Nickname.Value;
+                    }
                 }
-            }
-            if (ri.Subscription == SubscriptionType.none || ri.Subscription == SubscriptionType.to)
-            {
-                if (ri.Subscription == SubscriptionType.none)
+                if (!contactItem.HasFromSubscription())
                 {
-                    ri.Subscription = SubscriptionType.from;
+                    contactItem.SetFromSubscription();
+                    context.Storages.Users.SaveRosterItem(session.Jid, contactItem);
+                    result.Add(new RosterPush(session.Jid, contactItem, context));
                 }
-                if (ri.Subscription == SubscriptionType.to)
-                {
-                    ri.Subscription = SubscriptionType.both;
-                }
-                context.Storages.Users.SaveRosterItem(session.Jid, ri);
-                result.Add(new RosterPush(session.Jid, ri, context));
-            }
 
-            // user server
-            ri = context.Storages.Users.GetRosterItem(element.To, session.Jid);
-            if (ri != null && (ri.Subscription == SubscriptionType.none || ri.Subscription == SubscriptionType.from) && ri.Ask == AskType.subscribe)
-            {
-                if (ri.Subscription == SubscriptionType.none)
-                {
-                    ri.Subscription = SubscriptionType.to;
-                }
-                if (ri.Subscription == SubscriptionType.from)
-                {
-                    ri.Subscription = SubscriptionType.both;
-                }
-                ri.Ask = AskType.NONE;
-                context.Storages.Users.SaveRosterItem(element.To, ri);
+                userItem.SetToSubscription();
+                userItem.Ask = AskType.NONE;
+                context.Storages.Users.SaveRosterItem(element.To, userItem);
 
                 result.Add(Send(context.Sessions.GetSessions(element.To.BareJid), element));
-                result.Add(new RosterPush(element.To, ri, context));
+                result.Add(new RosterPush(element.To, userItem, context));
                 foreach (var s in context.Sessions.GetSessions(session.Jid.BareJid))
                 {
                     // available

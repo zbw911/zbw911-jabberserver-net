@@ -17,13 +17,7 @@ namespace Jabber.Net.Server.S2C.Presences
                 return Error(session, ErrorCondition.ItemNotFound, element);
             }
 
-            if (ri.Subscription == SubscriptionType.both || ri.Subscription == SubscriptionType.to)
-            {
-                element.SwitchDirection();
-                element.Type = PresenceType.subscribed;
-                return Send(session, element);
-            }
-            else
+            if (ri.Ask == AskType.NONE && !ri.HasToSubscription())
             {
                 ri.Ask = AskType.subscribe;
                 context.Storages.Users.SaveRosterItem(session.Jid, ri);
@@ -33,6 +27,8 @@ namespace Jabber.Net.Server.S2C.Presences
                 result.Add(new RosterPush(session.Jid, ri, context));
                 return result;
             }
+
+            return Void();
         }
     }
 }
