@@ -81,10 +81,6 @@ namespace Jabber.Net.Server.S2C
             {
                 return Error(session, ErrorCondition.BadRequest, message);
             }
-            if (!message.HasFrom)
-            {
-                message.From = session.Jid;
-            }
 
             Solution solution = null;
             var jidType = message.To.IsBare ? JidType.Bare : JidType.FullNoMatch;
