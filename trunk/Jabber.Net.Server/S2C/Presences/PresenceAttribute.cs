@@ -5,12 +5,12 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C.Presences
 {
-    class PresenceFilterAttribute : XmppValidationAttribute
+    class PresenceAttribute : XmppValidationAttribute
     {
         private readonly PresenceType allowed;
 
 
-        public PresenceFilterAttribute(PresenceType allowed)
+        public PresenceAttribute(PresenceType allowed)
         {
             this.allowed = allowed;
         }

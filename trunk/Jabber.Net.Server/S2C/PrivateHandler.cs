@@ -11,7 +11,7 @@ namespace Jabber.Net.Server.S2C
     class PrivateHandler : XmppHandler,
         IXmppHandler<PrivateIq>
     {
-        [IQType(IqType.get, IqType.set)]
+        [IQ(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(PrivateIq element, XmppSession session, XmppHandlerContext context)
         {
             if (element.HasTo && element.To != session.Jid)

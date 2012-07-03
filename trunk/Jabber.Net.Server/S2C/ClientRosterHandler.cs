@@ -8,7 +8,7 @@ namespace Jabber.Net.Server.S2C
 {
     class ClientRosterHandler : XmppHandler, IXmppHandler<RosterIq>
     {
-        [IQType(IqType.get, IqType.set)]
+        [IQ(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(RosterIq element, XmppSession session, XmppHandlerContext context)
         {
             var to = element.HasTo ? element.To : session.Jid;

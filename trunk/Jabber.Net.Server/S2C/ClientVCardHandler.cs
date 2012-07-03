@@ -7,7 +7,7 @@ namespace Jabber.Net.Server.S2C
 {
     class ClientVCardHandler : XmppHandler, IXmppHandler<VcardIq>
     {
-        [IQType(IqType.get, IqType.set)]
+        [IQ(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(VcardIq element, XmppSession session, XmppHandlerContext context)
         {
             var to = element.HasTo ? element.To : session.Jid;

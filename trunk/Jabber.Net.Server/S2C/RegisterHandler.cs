@@ -16,7 +16,7 @@ namespace Jabber.Net.Server.S2C
             context.Sessions.SupportRegister = true;
         }
 
-        [IQType(IqType.get, IqType.set)]
+        [IQ(IqType.get, IqType.set)]
         public XmppHandlerResult ProcessElement(RegisterIq element, XmppSession session, XmppHandlerContext context)
         {
             if (element.Type == IqType.get)

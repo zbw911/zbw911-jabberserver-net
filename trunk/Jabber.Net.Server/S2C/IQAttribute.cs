@@ -6,7 +6,7 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C
 {
-    class IQTypeAttribute : XmppValidationAttribute
+    class IQAttribute : XmppValidationAttribute
     {
         private readonly IqType[] allowed;
 
@@ -17,7 +17,7 @@ namespace Jabber.Net.Server.S2C
         }
 
 
-        public IQTypeAttribute(params IqType[] allowed)
+        public IQAttribute(params IqType[] allowed)
         {
             this.allowed = allowed;
         }

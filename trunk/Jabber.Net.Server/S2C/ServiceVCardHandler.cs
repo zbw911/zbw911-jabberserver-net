@@ -17,7 +17,7 @@ namespace Jabber.Net.Server.S2C
         }
 
 
-        [IQType(IqType.get)]
+        [IQ(IqType.get)]
         public XmppHandlerResult ProcessElement(VcardIq element, XmppSession session, XmppHandlerContext context)
         {
             element.Query = new Vcard

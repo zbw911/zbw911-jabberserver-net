@@ -18,7 +18,7 @@ namespace Jabber.Net.Server.S2C
         }
 
 
-        [IQType(IqType.get)]
+        [IQ(IqType.get)]
         public XmppHandlerResult ProcessElement(VersionIq element, XmppSession session, XmppHandlerContext context)
         {
             element.Query.Os = Environment.OSVersion.ToString();
