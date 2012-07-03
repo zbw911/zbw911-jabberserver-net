@@ -137,13 +137,13 @@
     <Compile Include="S2C\Presences\PresenceSubscribedHandler.cs" />
     <Compile Include="S2C\Presences\PresenceSubscribeHandler.cs" />
     <Compile Include="S2C\ClientRosterHandler.cs" />
-    <Compile Include="S2C\Presences\PresenceFilterAttribute.cs" />
+    <Compile Include="S2C\Presences\PresenceAttribute.cs" />
     <Compile Include="S2C\Presences\PresenceUnsubscribedHandler.cs" />
     <Compile Include="S2C\Presences\PresenceUnsubscribeHandler.cs" />
     <Compile Include="S2C\RosterPush.cs" />
     <Compile Include="S2C\ServiceLastHandler.cs" />
     <Compile Include="S2C\PrivateHandler.cs" />
-    <Compile Include="S2C\IQTypeAttribute.cs" />
+    <Compile Include="S2C\IQAttribute.cs" />
     <Compile Include="S2C\RegisterHandler.cs" />
     <Compile Include="S2C\ServiceVersionHandler.cs" />
     <Compile Include="S2C\ServiceVCardHandler.cs" />
