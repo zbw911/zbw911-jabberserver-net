@@ -26,7 +26,7 @@ namespace Jabber.Net.Server.S2C
                 session.Bind(!string.IsNullOrEmpty(element.Query.Resource) ? element.Query.Resource : session.Jid.User);
                 element.From = element.To = null;
                 element.Query = new Bind(session.Jid);
-                var result = Component(Send(session, element));
+                var result = Component(Send(session, element.ToResult()));
                 foreach (var s in context.Sessions.GetSessions(session.Jid))
                 {
                     if (!session.Equals(s))

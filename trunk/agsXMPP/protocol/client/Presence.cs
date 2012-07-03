@@ -265,7 +265,12 @@ namespace agsXMPP.protocol.client
 
         public static Presence Subscribe(Jid from, Jid to)
         {
-            return new Presence(from, to, PresenceType.unsubscribe);
+            return new Presence(from, to, PresenceType.subscribe);
+        }
+
+        public static Presence Subscribed(Jid from, Jid to)
+        {
+            return new Presence(from, to, PresenceType.subscribed);
         }
 
         public static Presence Unsubscribe(Jid from, Jid to)

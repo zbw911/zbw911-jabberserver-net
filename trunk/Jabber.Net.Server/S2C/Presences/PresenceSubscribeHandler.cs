@@ -16,6 +16,10 @@ namespace Jabber.Net.Server.S2C.Presences
             {
                 return Error(session, ErrorCondition.ItemNotFound, element);
             }
+            if (ri.HasToSubscription())
+            {
+                return Send(session, Presence.Subscribed(element.To, element.From));
+            }
 
             if (ri.Ask == AskType.NONE && !ri.HasToSubscription())
             {

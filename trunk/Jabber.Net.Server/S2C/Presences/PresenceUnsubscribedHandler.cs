@@ -15,39 +15,26 @@ namespace Jabber.Net.Server.S2C.Presences
 
             // contact server
             var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
-            if (ri != null && (ri.Subscription == SubscriptionType.from || ri.Subscription == SubscriptionType.both))
+            if (ri != null && ri.HasFromSubscription())
             {
-                if (ri.Subscription == SubscriptionType.from)
-                {
-                    ri.Subscription = SubscriptionType.none;
-                }
-                if (ri.Subscription == SubscriptionType.both)
-                {
-                    ri.Subscription = SubscriptionType.to;
-                }
+                ri.SetFromSubscription(false);
                 context.Storages.Users.SaveRosterItem(session.Jid, ri);
                 result.Add(new RosterPush(session.Jid, ri, context));
             }
 
             // user server
             ri = context.Storages.Users.GetRosterItem(element.To, session.Jid);
-            if (ri != null &&
-                ((ri.Subscription == SubscriptionType.to || ri.Subscription == SubscriptionType.both) ||
-                (ri.Subscription == SubscriptionType.none && ri.Ask == AskType.subscribe)))
+            if (ri != null && (ri.HasToSubscription() || ri.Ask == AskType.subscribe))
             {
-                if (ri.Subscription == SubscriptionType.to)
+                if (ri.HasToSubscription())
                 {
-                    ri.Subscription = SubscriptionType.none;
+                    ri.SetToSubscription(false);
                 }
-                if (ri.Subscription == SubscriptionType.both)
-                {
-                    ri.Subscription = SubscriptionType.from;
-                }
-                if (ri.Subscription == SubscriptionType.none && ri.Ask == AskType.subscribe)
+                else
                 {
                     ri.Ask = AskType.NONE;
                 }
-                context.Storages.Users.SaveRosterItem(session.Jid, ri);
+                context.Storages.Users.SaveRosterItem(element.To, ri);
 
                 foreach (var s in context.Sessions.GetSessions(session.Jid.BareJid))
                 {

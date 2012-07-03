@@ -97,9 +97,16 @@ namespace Jabber.Net.Server.Handlers
                     }
 
                     // correct from
-                    if (stanza.HasFrom && session.Jid != stanza.From)
+                    if (stanza.HasFrom)
                     {
-                        return Error(session, StreamErrorCondition.InvalidFrom);
+                        if (stanza.From.IsBare && session.Jid.BareJid != stanza.From.BareJid)
+                        {
+                            return Error(session, StreamErrorCondition.InvalidFrom);
+                        }
+                        if (stanza.From.IsFull && session.Jid != stanza.From)
+                        {
+                            return Error(session, StreamErrorCondition.InvalidFrom);
+                        }
                     }
                     if (!stanza.HasFrom)
                     {

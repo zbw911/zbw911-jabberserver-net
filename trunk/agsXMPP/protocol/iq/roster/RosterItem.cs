@@ -117,27 +117,55 @@ namespace agsXMPP.protocol.iq.roster
             return Subscription == SubscriptionType.from || Subscription == SubscriptionType.both;
         }
 
-        public void SetToSubscription()
+        public void SetToSubscription(bool subscription)
         {
-            if (Subscription == SubscriptionType.none)
+            if (subscription)
             {
-                Subscription = SubscriptionType.to;
+                if (Subscription == SubscriptionType.none)
+                {
+                    Subscription = SubscriptionType.to;
+                }
+                if (Subscription == SubscriptionType.from)
+                {
+                    Subscription = SubscriptionType.both;
+                }
             }
-            if (Subscription == SubscriptionType.from)
+            else
             {
-                Subscription = SubscriptionType.both;
+                if (Subscription == SubscriptionType.to)
+                {
+                    Subscription = SubscriptionType.none;
+                }
+                if (Subscription == SubscriptionType.both)
+                {
+                    Subscription = SubscriptionType.from;
+                }
             }
         }
 
-        public void SetFromSubscription()
+        public void SetFromSubscription(bool subscription)
         {
-            if (Subscription == SubscriptionType.none)
+            if (subscription)
             {
-                Subscription = SubscriptionType.from;
+                if (Subscription == SubscriptionType.none)
+                {
+                    Subscription = SubscriptionType.from;
+                }
+                if (Subscription == SubscriptionType.to)
+                {
+                    Subscription = SubscriptionType.both;
+                }
             }
-            if (Subscription == SubscriptionType.to)
+            else
             {
-                Subscription = SubscriptionType.both;
+                if (Subscription == SubscriptionType.from)
+                {
+                    Subscription = SubscriptionType.none;
+                }
+                if (Subscription == SubscriptionType.both)
+                {
+                    Subscription = SubscriptionType.to;
+                }
             }
         }
     }

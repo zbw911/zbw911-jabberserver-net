@@ -11,28 +11,44 @@ namespace Jabber.Net.Server.S2C.Presences
         [PresenceFilter(PresenceType.unsubscribe)]
         public XmppHandlerResult ProcessElement(Presence element, XmppSession session, XmppHandlerContext context)
         {
-            var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
-            if (ri == null)
-            {
-                return Error(session, ErrorCondition.ItemNotFound, element);
-            }
+            var result = Component();
 
-            if (ri.Subscription == SubscriptionType.both || ri.Subscription == SubscriptionType.to)
+            // user server
+            var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
+            if (ri != null && (ri.HasToSubscription() || ri.Ask == AskType.subscribe))
             {
-                element.SwitchDirection();
-                element.Type = PresenceType.subscribed;
-                return Send(session, element);
-            }
-            else
-            {
-                ri.Ask = AskType.subscribe;
+                if (ri.HasToSubscription() && ri.Ask == AskType.NONE)
+                {
+                    ri.SetToSubscription(false);
+                }
+                if (ri.Ask == AskType.subscribe)
+                {
+                    ri.Ask = AskType.NONE;
+                }
                 context.Storages.Users.SaveRosterItem(session.Jid, ri);
 
-                // TODO: resend if no answer
-                var result = Component(Send(context.Sessions.GetSessions(element.To.BareJid), element));
+                result.Add(Send(context.Sessions.GetSessions(session.Jid.BareJid), element));
                 result.Add(new RosterPush(session.Jid, ri, context));
-                return result;
             }
+
+            // contact server
+            ri = context.Storages.Users.GetRosterItem(element.To, session.Jid);
+            if (ri != null && ri.HasFromSubscription())
+            {
+                ri.SetFromSubscription(false);
+                context.Storages.Users.SaveRosterItem(element.To, ri);
+
+                result.Add(Send(context.Sessions.GetSessions(element.To.BareJid), element));
+                result.Add(new RosterPush(element.To, ri, context));
+                foreach (var s in context.Sessions.GetSessions(element.To.BareJid))
+                {
+                    // unavailable
+                    result.Add(Send(context.Sessions.GetSessions(session.Jid.BareJid), Presence.Unsubscribe(element.To, session.Jid)));
+                }
+            }
+
+            
+            return result;
         }
     }
 }

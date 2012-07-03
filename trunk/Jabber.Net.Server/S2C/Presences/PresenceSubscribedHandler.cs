@@ -27,12 +27,12 @@ namespace Jabber.Net.Server.S2C.Presences
                 }
                 if (!contactItem.HasFromSubscription())
                 {
-                    contactItem.SetFromSubscription();
+                    contactItem.SetFromSubscription(true);
                     context.Storages.Users.SaveRosterItem(session.Jid, contactItem);
                     result.Add(new RosterPush(session.Jid, contactItem, context));
                 }
 
-                userItem.SetToSubscription();
+                userItem.SetToSubscription(true);
                 userItem.Ask = AskType.NONE;
                 context.Storages.Users.SaveRosterItem(element.To, userItem);
 
