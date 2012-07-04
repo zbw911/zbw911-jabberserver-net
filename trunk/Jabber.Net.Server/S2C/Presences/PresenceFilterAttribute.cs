@@ -5,12 +5,12 @@ using Jabber.Net.Server.Sessions;
 
 namespace Jabber.Net.Server.S2C.Presences
 {
-    class PresenceAttribute : XmppValidationAttribute
+    class PresenceFilterAttribute : XmppValidationAttribute
     {
         private readonly PresenceType allowed;
 
 
-        public PresenceAttribute(PresenceType allowed)
+        public PresenceFilterAttribute(PresenceType allowed)
         {
             this.allowed = allowed;
         }
@@ -18,22 +18,11 @@ namespace Jabber.Net.Server.S2C.Presences
         public override XmppHandlerResult ValidateElement(Element element, XmppSession session, XmppHandlerContext context)
         {
             var presence = element as Presence;
-            if (presence.HasTo && presence.To.IsFull)
-            {
-                presence.To = presence.To.BareJid;
-            }
-            presence.From = session.Jid.BareJid;
-            if (presence.To == presence.From)
+            if (presence.Type != allowed)
             {
                 return Fail();
             }
-
-            if (presence.HasTo && presence.Type == allowed)
-            {
-                return Success();
-            }
-
-            return Fail();
+            return Success();
         }
     }
 }
