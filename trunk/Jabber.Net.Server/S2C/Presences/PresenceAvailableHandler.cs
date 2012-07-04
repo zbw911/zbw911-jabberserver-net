@@ -27,6 +27,23 @@ namespace Jabber.Net.Server.S2C.Presences
                         result.Add(Send(session, e, true));
                     }
                     context.Storages.Elements.RemoveElements(session.Jid, "offline%");
+
+                    // send presences from roster
+                    foreach (var ri in context.Storages.Users.GetRosterItems(session.Jid))
+                    {
+                        if (ri.HasFromSubscription())
+                        {
+                            foreach (var s in context.Sessions.GetSessions(ri.Jid.BareJid).Where(s => s.Available))
+                            {
+                                if (s.Presence != null)
+                                {
+                                    var p = (Presence)s.Presence.Clone();
+                                    p.To = session.Jid;
+                                    result.Add(Send(session, p));
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // send to itself available resource

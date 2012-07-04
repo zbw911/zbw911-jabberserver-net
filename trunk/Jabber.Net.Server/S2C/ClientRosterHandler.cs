@@ -61,6 +61,11 @@ namespace Jabber.Net.Server.S2C
                 }
                 else
                 {
+                    if (session.Jid.BareJid == ri.Jid.BareJid)
+                    {
+                        return Error(session, ErrorCondition.Conflict, element);
+                    }
+
                     var old = context.Storages.Users.GetRosterItem(to, ri.Jid);
                     if (old != null)
                     {
