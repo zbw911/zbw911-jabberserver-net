@@ -134,6 +134,7 @@
     </Compile>
     <Compile Include="S2C\ClientVCardHandler.cs" />
     <Compile Include="S2C\ClientMessageHandler.cs" />
+    <Compile Include="S2C\Presences\PresenceUnavailableHandler.cs" />
     <Compile Include="S2C\Presences\PresenceSubscriptionAttribute.cs" />
     <Compile Include="S2C\Presences\PresenceAvailableHandler.cs" />
     <Compile Include="S2C\Presences\PresenceSubscribedHandler.cs" />

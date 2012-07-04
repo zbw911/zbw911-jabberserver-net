@@ -35,13 +35,33 @@ namespace Jabber.Net.Server.Connections
 
         public void Send(byte[] buffer, Action<byte[]> error)
         {
-            RequiresNotClosed();
             Args.NotNull(buffer, "buffer");
 
             if (0 < buffer.Length)
             {
-                var stream = client.GetStream();
-                stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, new AsyncState(stream, buffer, error));
+                try
+                {
+                    var stream = client.GetStream();
+                    stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, new AsyncState(stream, buffer, error));
+                }
+                catch (Exception ex)
+                {
+                    if (!IgnoreError(ex))
+                    {
+                        Log.Error(ex);
+                    }
+                    try
+                    {
+                        if (error != null)
+                        {
+                            error(buffer);
+                        }
+                    }
+                    finally
+                    {
+                        Close();
+                    }
+                }
             }
         }
 

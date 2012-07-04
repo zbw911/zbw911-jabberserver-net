@@ -67,7 +67,7 @@ namespace Jabber.Net.Server.Handlers
 
         public XmppHandlerResult OnClose(XmppSession session, XmppHandlerContext context)
         {
-            return Close(session);
+            return Component(session.Available ? Process(session, Presence.Unavailable(session.Jid, null)) : Void(), Close(session));
         }
 
         public XmppHandlerResult OnError(Exception error, XmppSession session, XmppHandlerContext context)

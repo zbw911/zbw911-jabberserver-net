@@ -116,7 +116,7 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        public IEnumerable<Jid> GetToJids(Jid contact)
+        public IEnumerable<Jid> GetSubscribers(Jid contact)
         {
             Args.NotNull(contact, "contact");
             using (var db = GetDb())
@@ -158,20 +158,14 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
-        public IEnumerable<Presence> GetPendingPresences(Jid contact)
+        public IEnumerable<Jid> GetAskers(Jid contact)
         {
             Args.NotNull(contact, "contact");
             using (var db = GetDb())
             {
-                return db.ExecList(new SqlQuery("jabber_roster").Select("user_jid", "ask").Where("contact_jid", contact.Bare).Where(!Exp.Eq("ask", AskType.NONE)))
-                    .Select(r =>
-                    {
-                        var user = new Jid((string)r[0]);
-                        var ask = (AskType)Convert.ToInt32(r[1]);
-                        return ask == AskType.subscribe ?
-                            Presence.Subscribe(user, contact.BareJid) :
-                            Presence.Unsubscribe(user, contact.BareJid);
-                    })
+                return db
+                    .ExecList(new SqlQuery("jabber_roster").Select("user_jid").Where("contact_jid", contact.Bare).Where(!Exp.Eq("ask", AskType.NONE)))
+                    .Select(r => new Jid((string)r[0]))
                     .ToArray();
             }
         }
