@@ -116,6 +116,21 @@ namespace Jabber.Net.Server.Storages
             }
         }
 
+        public IEnumerable<Jid> GetToJids(Jid contact)
+        {
+            Args.NotNull(contact, "contact");
+            using (var db = GetDb())
+            {
+                var q = new SqlQuery("jabber_roster")
+                    .Select("user_jid")
+                    .Where("contact_jid", contact.Bare)
+                    .Where(Exp.Eq("subs", (int)SubscriptionType.to) | Exp.Eq("subs", (int)SubscriptionType.both));
+                return db.ExecList(q)
+                    .Select(r => new Jid((string)r[0]))
+                    .ToList();
+            }
+        }
+
         public void SaveRosterItem(Jid user, RosterItem ri)
         {
             Args.NotNull(user, "user");

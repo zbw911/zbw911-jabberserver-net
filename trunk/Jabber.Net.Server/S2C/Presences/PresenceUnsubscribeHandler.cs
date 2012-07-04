@@ -8,7 +8,8 @@ namespace Jabber.Net.Server.S2C.Presences
 {
     class PresenceUnsubscribeHandler : XmppHandler, IXmppHandler<Presence>
     {
-        [Presence(PresenceType.unsubscribe)]
+        [PresenceFilter(PresenceType.unsubscribe)]
+        [PresenceSubscription]
         public XmppHandlerResult ProcessElement(Presence element, XmppSession session, XmppHandlerContext context)
         {
             var result = Component();

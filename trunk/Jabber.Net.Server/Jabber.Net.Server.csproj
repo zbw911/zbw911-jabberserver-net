@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -134,10 +134,12 @@
     </Compile>
     <Compile Include="S2C\ClientVCardHandler.cs" />
     <Compile Include="S2C\ClientMessageHandler.cs" />
+    <Compile Include="S2C\Presences\PresenceSubscriptionAttribute.cs" />
+    <Compile Include="S2C\Presences\PresenceAvailableHandler.cs" />
     <Compile Include="S2C\Presences\PresenceSubscribedHandler.cs" />
     <Compile Include="S2C\Presences\PresenceSubscribeHandler.cs" />
     <Compile Include="S2C\ClientRosterHandler.cs" />
-    <Compile Include="S2C\Presences\PresenceAttribute.cs" />
+    <Compile Include="S2C\Presences\PresenceFilterAttribute.cs" />
     <Compile Include="S2C\Presences\PresenceUnsubscribedHandler.cs" />
     <Compile Include="S2C\Presences\PresenceUnsubscribeHandler.cs" />
     <Compile Include="S2C\RosterPush.cs" />

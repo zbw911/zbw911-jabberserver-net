@@ -24,6 +24,8 @@ namespace Jabber.Net.Server.Storages
 
         IEnumerable<Presence> GetPendingPresences(Jid contact);
 
+        IEnumerable<Jid> GetToJids(Jid contact);
+
         RosterItem GetRosterItem(Jid user, Jid contact);
 
         void SaveRosterItem(Jid user, RosterItem ri);

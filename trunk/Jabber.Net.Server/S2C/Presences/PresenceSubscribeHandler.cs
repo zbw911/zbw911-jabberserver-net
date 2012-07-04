@@ -8,7 +8,8 @@ namespace Jabber.Net.Server.S2C.Presences
 {
     class PresenceSubscribeHandler : XmppHandler, IXmppHandler<Presence>
     {
-        [Presence(PresenceType.subscribe)]
+        [PresenceFilter(PresenceType.subscribe)]
+        [PresenceSubscription]
         public XmppHandlerResult ProcessElement(Presence element, XmppSession session, XmppHandlerContext context)
         {
             var ri = context.Storages.Users.GetRosterItem(session.Jid, element.To);
