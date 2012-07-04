@@ -22,9 +22,9 @@ namespace Jabber.Net.Server.Storages
 
         IEnumerable<RosterItem> GetRosterItems(Jid user);
 
-        IEnumerable<Presence> GetPendingPresences(Jid contact);
+        IEnumerable<Jid> GetAskers(Jid contact);
 
-        IEnumerable<Jid> GetToJids(Jid contact);
+        IEnumerable<Jid> GetSubscribers(Jid contact);
 
         RosterItem GetRosterItem(Jid user, Jid contact);
 

@@ -1,6 +1,7 @@
 ﻿using agsXMPP;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Utils;
+using agsXMPP.protocol.client;
 
 namespace Jabber.Net.Server.Sessions
 {
@@ -35,10 +36,22 @@ namespace Jabber.Net.Server.Sessions
             }
         }
 
+        public string Language
+        {
+            get;
+            set;
+        }
+
         public bool Authenticated
         {
             get;
             private set;
+        }
+
+        public object AuthData
+        {
+            get;
+            set;
         }
 
         public bool Binded
@@ -53,28 +66,20 @@ namespace Jabber.Net.Server.Sessions
             private set;
         }
 
+        public Presence Presence
+        {
+            get;
+            set;
+        }
+
         public bool Available
         {
-            get;
-            set;
-        }
-
-        public object AuthData
-        {
-            get;
-            set;
-        }
-
-        public string Language
-        {
-            get;
-            set;
+            get { return Presence != null && Presence.Type == PresenceType.available; }
         }
 
         public int Priority
         {
-            get;
-            set;
+            get { return Presence != null ? Presence.Priority : 0; }
         }
 
 
