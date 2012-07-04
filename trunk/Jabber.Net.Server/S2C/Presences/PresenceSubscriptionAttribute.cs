@@ -19,6 +19,10 @@ namespace Jabber.Net.Server.S2C.Presences
                 presence.To = presence.To.BareJid;
             }
             presence.From = session.Jid.BareJid;
+            if (presence.From == presence.To)
+            {
+                return Fail();
+            }
 
             return Success();
         }
