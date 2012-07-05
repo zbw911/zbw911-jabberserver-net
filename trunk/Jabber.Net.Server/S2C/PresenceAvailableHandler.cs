@@ -3,7 +3,7 @@ using agsXMPP.protocol.client;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
-namespace Jabber.Net.Server.S2C.Presences
+namespace Jabber.Net.Server.S2C
 {
     class PresenceAvailableHandler : XmppHandler, IXmppHandler<Presence>
     {

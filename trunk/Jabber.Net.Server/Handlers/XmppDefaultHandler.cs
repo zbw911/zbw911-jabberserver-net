@@ -38,27 +38,27 @@ namespace Jabber.Net.Server.Handlers
 
             if (stanza.HasTo && stanza.To.IsFull)
             {
+                var iq = stanza as IQ;
+
                 // route stanza to client
                 var to = context.Sessions.GetSession(stanza.To);
                 if (to == null)
                 {
-                    return Error(session, ErrorCondition.RecipientUnavailable, stanza);
-                }
-
-                var iq = stanza as IQ;
-                if (iq != null)
-                {
-                    if (iq.Type == IqType.get || iq.Type == IqType.set)
+                    if (iq != null && (iq.Type == IqType.get || iq.Type == IqType.set))
                     {
-                        var defaultResponse = Error(session, ErrorCondition.RecipientUnavailable, stanza);
-                        iq.From = session.Jid;
-                        return Request(to, iq, defaultResponse);
+                        return Error(session, ErrorCondition.RecipientUnavailable, stanza);
                     }
                     else
                     {
-                        return Response(to, iq);
+                        return Void();
                     }
                 }
+
+                if (iq != null)
+                {
+                    return Request(to, iq, Error(session, ErrorCondition.RecipientUnavailable, stanza));
+                }
+
                 return Send(to, stanza);
             }
 
