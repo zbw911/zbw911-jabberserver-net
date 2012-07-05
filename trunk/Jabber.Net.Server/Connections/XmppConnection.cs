@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Xmpp;
@@ -16,6 +17,11 @@ namespace Jabber.Net.Server.Connections
         {
             get;
             set;
+        }
+
+        public bool SupportTls
+        {
+            get { return connection.SupportTls; }
         }
 
 
@@ -45,6 +51,12 @@ namespace Jabber.Net.Server.Connections
         public void Close()
         {
             connection.Close();
+        }
+
+        public void StartTls(X509Certificate certificate)
+        {
+            Reset();
+            connection.StartTls(certificate);
         }
 
         public void Reset()

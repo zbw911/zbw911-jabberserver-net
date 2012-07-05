@@ -2,6 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Jabber.Net.Server.Connections
 {
@@ -9,8 +12,15 @@ namespace Jabber.Net.Server.Connections
     {
         private readonly object locker = new object();
         private readonly TcpClient client;
+        private Stream clientStream;
         private bool closed = false;
         private IXmppReciever reciever;
+
+
+        public bool SupportTls
+        {
+            get { return true; }
+        }
 
 
         public TcpXmppConnection(TcpClient tcpClient)
@@ -18,6 +28,7 @@ namespace Jabber.Net.Server.Connections
             Args.NotNull(tcpClient, "tcpClient");
 
             client = tcpClient;
+            clientStream = client.GetStream();
         }
 
 
@@ -28,7 +39,7 @@ namespace Jabber.Net.Server.Connections
 
             this.reciever = reciever;
 
-            var stream = client.GetStream();
+            var stream = clientStream;
             var buffer = new byte[client.ReceiveBufferSize];
             stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, new AsyncState(stream, buffer, null));
         }
@@ -41,7 +52,7 @@ namespace Jabber.Net.Server.Connections
             {
                 try
                 {
-                    var stream = client.GetStream();
+                    var stream = clientStream;
                     stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, new AsyncState(stream, buffer, error));
                 }
                 catch (Exception ex)
@@ -74,7 +85,7 @@ namespace Jabber.Net.Server.Connections
 
                 try
                 {
-                    client.GetStream().Close();
+                    clientStream.Close();
                 }
                 catch (Exception) { }
                 try
@@ -89,6 +100,16 @@ namespace Jabber.Net.Server.Connections
                 catch (Exception) { }
             }
         }
+
+        public void StartTls(X509Certificate certificate)
+        {
+            Args.NotNull(certificate, "certificate");
+
+            clientStream.Flush();
+            clientStream = new SslStream(clientStream);
+            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Tls, false);
+        }
+
 
         private void ReadCallback(IAsyncResult ar)
         {

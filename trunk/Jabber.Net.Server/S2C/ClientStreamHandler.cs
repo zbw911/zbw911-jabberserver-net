@@ -5,7 +5,7 @@ using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.sasl;
 using agsXMPP.protocol.stream;
 using agsXMPP.protocol.stream.feature;
-using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.tls;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
@@ -54,6 +54,11 @@ namespace Jabber.Net.Server.S2C
                 if (context.Handlers.SupportRegister)
                 {
                     stream.Features.Register = new Register();
+                }
+
+                if (context.Handlers.SupportTls && session.EndPoint.SupportTls)
+                {
+                    stream.Features.StartTls = new StartTls();
                 }
             }
             else

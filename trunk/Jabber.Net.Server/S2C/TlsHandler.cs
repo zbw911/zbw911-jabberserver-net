@@ -1,4 +1,6 @@
-﻿using agsXMPP.protocol.tls;
+﻿using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using agsXMPP.protocol.tls;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
@@ -9,6 +11,16 @@ namespace Jabber.Net.Server.S2C
         IXmppHandler<Proceed>,
         IXmppRegisterHandler
     {
+        private readonly X509Certificate certificate;
+
+
+        public TlsHandler(string certificatefile)
+        {
+            certificate = X509Certificate.CreateFromCertFile(certificatefile);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+        }
+
+
         public void OnRegister(XmppHandlerContext context)
         {
             context.Handlers.SupportTls = true;
@@ -17,11 +29,12 @@ namespace Jabber.Net.Server.S2C
 
         public XmppHandlerResult ProcessElement(StartTls element, XmppSession session, XmppHandlerContext context)
         {
-            return Void();
+            return Component(Send(session, new Proceed()), Process(session, new Proceed()));
         }
 
         public XmppHandlerResult ProcessElement(Proceed element, XmppSession session, XmppHandlerContext context)
         {
+            session.EndPoint.StartTls(certificate);
             return Void();
         }
     }
