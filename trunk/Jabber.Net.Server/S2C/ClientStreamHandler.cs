@@ -47,22 +47,22 @@ namespace Jabber.Net.Server.S2C
                 context.Sessions.OpenSession(session);
 
                 stream.Features.Mechanisms = new Mechanisms();
-                foreach (var m in context.Sessions.SupportedAuthMechanisms)
+                foreach (var m in context.Handlers.SupportedAuthMechanisms)
                 {
                     stream.Features.Mechanisms.AddChild(m);
                 }
-                if (context.Sessions.SupportRegister)
+                if (context.Handlers.SupportRegister)
                 {
                     stream.Features.Register = new Register();
                 }
             }
             else
             {
-                if (context.Sessions.SupportBind)
+                if (context.Handlers.SupportBind)
                 {
                     stream.Features.AddChild(new Bind());
                 }
-                if (context.Sessions.SupportSession)
+                if (context.Handlers.SupportSession)
                 {
                     stream.Features.AddChild(new Session());
                 }

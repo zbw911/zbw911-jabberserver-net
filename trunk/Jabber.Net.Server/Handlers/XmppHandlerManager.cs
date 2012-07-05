@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using agsXMPP;
+using agsXMPP.protocol.sasl;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Sessions;
@@ -17,6 +19,37 @@ namespace Jabber.Net.Server.Handlers
         private readonly IXmppHandlerInvoker defaultInvoker;
 
 
+        public IList<Mechanism> SupportedAuthMechanisms
+        {
+            get;
+            private set;
+        }
+
+        public bool SupportBind
+        {
+            get;
+            set;
+        }
+
+        public bool SupportSession
+        {
+            get;
+            set;
+        }
+
+        public bool SupportRegister
+        {
+            get;
+            set;
+        }
+
+        public bool SupportTls
+        {
+            get;
+            set;
+        }
+
+
         public XmppHandlerManager(XmppSessionManager sessionManager, IXmppResolver resolver)
         {
             Args.NotNull(sessionManager, "sessionManager");
@@ -29,6 +62,7 @@ namespace Jabber.Net.Server.Handlers
 
             this.defaultHandler = new XmppDefaultHandler();
             this.defaultInvoker = new XmppHandlerRouter.Invoker<Element>(defaultHandler.ProcessElement, "DefaultHandler");
+            this.SupportedAuthMechanisms = new List<Mechanism>();
         }
 
 

@@ -10,7 +10,7 @@ namespace Jabber.Net.Server.S2C
     {
         public void OnRegister(XmppHandlerContext context)
         {
-            context.Sessions.SupportBind = true;
+            context.Handlers.SupportBind = true;
         }
 
         [IQ(IqType.set)]

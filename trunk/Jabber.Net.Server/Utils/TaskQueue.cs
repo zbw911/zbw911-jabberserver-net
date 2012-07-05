@@ -26,7 +26,7 @@ namespace Jabber.Net.Server.Utils
         {
             Args.NotNull(id, "id");
             Args.NotNull(task, "task");
-            Args.Requires<ArgumentOutOfRangeException>(TimeSpan.Zero <= timeout, "Invalied timeout: " + timeout);
+            Args.Requires<ArgumentOutOfRangeException>(TimeSpan.Zero <= timeout, "Invalid timeout: " + timeout);
 
             lock (tasks)
             {

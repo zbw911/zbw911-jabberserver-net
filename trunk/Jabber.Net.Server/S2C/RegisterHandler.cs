@@ -13,7 +13,7 @@ namespace Jabber.Net.Server.S2C
     {
         public void OnRegister(XmppHandlerContext context)
         {
-            context.Sessions.SupportRegister = true;
+            context.Handlers.SupportRegister = true;
         }
 
         [IQ(IqType.get, IqType.set)]
