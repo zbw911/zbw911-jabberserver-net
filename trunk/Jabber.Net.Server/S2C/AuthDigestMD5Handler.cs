@@ -14,7 +14,7 @@ namespace Jabber.Net.Server.S2C
     {
         public void OnRegister(XmppHandlerContext context)
         {
-            context.Sessions.SupportedAuthMechanisms.Add(new Mechanism(MechanismType.DIGEST_MD5, true));
+            context.Handlers.SupportedAuthMechanisms.Add(new Mechanism(MechanismType.DIGEST_MD5, true));
         }
 
 

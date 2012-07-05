@@ -135,6 +135,7 @@
     <Compile Include="S2C\ClientVCardHandler.cs" />
     <Compile Include="S2C\ClientMessageHandler.cs" />
     <Compile Include="S2C\ClientLastHandler.cs" />
+    <Compile Include="S2C\TlsHandler.cs" />
     <Compile Include="S2C\ServiceTimeHandler.cs" />
     <Compile Include="S2C\PresenceUnavailableHandler.cs" />
     <Compile Include="S2C\PresenceSubscriptionAttribute.cs" />
