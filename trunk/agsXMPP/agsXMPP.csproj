@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -192,6 +192,7 @@
     <Compile Include="protocol\iq\jingle\Jingle.cs" />
     <Compile Include="protocol\iq\disco\Features.cs" />
     <Compile Include="protocol\iq\register\RegisterEventArgs.cs" />
+    <Compile Include="protocol\iq\time\EntityTimeIq.cs" />
     <Compile Include="protocol\iq\time\EntityTime.cs" />
     <Compile Include="protocol\iq\vcard\Gender.cs" />
     <Compile Include="protocol\sasl\TMToken.cs" />

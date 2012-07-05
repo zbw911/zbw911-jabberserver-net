@@ -6,13 +6,14 @@ using agsXMPP.protocol.iq.disco;
 using agsXMPP.protocol.iq.last;
 using agsXMPP.protocol.iq.@private;
 using agsXMPP.protocol.iq.register;
+using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.session;
+using agsXMPP.protocol.iq.time;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.protocol.iq.version;
 using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
-using agsXMPP.protocol.iq.roster;
 
 namespace Jabber.Net.Server.Xmpp
 {
@@ -121,6 +122,10 @@ namespace Jabber.Net.Server.Xmpp
                 else if (iq.SelectSingleElement<Roster>() != null)
                 {
                     return new RosterIq(iq);
+                }
+                else if (iq.SelectSingleElement<EntityTime>() != null)
+                {
+                    return new EntityTimeIq(iq);
                 }
             }
             return element;

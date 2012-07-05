@@ -52,7 +52,12 @@ namespace Jabber.Net.Server
             }
             if (stanza != null)
             {
-                if (!stanza.Switched)
+                var iq = stanza as IQ;
+                if (iq != null && iq.Type == IqType.error)
+                {
+                    return iq;
+                }
+                if (!stanza.Switched && (iq == null || iq.Type != IqType.result))
                 {
                     stanza.SwitchDirection();
                 }

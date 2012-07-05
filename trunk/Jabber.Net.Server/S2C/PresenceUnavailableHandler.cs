@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.last;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
+using Jabber.Net.Server.Utils;
 
-namespace Jabber.Net.Server.S2C.Presences
+namespace Jabber.Net.Server.S2C
 {
     class PresenceUnavailableHandler : XmppHandler, IXmppHandler<Presence>
     {
@@ -20,6 +23,9 @@ namespace Jabber.Net.Server.S2C.Presences
                     p.To = s.Jid;
                     result.Add(Send(s, p));
                 }
+
+                var last = new Last { Value = element.Status, Seconds = UnixDateTime.ToUnix(DateTime.UtcNow) };
+                context.Storages.Elements.SaveElement(session.Jid, agsXMPP.Uri.IQ_LAST, last);
 
                 // broadcast to subscribers
                 foreach (var to in context.Storages.Users.GetSubscribers(session.Jid))
