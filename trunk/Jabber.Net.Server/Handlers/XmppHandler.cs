@@ -79,9 +79,9 @@ namespace Jabber.Net.Server.Handlers
             return null;
         }
 
-        protected XmppHandlerResult Request(XmppSession session, IQ iq, XmppHandlerResult timeoutResponse)
+        protected XmppHandlerResult Request(XmppSession session, IQ iq, XmppHandlerResult errorResponse)
         {
-            return new XmppRequestResult(session, iq, timeoutResponse, TimeSpan.FromSeconds(10));
+            return new XmppRequestResult(session, iq, errorResponse);
         }
 
         protected XmppHandlerResult Process(XmppSession session, Element element)
