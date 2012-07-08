@@ -19,7 +19,7 @@ namespace Jabber.Net.Server.Connections
 
         public bool SupportTls
         {
-            get { return true; }
+            get { return !(clientStream is SslStream); }
         }
 
 
@@ -107,7 +107,7 @@ namespace Jabber.Net.Server.Connections
 
             clientStream.Flush();
             clientStream = new SslStream(clientStream);
-            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Tls, false);
+            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3, true);
         }
 
 

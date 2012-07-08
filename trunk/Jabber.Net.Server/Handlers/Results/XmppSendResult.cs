@@ -1,6 +1,7 @@
 ﻿using System;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
+using Jabber.Net.Server.Storages;
 
 namespace Jabber.Net.Server.Handlers.Results
 {
@@ -27,9 +28,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         private void Save(Element e, XmppHandlerContext context)
         {
-            var id = e.GetAttribute("id");
-            if (string.IsNullOrEmpty(id)) id = Guid.NewGuid().ToString("N");
-            context.Storages.Elements.SaveElement(Session.Jid, "offline|" + id, e);
+            context.Storages.Elements.SaveOffline(Session.Jid, e);
         }
     }
 }

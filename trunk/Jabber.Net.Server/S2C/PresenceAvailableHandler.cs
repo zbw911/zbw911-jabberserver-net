@@ -2,6 +2,7 @@
 using agsXMPP.protocol.client;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
+using Jabber.Net.Server.Storages;
 
 namespace Jabber.Net.Server.S2C
 {
@@ -22,11 +23,11 @@ namespace Jabber.Net.Server.S2C
                     {
                         result.Add(Send(session, Presence.Subscribe(jid, session.Jid)));
                     }
-                    foreach (var e in context.Storages.Elements.GetElements(session.Jid, "offline%"))
+                    foreach (var e in context.Storages.Elements.GetOfflines(session.Jid))
                     {
                         result.Add(Send(session, e, true));
                     }
-                    context.Storages.Elements.RemoveElements(session.Jid, "offline%");
+                    context.Storages.Elements.RemoveOfflines(session.Jid);
 
                     // send presences from roster
                     foreach (var ri in context.Storages.Users.GetRosterItems(session.Jid))
