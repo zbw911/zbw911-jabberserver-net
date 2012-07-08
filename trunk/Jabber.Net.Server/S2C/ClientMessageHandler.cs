@@ -4,6 +4,7 @@ using System.Linq;
 using agsXMPP.protocol.client;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
+using Jabber.Net.Server.Storages;
 
 namespace Jabber.Net.Server.S2C
 {
@@ -132,8 +133,7 @@ namespace Jabber.Net.Server.S2C
                     return Error(session, ErrorCondition.ServiceUnavailable, message);
 
                 case SolutionResult.O:
-                    var id = !string.IsNullOrEmpty(message.Id) ? message.Id : CreateId();
-                    context.Storages.Elements.SaveElement(message.To, "offline|" + id, message);
+                    context.Storages.Elements.SaveOffline(message.To, message);
                     return Void();
 
                 case SolutionResult.D:
