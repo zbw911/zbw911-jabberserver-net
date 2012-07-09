@@ -46,6 +46,7 @@ namespace agsXMPP.protocol.iq.disco
         }
 
         public DiscoItem(Jid jid, string name)
+            : this()
         {
             Jid = jid;
             Name = name;

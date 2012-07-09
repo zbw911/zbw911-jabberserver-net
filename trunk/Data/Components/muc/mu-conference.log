@@ -1,0 +1,164 @@
+Tue Jul 10 00:37:25 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 00:37:25 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 00:37:44 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:17:41 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:17:41 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:17:41 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:17:41 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:17:46 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:17:46 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:17:54 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:17:54 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:18:10 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:18:10 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:18:10 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:18:10 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:18:14 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:18:15 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:18:15 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:18:15 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:18:15 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:20:26 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:20:27 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:20:27 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:20:27 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:20:32 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:20:32 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:20:55 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:20:55 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:21:44 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:21:44 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:21:44 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:21:44 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:21:49 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:21:49 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:26:58 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:26:58 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:26:58 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:27:38 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:27:38 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:32:20 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:33:10 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:33:10 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:33:10 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:33:10 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:33:15 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:33:15 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:33:46 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:33:46 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:33:52 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:33:52 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:33:52 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:33:52 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:33:57 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:33:57 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:35:49 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:36:39 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:36:39 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:36:41 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:36:41 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:36:41 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:36:41 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:36:46 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:36:46 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:36:57 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:36:57 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:44:21 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:44:21 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:44:21 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): Server stream connected.
+Tue Jul 10 01:44:21 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:44:26 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:44:26 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:45:20 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:45:20 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:45:20 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:45:20 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:45:20 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:45:20 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:45:20 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:45:25 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:45:25 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:46:23 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:46:26 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:46:26 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:46:27 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:46:27 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:46:27 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:46:27 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:46:32 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:46:32 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:46:35 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:46:49 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:46:49 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:46:49 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:46:49 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:46:49 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:46:49 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): packet delivery thread starting.
+Tue Jul 10 01:46:54 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:46:54 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:47:07 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:48:07 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:48:07 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:48:08 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:48:08 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:48:08 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:48:08 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:48:13 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:48:13 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:48:23 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:48:23 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:48:23 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:48:25 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:48:25 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:48:25 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:48:25 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:48:30 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:48:30 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:49:23 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:49:23 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:49:23 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:49:25 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:49:25 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:49:25 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 01:49:25 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:49:32 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:49:32 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:50:27 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 01:50:51 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 01:50:51 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 01:50:52 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 01:50:52 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 01:50:52 2012 ..\src\jcomp\jcr_main_strea51 (jcr_queue_deliver): Server stream connected.
+Tue Jul 10 01:50:52 2012 ..\src\jcomp\jcr_main_strea51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 01:51:01 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 01:51:01 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 01:52:02 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 02:02:46 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 02:02:46 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 02:02:47 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 02:02:47 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 02:02:47 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 02:02:47 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 02:02:57 2012 ..\src\jcomp\jcr_elements.c:103 (jcr_end_element): 'stream:error' on server stream: '<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>'
+Tue Jul 10 02:02:57 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 02:03:49 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 02:03:52 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 02:03:52 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 02:03:52 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 02:03:57 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 02:03:57 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 02:03:57 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 02:03:57 2012 ..\src\jcomp\jcr_deliver.c:51 (jcr_queue_deliver): packet delivery thread starting.
+Tue Jul 10 02:04:44 2012 ..\src\jcomp\jcr_elements.c:103 (jcr_end_element): 'stream:error' on server stream: '<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>'
+Tue Jul 10 02:04:44 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 02:06:05 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down
+Tue Jul 10 02:06:09 2012 ..\src\jcomp\jcr_deliver.c:101 (jcr_queue_deliver): packet delivery thread exiting.
+Tue Jul 10 02:06:09 2012 ..\src\jcomp\jcr_deliver.c:102 (jcr_queue_deliver):   Last DvryQ Buffer=''
+Tue Jul 10 02:06:09 2012 ..\src\main.c:214 (jabber_main): Main loop exiting.
+Tue Jul 10 02:06:14 2012 ..\src\main.c:172 (jabber_main): Jabber Component Runtime -- 0.2.4  starting.
+Tue Jul 10 02:06:14 2012 ..\src\main.c:211 (jabber_main): Main loop starting.
+Tue Jul 10 02:06:14 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): Server stream connected.
+Tue Jul 10 02:06:14 2012 ..\src\jcomp\jcr_main_stream_error.c:54 (jcr_main_new_stream): packet delivery thread starting.
+Tue Jul 10 02:07:06 2012 ..\src\jcomp\jcr_elements.c:103 (jcr_end_element): 'stream:error' on server stream: '<stream:error xmlns:stream='http://etherx.jabber.org/streams'><invalid-from xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>'
+Tue Jul 10 02:07:06 2012 ..\src\jcomp\jcr_elements.c:158 (jcr_read_data): Main Channel Error: G_IO_HUP
+Tue Jul 10 02:07:53 2012 ..\src\jcomp\jcr_shutdown.c:43 (jcr_server_shutdown): Server shutting down

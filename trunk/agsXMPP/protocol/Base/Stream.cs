@@ -86,9 +86,9 @@ namespace agsXMPP.protocol.Base
         public override string ToString()
         {
             var taglen = (Uri.PREFIX + ":stream").Length;
-            var s = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            var s = new StringBuilder(/*"<?xml version=\"1.0\" encoding=\"utf-8\"?>"*/);
             s.Append(base.ToString());
-            s.Insert(53, "xmlns=\"" + DefaultNamespace + "\" ");
+            s.Insert(53-38, "xmlns=\"" + DefaultNamespace + "\" ");
             if (HasChildElements)
             {
                 s.Remove(s.Length - 16, 16);
