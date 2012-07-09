@@ -7,10 +7,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Text;
 using agsXMPP.protocol.stream;
 
-namespace agsXMPP.protocol
+namespace agsXMPP.protocol.client
 {
     /// <summary>
     /// stream:stream Element
@@ -34,23 +33,11 @@ namespace agsXMPP.protocol
             Namespace = Uri.STREAM;
         }
 
-        #endregion
-
-        public override string ToString()
+        public Stream(Base.Stream stream, string defaultNamespace)
+            : base(stream, defaultNamespace)
         {
-            var taglen = (Uri.PREFIX + ":stream").Length;
-            var s = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            s.Append(base.ToString());
-            s.Insert(53, "xmlns=\"" + Uri.CLIENT + "\" ");
-            if (HasChildElements)
-            {
-                s.Remove(s.Length - 16, 16);
-            }
-            else
-            {
-                s.Remove(s.Length - 2, 1);
-            }
-            return s.ToString();
         }
+
+        #endregion        
     }
 }

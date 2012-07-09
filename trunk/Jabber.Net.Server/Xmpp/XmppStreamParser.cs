@@ -41,7 +41,7 @@ namespace Jabber.Net.Server.Xmpp
         public Element Parse(byte[] buffer)
         {
             var e = ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer));
-            return CorrectIQType(e);
+            return CorrectType(e);
         }
 
         public byte[] ToBytes(Element e)
@@ -65,7 +65,7 @@ namespace Jabber.Net.Server.Xmpp
             var ev = Parsed;
             if (ev != null && e is Element)
             {
-                ev(this, new ParsedArgs(CorrectIQType((Element)e)));
+                ev(this, new ParsedArgs(CorrectType((Element)e)));
             }
         }
 
@@ -78,7 +78,7 @@ namespace Jabber.Net.Server.Xmpp
             }
         }
 
-        private Element CorrectIQType(Element element)
+        private Element CorrectType(Element element)
         {
             var iq = element as IQ;
             if (iq != null)
@@ -126,6 +126,14 @@ namespace Jabber.Net.Server.Xmpp
                 else if (iq.SelectSingleElement<EntityTime>() != null)
                 {
                     return new EntityTimeIq(iq);
+                }
+            }
+            var stream = element as agsXMPP.protocol.Base.Stream;
+            if (stream != null)
+            {
+                if (agsParser.DefaultNamespace == agsXMPP.Uri.CLIENT)
+                {
+                    return new Stream(stream, agsParser.DefaultNamespace);
                 }
             }
             return element;

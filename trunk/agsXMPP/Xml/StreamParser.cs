@@ -26,8 +26,8 @@ using System.Collections;
 using agsXMPP.Factory;
 using agsXMPP.Xml.Dom;
 using agsXMPP.Xml.xpnet;
-using Encoding=System.Text.Encoding;
-using UTF8Encoding=agsXMPP.Xml.xpnet.UTF8Encoding;
+using Encoding = System.Text.Encoding;
+using UTF8Encoding = agsXMPP.Xml.xpnet.UTF8Encoding;
 
 #endregion
 
@@ -35,7 +35,7 @@ namespace agsXMPP.Xml
 {
     #region usings
 
-    
+
 
     #endregion
 
@@ -137,6 +137,11 @@ namespace agsXMPP.Xml
             get { return m_Depth; }
         }
 
+        public string DefaultNamespace
+        {
+            get { return m_ns.DefaultNamespace; }
+        }
+
         #endregion
 
         #region Methods
@@ -224,18 +229,18 @@ namespace agsXMPP.Xml
                             break;
                         case TOK.CHAR_REF:
                         case TOK.MAGIC_ENTITY_REF:
-                            AddText(new string(new[] {ct.RefChar1}));
+                            AddText(new string(new[] { ct.RefChar1 }));
                             break;
                         case TOK.CHAR_PAIR_REF:
-                            AddText(new string(new[] {ct.RefChar1, ct.RefChar2}));
+                            AddText(new string(new[] { ct.RefChar1, ct.RefChar2 }));
                             break;
                         case TOK.COMMENT:
                             if (current != null)
                             {
                                 // <!-- 4
                                 // --> 3
-                                int start = off + 4*m_enc.MinBytesPerChar;
-                                int end = ct.TokenEnd - off - 7*m_enc.MinBytesPerChar;
+                                int start = off + 4 * m_enc.MinBytesPerChar;
+                                int end = ct.TokenEnd - off - 7 * m_enc.MinBytesPerChar;
                                 string text = utf.GetString(b, start, end);
                                 current.AddChild(new Comment(text));
                             }
@@ -401,7 +406,7 @@ namespace agsXMPP.Xml
 
             foreach (string attrname in ht.Keys)
             {
-                newel.SetAttribute(attrname, (string) ht[attrname]);
+                newel.SetAttribute(attrname, (string)ht[attrname]);
             }
 
             if (m_root == null)
@@ -463,14 +468,14 @@ namespace agsXMPP.Xml
             else
             {
                 name = utf.GetString(buf,
-                                     offset + m_enc.MinBytesPerChar*2,
-                                     ct.NameEnd - offset - m_enc.MinBytesPerChar*2);
+                                     offset + m_enc.MinBytesPerChar * 2,
+                                     ct.NameEnd - offset - m_enc.MinBytesPerChar * 2);
             }
 
             // 			if (current.Name != name)
             // 				throw new Exception("Invalid end tag: " + name +
             // 					" != " + current.Name);
-            var parent = (Element) current.Parent;
+            var parent = (Element)current.Parent;
             if (parent == null)
             {
                 DoRaiseOnStreamElement(current);
@@ -527,10 +532,10 @@ namespace agsXMPP.Xml
                             break;
                         case TOK.CHAR_REF:
                         case TOK.MAGIC_ENTITY_REF:
-                            val += new string(new[] {ct.RefChar1});
+                            val += new string(new[] { ct.RefChar1 });
                             break;
                         case TOK.CHAR_PAIR_REF:
-                            val += new string(new[] {ct.RefChar1, ct.RefChar2});
+                            val += new string(new[] { ct.RefChar1, ct.RefChar2 });
                             break;
                         case TOK.ENTITY_REF:
 #if CF

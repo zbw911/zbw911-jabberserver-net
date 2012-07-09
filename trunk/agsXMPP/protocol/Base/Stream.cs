@@ -7,6 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Text;
 namespace agsXMPP.protocol.Base
 {
     /// <summary>
@@ -23,9 +24,21 @@ namespace agsXMPP.protocol.Base
             TagName = "stream";
         }
 
+        protected Stream(Stream stream, string defaultNamespace)
+            : base(stream)
+        {
+            DefaultNamespace = defaultNamespace;
+        }
+
         #endregion
 
         #region Properties
+
+        public string DefaultNamespace
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// </summary>
@@ -68,5 +81,23 @@ namespace agsXMPP.protocol.Base
         }
 
         #endregion
+
+
+        public override string ToString()
+        {
+            var taglen = (Uri.PREFIX + ":stream").Length;
+            var s = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            s.Append(base.ToString());
+            s.Insert(53, "xmlns=\"" + DefaultNamespace + "\" ");
+            if (HasChildElements)
+            {
+                s.Remove(s.Length - 16, 16);
+            }
+            else
+            {
+                s.Remove(s.Length - 2, 1);
+            }
+            return s.ToString();
+        }
     }
 }
