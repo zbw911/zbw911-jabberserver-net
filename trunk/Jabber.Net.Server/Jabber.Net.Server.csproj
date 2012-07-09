@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\ReaderWriterLockDictionary.cs" />
+    <Compile Include="Components\ComponentHandler.cs" />
     <Compile Include="Connections\IXmppEndPoint.cs" />
     <Compile Include="Connections\IXmppReciever.cs" />
     <Compile Include="Connections\IXmppConnection.cs" />

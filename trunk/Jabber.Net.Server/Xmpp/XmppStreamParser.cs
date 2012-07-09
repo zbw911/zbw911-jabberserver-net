@@ -135,6 +135,10 @@ namespace Jabber.Net.Server.Xmpp
                 {
                     return new Stream(stream, agsParser.DefaultNamespace);
                 }
+                if (agsParser.DefaultNamespace == agsXMPP.Uri.ACCEPT)
+                {
+                    return new agsXMPP.protocol.component.Stream(stream, agsParser.DefaultNamespace);
+                }
             }
             return element;
         }
