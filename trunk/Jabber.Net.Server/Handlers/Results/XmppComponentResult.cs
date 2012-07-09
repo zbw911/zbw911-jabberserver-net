@@ -6,7 +6,7 @@ namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppComponentResult : XmppHandlerResult
     {
-        private readonly IList<XmppHandlerResult> results;
+        private readonly List<XmppHandlerResult> results;
 
 
         public XmppComponentResult(params XmppHandlerResult[] results)
@@ -26,10 +26,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         public override void Execute(XmppHandlerContext context)
         {
-            foreach (var r in results)
-            {
-                context.Handlers.ProcessResult(r);
-            }
+            results.ForEach(context.Handlers.ProcessResult);
         }
     }
 }

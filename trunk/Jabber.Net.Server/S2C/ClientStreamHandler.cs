@@ -1,5 +1,6 @@
 ﻿using agsXMPP;
 using agsXMPP.protocol;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.sasl;

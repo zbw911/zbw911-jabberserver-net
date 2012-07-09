@@ -102,18 +102,18 @@ namespace Jabber.Net.Server.Handlers
                 var to = element.GetAttribute("to");
                 var jid = to != null ? new Jid(to) : session.Jid;
                 var handlers = router.GetElementHandlers(element.GetType(), jid);
-                if (handlers.Any())
+                var processed = false;
+
+                foreach (var handler in handlers)
                 {
-                    foreach (var handler in handlers)
+                    processed = true;
+                    if (!ProcessValidation(handler, element, session, context))
                     {
-                        if (!ProcessValidation(handler, element, session, context))
-                        {
-                            continue;
-                        }
-                        ProcessResult(handler.ProcessElement(element, session, context));
+                        continue;
                     }
+                    ProcessResult(handler.ProcessElement(element, session, context));
                 }
-                else
+                if (!processed)
                 {
                     ProcessResult(defaultInvoker.ProcessElement(element, session, context));
                 }

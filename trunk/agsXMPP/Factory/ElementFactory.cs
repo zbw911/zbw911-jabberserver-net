@@ -96,7 +96,6 @@ using Presence = agsXMPP.protocol.client.Presence;
 using PubSub = agsXMPP.protocol.extensions.pubsub.owner.PubSub;
 using RosterItem = agsXMPP.protocol.iq.roster.RosterItem;
 using Status = agsXMPP.protocol.x.muc.Status;
-using Stream = agsXMPP.protocol.Stream;
 using Type = System.Type;
 using Version = agsXMPP.protocol.iq.version.Version;
 
@@ -144,7 +143,7 @@ namespace agsXMPP.Factory
             AddElementType("item", Uri.IQ_SEARCH, typeof(SearchItem));
 
             // Stream stuff
-            AddElementType("stream", Uri.STREAM, typeof(Stream));
+            AddElementType("stream", Uri.STREAM, typeof(agsXMPP.protocol.Base.Stream));
             AddElementType("error", Uri.STREAM, typeof(protocol.Error));
 
             AddElementType("server", Uri.IQ_GOOGLE_JINGLE, typeof(Server));

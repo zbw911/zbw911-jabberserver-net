@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Sessions;
-using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Handlers.Results
 {
