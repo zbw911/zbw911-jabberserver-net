@@ -75,7 +75,6 @@ using agsXMPP.protocol.x.muc.iq;
 using agsXMPP.protocol.x.muc.iq.admin;
 using agsXMPP.protocol.x.muc.iq.owner;
 using agsXMPP.protocol.x.rosterx;
-using agsXMPP.protocol.x.tm.history;
 using agsXMPP.protocol.x.vcard_update;
 using agsXMPP.Xml.Dom;
 using Active = agsXMPP.protocol.iq.privacy.Active;
@@ -412,12 +411,6 @@ namespace agsXMPP.Factory
 
             // XEP-0202: Entity Time
             AddElementType("time", Uri.ENTITY_TIME, typeof(EntityTime));
-
-            //Team lab
-            AddElementType("query", Uri.X_TM_IQ_HISTORY, typeof(protocol.x.tm.history.History));
-            AddElementType("item", Uri.X_TM_IQ_HISTORY, typeof(HistoryItem));
-            AddElementType("query", Uri.X_TM_IQ_PRIVATELOG, typeof(PrivateLog));
-            AddElementType("item", Uri.X_TM_IQ_PRIVATELOG, typeof(PrivateLogItem));
         }
 
         #endregion
