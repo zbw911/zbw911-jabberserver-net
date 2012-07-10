@@ -1,5 +1,4 @@
-﻿using System;
-using agsXMPP;
+﻿using agsXMPP;
 using agsXMPP.protocol;
 using agsXMPP.protocol.component;
 using Jabber.Net.Server.Handlers;
@@ -10,7 +9,8 @@ namespace Jabber.Net.Server.Components
     class ComponentHandler : XmppHandler,
         IXmppHandler<Stream>,
         IXmppHandler<Handshake>,
-        IXmppHandler<agsXMPP.protocol.Base.Stanza>
+        IXmppHandler<agsXMPP.protocol.Base.Stanza>,
+        IXmppHandler<agsXMPP.protocol.component.Error>
     {
 
 
@@ -73,6 +73,11 @@ namespace Jabber.Net.Server.Components
             }
 
             return Send(context.Sessions.GetSessions(element.To), element);
+        }
+
+        public XmppHandlerResult ProcessElement(agsXMPP.protocol.component.Error element, XmppSession session, XmppHandlerContext context)
+        {
+            return Void();
         }
     }
 }

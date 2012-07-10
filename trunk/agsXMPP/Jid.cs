@@ -430,7 +430,7 @@ namespace agsXMPP
         /// </summary>
         public bool IsServer
         {
-            get { return !HasUser; }
+            get { return this != Empty && !HasUser; }
         }
 
         /// <summary>
