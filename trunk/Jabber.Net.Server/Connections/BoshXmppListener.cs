@@ -4,40 +4,44 @@ using System.Net.Sockets;
 
 namespace Jabber.Net.Server.Connections
 {
-    class TcpXmppListener : IXmppListener
+    class BoshXmppListener : IXmppListener
     {
-        private readonly IPEndPoint endpoint;
-        private TcpListener listener;
+        private readonly string listenUri;
+        private HttpListener listener;
         private Action<IXmppConnection> newConnection;
 
 
-        public TcpXmppListener(Uri listenUri)
+        public BoshXmppListener(string listenUri)
         {
             Args.NotNull(listenUri, "listenUri");
 
-            endpoint = new IPEndPoint(IPAddress.Parse(listenUri.Host), listenUri.Port);
+            this.listenUri = listenUri;
         }
 
 
         public void StartListen(Action<IXmppConnection> newConnection)
         {
+            Args.Requires<NotSupportedException>(HttpListener.IsSupported, "HttpListener not supported.");
             Args.NotNull(newConnection, "newConnection");
 
             this.newConnection = newConnection;
-            listener = new TcpListener(endpoint)
+            listener = new HttpListener
             {
-                ExclusiveAddressUse = true,
+                IgnoreWriteExceptions = true,
             };
-
+            listener.Prefixes.Add(listenUri);
             listener.Start();
-            BeginAcceptTcpClient(true);
+            BeginGetContext(true);
         }
 
         public void StopListen()
         {
             if (listener != null)
             {
-                listener.Stop();
+                if (listener.IsListening)
+                {
+                    listener.Stop();
+                }
                 listener = null;
             }
         }
@@ -48,9 +52,9 @@ namespace Jabber.Net.Server.Connections
             var continueAccept = true;
             try
             {
-                var listener = (TcpListener)ar.AsyncState;
-                var tcpClient = listener.EndAcceptTcpClient(ar);
-                newConnection(new TcpXmppConnection(tcpClient));
+                var listener = (HttpListener)ar.AsyncState;
+                var context = listener.EndGetContext(ar);
+                newConnection(new BoshXmppConnection(context));
             }
             catch (ObjectDisposedException)
             {
@@ -65,16 +69,16 @@ namespace Jabber.Net.Server.Connections
             {
                 if (continueAccept)
                 {
-                    BeginAcceptTcpClient(false);
+                    BeginGetContext(false);
                 }
             }
         }
 
-        private void BeginAcceptTcpClient(bool throwerror)
+        private void BeginGetContext(bool throwerror)
         {
             try
             {
-                listener.BeginAcceptTcpClient(OnAccept, listener);
+                listener.BeginGetContext(OnAccept, listener);
             }
             catch (ObjectDisposedException)
             {

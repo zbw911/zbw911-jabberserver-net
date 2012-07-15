@@ -86,13 +86,13 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        public void ProcessElement(IXmppEndPoint endpoint, Element element)
+        public void ProcessElement(IXmppConnection connection, Element element)
         {
             try
             {
                 Args.NotNull(element, "element");
 
-                var session = GetSession(endpoint);
+                var session = GetSession(connection);
 
                 if (!ProcessValidation(defaultInvoker, element, session, context))
                 {
@@ -120,15 +120,15 @@ namespace Jabber.Net.Server.Handlers
             }
             catch (Exception error)
             {
-                ProcessError(endpoint, error);
+                ProcessError(connection, error);
             }
         }
 
-        public void ProcessClose(IXmppEndPoint endpoint)
+        public void ProcessClose(IXmppConnection connection)
         {
             try
             {
-                var session = GetSession(endpoint);
+                var session = GetSession(connection);
                 try
                 {
                     foreach (var handler in router.GetCloseHandlers())
@@ -143,17 +143,17 @@ namespace Jabber.Net.Server.Handlers
             }
             catch (Exception error)
             {
-                ProcessError(endpoint, error);
+                ProcessError(connection, error);
             }
         }
 
-        public void ProcessError(IXmppEndPoint endpoint, Exception error)
+        public void ProcessError(IXmppConnection connection, Exception error)
         {
             try
             {
                 Args.NotNull(error, "error");
 
-                var session = GetSession(endpoint);
+                var session = GetSession(connection);
                 try
                 {
                     foreach (var handler in router.GetErrorHandlers())
@@ -195,10 +195,10 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
-        private XmppSession GetSession(IXmppEndPoint endpoint)
+        private XmppSession GetSession(IXmppConnection connection)
         {
-            Args.NotNull(endpoint, "endpoint");
-            return sessionManager.GetSession(endpoint.SessionId) ?? new XmppSession(endpoint);
+            Args.NotNull(connection, "endpoint");
+            return sessionManager.GetSession(connection.SessionId) ?? new XmppSession(connection);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Jabber.Net.Server.Handlers.Results
             {
                 onerror = _ => context.Handlers.ProcessResult(errorResponse);
             }
-            Session.EndPoint.Send(iq, onerror);
+            Session.Connection.Send(iq, onerror);
         }
     }
 }

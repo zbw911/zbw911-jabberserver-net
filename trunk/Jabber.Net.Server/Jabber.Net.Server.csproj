@@ -91,10 +91,10 @@
   <ItemGroup>
     <Compile Include="Collections\ReaderWriterLockDictionary.cs" />
     <Compile Include="Components\ComponentHandler.cs" />
-    <Compile Include="Connections\IXmppEndPoint.cs" />
-    <Compile Include="Connections\IXmppReciever.cs" />
+    <Compile Include="Connections\BoshXmppConnection.cs" />
+    <Compile Include="Connections\BoshXmppListener.cs" />
+    <Compile Include="Connections\IXmppTlsConnection.cs" />
     <Compile Include="Connections\IXmppConnection.cs" />
-    <Compile Include="Connections\XmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />
     <Compile Include="Data\DbManager.cs" />
     <Compile Include="Data\ISqlDialect.cs" />
@@ -136,6 +136,7 @@
     <Compile Include="S2C\ClientVCardHandler.cs" />
     <Compile Include="S2C\ClientMessageHandler.cs" />
     <Compile Include="S2C\ClientLastHandler.cs" />
+    <Compile Include="S2C\BoshHandler.cs" />
     <Compile Include="S2C\TlsHandler.cs" />
     <Compile Include="S2C\ServiceTimeHandler.cs" />
     <Compile Include="S2C\PresenceUnavailableHandler.cs" />
@@ -197,12 +198,14 @@
     <Compile Include="Utils\IUniqueId.cs" />
     <Compile Include="Utils\IncrementalUniqueId.cs" />
     <Compile Include="Utils\JidTypeConverter.cs" />
-    <None Include="Xmpp\XmppElement.cs" />
     <Compile Include="Utils\ReaderWriterLock.cs" />
     <Compile Include="Utils\TaskQueue.cs" />
     <Compile Include="Utils\UnixDateTime.cs" />
     <Compile Include="XmppUser.cs" />
-    <Compile Include="Xmpp\XmppStreamParser.cs" />
+    <Compile Include="Xmpp\XmppStreamArgs.cs" />
+    <Compile Include="Xmpp\XmppStreamState.cs" />
+    <Compile Include="Xmpp\XmppStreamWriter.cs" />
+    <Compile Include="Xmpp\XmppStreamReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\agsXMPP\agsXMPP.csproj">

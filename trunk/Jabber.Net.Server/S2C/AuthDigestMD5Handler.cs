@@ -71,7 +71,7 @@ namespace Jabber.Net.Server.S2C
             else if (authStep.Step == AuthStep.Step2)
             {
                 session.Authenticate(authStep.UserName);
-                session.EndPoint.Reset();
+                session.Connection.Reset();
                 return Send(session, new Success());
             }
             else

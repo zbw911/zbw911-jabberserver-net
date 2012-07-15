@@ -448,7 +448,7 @@ namespace agsXMPP.Xml
             if (current == null)
             {
                 // end of doc
-                if (OnStreamEnd != null)
+                if (OnStreamEnd != null && m_root != null)
                 {
                     OnStreamEnd(this, m_root);
                 }

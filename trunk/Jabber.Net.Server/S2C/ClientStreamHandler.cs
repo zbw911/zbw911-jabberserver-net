@@ -7,6 +7,7 @@ using agsXMPP.protocol.sasl;
 using agsXMPP.protocol.stream;
 using agsXMPP.protocol.stream.feature;
 using agsXMPP.protocol.tls;
+using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
@@ -57,7 +58,8 @@ namespace Jabber.Net.Server.S2C
                     stream.Features.Register = new Register();
                 }
 
-                if (context.Handlers.SupportTls && session.EndPoint.SupportTls)
+                if (context.Handlers.SupportTls &&
+                    session.Connection is IXmppTlsConnection && !((IXmppTlsConnection)session.Connection).TlsStarted)
                 {
                     stream.Features.StartTls = new StartTls();
                 }

@@ -1,19 +1,23 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
+using agsXMPP.Xml.Dom;
+using Jabber.Net.Server.Handlers;
 
 namespace Jabber.Net.Server.Connections
 {
     public interface IXmppConnection
     {
-        bool SupportTls { get; }
+        string SessionId
+        {
+            get;
+            set;
+        }
 
+        void BeginReceive(XmppHandlerManager handlerManager);
 
-        void BeginRecieve(IXmppReciever reciever);
+        void Send(Element element, Action<Element> onerror);
 
-        void Send(byte[] buffer, Action<byte[]> error);
+        void Reset();
 
         void Close();
-
-        void StartTls(X509Certificate certificate);
     }
 }

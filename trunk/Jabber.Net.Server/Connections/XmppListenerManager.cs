@@ -76,14 +76,13 @@ namespace Jabber.Net.Server.Connections
 
         private void NewConnection(IXmppConnection connection)
         {
-            var wrapper = new XmppConnection(connection, handlerManager);
             try
             {
-                wrapper.BeginReceive();
+                connection.BeginReceive(handlerManager);
             }
             catch
             {
-                wrapper.Close();
+                connection.Close();
                 throw;
             }
         }

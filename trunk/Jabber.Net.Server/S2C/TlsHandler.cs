@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using agsXMPP.protocol.tls;
+using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 
@@ -34,7 +35,7 @@ namespace Jabber.Net.Server.S2C
 
         public XmppHandlerResult ProcessElement(Proceed element, XmppSession session, XmppHandlerContext context)
         {
-            session.EndPoint.StartTls(certificate);
+            ((IXmppTlsConnection)session.Connection).TlsStart(certificate);
             return Void();
         }
     }

@@ -50,7 +50,7 @@ namespace Jabber.Net.Server.Sessions
                 sessions.Remove(id, out s);
                 if (s != null)
                 {
-                    s.EndPoint.Close();
+                    s.Connection.Close();
                 }
             }
         }

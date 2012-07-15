@@ -23,7 +23,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         public override void Execute(XmppHandlerContext context)
         {
-            Session.EndPoint.Send(element, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
+            Session.Connection.Send(element, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
         }
 
         private void Save(Element e, XmppHandlerContext context)

@@ -10,7 +10,7 @@ namespace Jabber.Net.Server.Sessions
         public static readonly XmppSession Empty = new XmppSession(string.Empty);
 
         private static readonly IUniqueId id = new IncrementalUniqueId();
-        private IXmppEndPoint endpoint;
+        private IXmppConnection connection;
 
 
         public string Id
@@ -25,14 +25,14 @@ namespace Jabber.Net.Server.Sessions
             set;
         }
 
-        public IXmppEndPoint EndPoint
+        public IXmppConnection Connection
         {
-            get { return endpoint; }
+            get { return connection; }
             set
             {
-                Args.NotNull(value, "EndPoint");
-                endpoint = value;
-                endpoint.SessionId = Id;
+                Args.NotNull(value, "Connection");
+                connection = value;
+                connection.SessionId = Id;
             }
         }
 
@@ -89,10 +89,10 @@ namespace Jabber.Net.Server.Sessions
             Jid = Jid.Empty;
         }
 
-        public XmppSession(IXmppEndPoint endpoint)
-            : this(endpoint.SessionId ?? id.CreateId())
+        public XmppSession(IXmppConnection connection)
+            : this(connection.SessionId ?? id.CreateId())
         {
-            EndPoint = endpoint;
+            Connection = connection;
         }
 
         public void Authenticate(string username)

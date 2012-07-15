@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.disco;
@@ -11,70 +10,93 @@ using agsXMPP.protocol.iq.session;
 using agsXMPP.protocol.iq.time;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.protocol.iq.version;
-using agsXMPP.util;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Xmpp
 {
-    class XmppStreamParser
+    class XmppStreamReader
     {
-        private readonly StreamParser agsParser;
+        private readonly System.IO.Stream stream;
+        private readonly StreamParser parser;
 
 
-        public event EventHandler<ParsedArgs> Parsed;
-
-        public event EventHandler<ParseErrorArgs> Error;
+        public event EventHandler<XmppStreamArgs> ReadElementComleted;
 
 
-        public XmppStreamParser()
+        public XmppStreamReader(System.IO.Stream stream)
         {
-            agsParser = new StreamParser();
-            agsParser.OnStreamStart += AgsParserOnStreamElement;
-            agsParser.OnStreamElement += AgsParserOnStreamElement;
-            agsParser.OnStreamEnd += AgsParserOnStreamElement;
-            agsParser.OnError += AgsParserOnError;
-            agsParser.OnStreamError += AgsParserOnError;
-            Reset();
-        }
+            Args.NotNull(stream, "stream");
 
-        public Element Parse(byte[] buffer)
-        {
-            var e = ElementSerializer.DeSerializeElement<Element>(Encoding.UTF8.GetString(buffer));
-            return CorrectType(e);
-        }
+            this.stream = stream;
+            this.parser = new StreamParser();
 
-        public byte[] ToBytes(Element e)
-        {
-            return Encoding.UTF8.GetBytes(e.ToString());
-        }
-
-        public void ParseAsync(byte[] buffer)
-        {
-            agsParser.Push(buffer, 0, buffer.Length);
-        }
-
-        public void Reset()
-        {
-            agsParser.Reset();
+            parser.OnStreamStart += OnElement;
+            parser.OnStreamElement += OnElement;
+            parser.OnStreamEnd += OnElement;
+            parser.OnStreamError += OnError;
+            parser.OnError += OnError;
         }
 
 
-        private void AgsParserOnStreamElement(object sender, Node e)
+        public void ReadElementAsync()
         {
-            var ev = Parsed;
-            if (ev != null && e is Element)
+            try
             {
-                ev(this, new ParsedArgs(CorrectType((Element)e)));
+                var buffer = new byte[1024];
+                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
+            }
+            catch (Exception ex)
+            {
+                OnError(this, ex);
             }
         }
 
-        private void AgsParserOnError(object sender, Exception ex)
+
+        private void ReadCallback(IAsyncResult ar)
         {
-            var ev = Error;
+            try
+            {
+                var buffer = (byte[])ar.AsyncState;
+                var readed = stream.EndRead(ar);
+                if (0 < readed)
+                {
+                    parser.Push(buffer, 0, readed);
+                    stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
+                }
+                else
+                {
+                    OnElement(parser, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                OnError(parser, ex);
+            }
+        }
+
+        private void OnElement(object sender, Node node)
+        {
+            var ev = ReadElementComleted;
             if (ev != null)
             {
-                ev(this, new ParseErrorArgs(ex));
+                if (node is Element)
+                {
+                    ev(this, new XmppStreamArgs(XmppStreamState.Success, CorrectType((Element)node), null));
+                }
+                else if (node == null)
+                {
+                    ev(this, new XmppStreamArgs(XmppStreamState.Closed));
+                }
+            }
+        }
+
+        private void OnError(object sender, Exception ex)
+        {
+            var ev = ReadElementComleted;
+            if (ev != null)
+            {
+                ev(this, new XmppStreamArgs(XmppStreamState.Error, null, ex));
             }
         }
 
@@ -131,47 +153,16 @@ namespace Jabber.Net.Server.Xmpp
             var stream = element as agsXMPP.protocol.Base.Stream;
             if (stream != null)
             {
-                if (agsParser.DefaultNamespace == agsXMPP.Uri.CLIENT)
+                if (parser.DefaultNamespace == agsXMPP.Uri.CLIENT)
                 {
-                    return new Stream(stream, agsParser.DefaultNamespace);
+                    return new Stream(stream, parser.DefaultNamespace);
                 }
-                if (agsParser.DefaultNamespace == agsXMPP.Uri.ACCEPT)
+                if (parser.DefaultNamespace == agsXMPP.Uri.ACCEPT)
                 {
-                    return new agsXMPP.protocol.component.Stream(stream, agsParser.DefaultNamespace);
+                    return new agsXMPP.protocol.component.Stream(stream, parser.DefaultNamespace);
                 }
             }
             return element;
-        }
-
-
-        public class ParsedArgs : EventArgs
-        {
-            public Element Element
-            {
-                get;
-                private set;
-            }
-
-
-            public ParsedArgs(Element element)
-            {
-                Element = element;
-            }
-        }
-
-        public class ParseErrorArgs : EventArgs
-        {
-            public Exception Error
-            {
-                get;
-                private set;
-            }
-
-
-            public ParseErrorArgs(Exception error)
-            {
-                Error = error;
-            }
         }
     }
 }

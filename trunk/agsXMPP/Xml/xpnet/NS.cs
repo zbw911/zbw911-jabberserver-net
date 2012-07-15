@@ -88,7 +88,10 @@ namespace agsXMPP.Xml.xpnet
         /// </summary>
         public void PopScope()
         {
-            m_stack.Pop();
+            if (0 < m_stack.Count)
+            {
+                m_stack.Pop();
+            }
         }
 
         /// <summary>

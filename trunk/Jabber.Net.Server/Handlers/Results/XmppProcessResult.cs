@@ -17,7 +17,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         public override void Execute(XmppHandlerContext context)
         {
-            context.Handlers.ProcessElement(Session.EndPoint, element);
+            context.Handlers.ProcessElement(Session.Connection, element);
         }
     }
 }
