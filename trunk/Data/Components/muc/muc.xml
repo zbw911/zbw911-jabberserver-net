@@ -19,9 +19,9 @@
   <logdir>.</logdir> <!-- directory containing the debug log (the file is called mu-conference.log) -->
   <pidfile>./muc.pid</pidfile> <!-- file that will contain the PID of the process -->
   
-  <!--   <logstderr/> --> <!-- uncomment to also send log to stderr -->
+  <logstderr/> <!-- uncomment to also send log to stderr -->
   
-  <loglevel>124</loglevel> <!-- log verbosity, 255 for very verbose, 0 for quiet -->
+  <loglevel>255</loglevel> <!-- log verbosity, 255 for very verbose, 0 for quiet -->
 
     <conference xmlns="jabber:config:conference">
       <public/> <!-- rooms are public when created, comment to make them private by default -->
@@ -43,9 +43,10 @@
       <!-- lists of admins of the service, add a <user/> tag by admin -->
       <sadmin>
         <user>admin@localhost</user>
+		<user>nikolay.ivanov@localhost</user>
       </sadmin>
-      <!-- <dynamic/> --> <!-- when uncommented, only dynamic rooms can be created -->
-      <!-- <persistent/> --> <!-- persistent rooms will be created, overide <dynamic/> -->
+      <!-- <dynamic/> --><!-- when uncommented, only dynamic rooms can be created -->
+      <persistent/> <!-- persistent rooms will be created, overide <dynamic/> -->
       <!-- <locknicks/> --> <!-- enforce the user nickname to the user part of his jid -->
       <!-- <roomlock/> --> <!-- uncomment to allow only admins to create rooms -->
       <!-- configuration of MySQL, only used if the MySQL exports is activated, see README.sql -->
