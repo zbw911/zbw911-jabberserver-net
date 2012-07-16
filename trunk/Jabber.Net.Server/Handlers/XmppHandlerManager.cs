@@ -100,7 +100,7 @@ namespace Jabber.Net.Server.Handlers
                 }
 
                 var to = element.GetAttribute("to");
-                var jid = to != null ? new Jid(to) : session.Jid;
+                var jid = to != null && !session.Jid.IsServer ? new Jid(to) : session.Jid;
                 var handlers = router.GetElementHandlers(element.GetType(), jid);
                 var processed = false;
 

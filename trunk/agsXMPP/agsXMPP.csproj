@@ -570,10 +570,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="protocol\iq\privacy\RuleManager.cs" />
-    <Compile Include="protocol\x\tm\history\History.cs" />
-    <Compile Include="protocol\x\tm\history\HistoryItem.cs" />
-    <Compile Include="protocol\x\tm\history\PrivateLog.cs" />
-    <Compile Include="protocol\x\tm\history\PrivateLogItem.cs" />
     <Compile Include="protocol\x\vcard_update\VcardUpdate.cs" />
     <Compile Include="sasl\DigestMD5\DigestMD5Mechanism.cs">
       <SubType>Code</SubType>

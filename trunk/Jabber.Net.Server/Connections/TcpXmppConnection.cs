@@ -89,6 +89,7 @@ namespace Jabber.Net.Server.Connections
                     if (!IgnoreError(e.Error))
                     {
                         Log.Error(e.Error);
+            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3, true);
                     }
                     try
                     {

@@ -1,4 +1,5 @@
-﻿using agsXMPP.protocol.client;
+﻿using System.Linq;
+using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.disco;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
@@ -20,7 +21,7 @@ namespace Jabber.Net.Server.S2C
         public XmppHandlerResult ProcessElement(DiscoInfoIq element, XmppSession session, XmppHandlerContext context)
         {
             element.Query.AddIdentity(serviceInfo.Category, serviceInfo.Type, serviceInfo.Name);
-            foreach (var feature in serviceInfo.Features)
+            foreach (var feature in serviceInfo.Features.Reverse())
             {
                 element.Query.AddFeature(feature);
             }
