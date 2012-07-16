@@ -107,7 +107,7 @@ namespace Jabber.Net.Server.Connections
 
             clientStream.Flush();
             clientStream = new SslStream(clientStream);
-            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3, true);
+            ((SslStream)clientStream).AuthenticateAsServer(certificate, false, SslProtocols.Tls, true);
         }
 
 
