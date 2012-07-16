@@ -7,14 +7,14 @@ using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
 using Jabber.Net.Server.Storages;
 
-namespace Jabber.Net.Server.MUC
+namespace Jabber.Net.Server.Muc
 {
     class MucDiscoItemsHandler : XmppHandler,
         IXmppHandler<DiscoItems>
     {
         public XmppHandlerResult ProcessElement(DiscoItems element, XmppSession session, XmppHandlerContext context)
         {
-            throw new NotImplementedException();
+            return Send(session, element.ToResult());
         }
     }
 }
