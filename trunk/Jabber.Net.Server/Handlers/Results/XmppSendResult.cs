@@ -7,9 +7,8 @@ namespace Jabber.Net.Server.Handlers.Results
 {
     public class XmppSendResult : XmppHandlerResult
     {
-        private readonly bool offline;
-
         private readonly Element element;
+        private readonly bool offline;
 
 
         public XmppSendResult(XmppSession session, Element element, bool offline)
@@ -23,12 +22,7 @@ namespace Jabber.Net.Server.Handlers.Results
 
         public override void Execute(XmppHandlerContext context)
         {
-            Session.Connection.Send(element, offline ? notsended => Save(notsended, context) : (Action<Element>)null);
-        }
-
-        private void Save(Element e, XmppHandlerContext context)
-        {
-            context.Storages.Elements.SaveOffline(Session.Jid, e);
+            Session.Connection.Send(element, offline ? notsended => context.Storages.Elements.SaveOffline(Session.Jid, notsended) : (Action<Element>)null);
         }
     }
 }

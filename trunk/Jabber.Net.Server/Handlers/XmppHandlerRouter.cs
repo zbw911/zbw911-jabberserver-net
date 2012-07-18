@@ -110,7 +110,7 @@ namespace Jabber.Net.Server.Handlers
             {
                 this.handler = handler;
                 HandlerId = handlerId;
-                Validators = handler.Method.GetCustomAttributes(false).OfType<XmppValidationAttribute>();
+                Validators = handler.Method.GetCustomAttributes(false).OfType<XmppValidationAttribute>().ToArray();
             }
 
             public XmppHandlerResult ProcessElement(Element e, XmppSession s, XmppHandlerContext c)
