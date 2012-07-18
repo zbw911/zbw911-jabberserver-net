@@ -44,6 +44,7 @@ namespace Jabber.Net.Server.Xmpp
             try
             {
                 stream.EndWrite(ar);
+                stream.Flush();
                 var ev = WriteElementComleted;
                 if (ev != null)
                 {

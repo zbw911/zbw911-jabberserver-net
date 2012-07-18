@@ -94,28 +94,25 @@ namespace Jabber.Net.Server.Handlers
 
                 var session = GetSession(connection);
 
-                if (!ProcessValidation(defaultInvoker, element, session, context))
+                if (ProcessValidation(defaultInvoker, element, session, context))
                 {
-                    return;
-                }
+                    var to = element.GetAttribute("to");
+                    var jid = to != null && !session.Jid.IsServer ? new Jid(to) : session.Jid;
+                    var handlers = router.GetElementHandlers(element.GetType(), jid);
+                    var processed = false;
 
-                var to = element.GetAttribute("to");
-                var jid = to != null && !session.Jid.IsServer ? new Jid(to) : session.Jid;
-                var handlers = router.GetElementHandlers(element.GetType(), jid);
-                var processed = false;
-
-                foreach (var handler in handlers)
-                {
-                    processed = true;
-                    if (!ProcessValidation(handler, element, session, context))
+                    foreach (var handler in handlers)
                     {
-                        continue;
+                        processed = true;
+                        if (ProcessValidation(handler, element, session, context))
+                        {
+                            ProcessResult(handler.ProcessElement(element, session, context));
+                        }
                     }
-                    ProcessResult(handler.ProcessElement(element, session, context));
-                }
-                if (!processed)
-                {
-                    ProcessResult(defaultInvoker.ProcessElement(element, session, context));
+                    if (!processed)
+                    {
+                        ProcessResult(defaultInvoker.ProcessElement(element, session, context));
+                    }
                 }
             }
             catch (Exception error)
