@@ -12,8 +12,6 @@ namespace Jabber.Net.Server.Components
         IXmppHandler<agsXMPP.protocol.Base.Stanza>,
         IXmppHandler<agsXMPP.protocol.component.Error>
     {
-
-
         private readonly Jid domain;
         private readonly string secret;
 
