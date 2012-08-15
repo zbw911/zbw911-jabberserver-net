@@ -28,6 +28,7 @@ using agsXMPP.Xml.Dom;
 using agsXMPP.Xml.xpnet;
 using Encoding = System.Text.Encoding;
 using UTF8Encoding = agsXMPP.Xml.xpnet.UTF8Encoding;
+using agsXMPP.protocol.Base;
 
 #endregion
 
@@ -450,7 +451,7 @@ namespace agsXMPP.Xml
                 // end of doc
                 if (OnStreamEnd != null && m_root != null)
                 {
-                    OnStreamEnd(this, m_root);
+                    OnStreamEnd(this, null);
                 }
 
                 // 				FireOnDocumentEnd();
