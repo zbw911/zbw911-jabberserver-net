@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Text;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.bind;
 using agsXMPP.protocol.iq.disco;
@@ -15,10 +18,11 @@ using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Xmpp
 {
-    class XmppStreamReader
+    class XmppStreamReader : IDisposable
     {
-        private readonly System.IO.Stream stream;
         private readonly StreamParser parser;
+        private IAsyncResult result;
+        private bool disposed = false;
 
 
         public event EventHandler<XmppStreamArgs> ReadElementComleted;
@@ -28,7 +32,7 @@ namespace Jabber.Net.Server.Xmpp
         {
             Args.NotNull(stream, "stream");
 
-            this.stream = stream;
+            this.Stream = stream;
             this.parser = new StreamParser();
 
             parser.OnStreamStart += OnElement;
@@ -38,13 +42,15 @@ namespace Jabber.Net.Server.Xmpp
             parser.OnError += OnError;
         }
 
+        public System.IO.Stream Stream { get; set; }
+
 
         public void ReadElementAsync()
         {
             try
             {
                 var buffer = new byte[1024];
-                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
+                result = Stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
             }
             catch (Exception ex)
             {
@@ -52,22 +58,38 @@ namespace Jabber.Net.Server.Xmpp
             }
         }
 
+        public void Reset()
+        {
+            parser.Reset();
+        }
 
         private void ReadCallback(IAsyncResult ar)
         {
             try
             {
                 var buffer = (byte[])ar.AsyncState;
-                var readed = stream.EndRead(ar);
+                var readed = Stream.EndRead(ar);
+
                 if (0 < readed)
                 {
                     parser.Push(buffer, 0, readed);
-                    stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
+                    if (!disposed)
+                    {
+                        try
+                        {
+                            Stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, buffer);
+                        }
+                        catch (Exception)
+                        {
+                            
+                        }
+                    }
                 }
                 else
                 {
                     OnElement(parser, null);
                 }
+
             }
             catch (Exception ex)
             {
@@ -163,6 +185,12 @@ namespace Jabber.Net.Server.Xmpp
                 }
             }
             return element;
+        }
+
+        
+        public void Dispose()
+        {
+            disposed = true;
         }
     }
 }
