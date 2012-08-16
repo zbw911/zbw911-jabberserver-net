@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
 
 namespace Jabber.Net.Server.Xmpp
@@ -10,6 +9,7 @@ namespace Jabber.Net.Server.Xmpp
     {
         private readonly Stream stream;
         private readonly Encoding encoding;
+        private volatile bool sending;
 
 
         public event EventHandler<XmppStreamArgs> WriteElementComleted;
@@ -24,27 +24,39 @@ namespace Jabber.Net.Server.Xmpp
         }
 
 
-        public void WriteElementAsync(Element element)
+        public void WriteElementAsync(Element element, Action<Element> onerror)
         {
+            WriteElementCancel();
             try
             {
+                sending = true;
                 var buffer = encoding.GetBytes(element.ToString());
-                stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, element);
+                stream.BeginWrite(buffer, 0, buffer.Length, SendCallback, Tuple.Create(element, onerror));
             }
             catch (Exception ex)
             {
-                OnError(element, ex);
+                sending = false;
+                OnError(element, ex, onerror);
             }
+        }
+
+        public void WriteElementCancel()
+        {
+            while (sending) ;
         }
 
 
         private void SendCallback(IAsyncResult ar)
         {
-            var element = (Element)ar.AsyncState;
+            var data = (Tuple<Element, Action<Element>>)ar.AsyncState;
+            var element = data.Item1;
+            var onerror = data.Item2;
             try
             {
                 stream.EndWrite(ar);
                 stream.Flush();
+                sending = false;
+
                 var ev = WriteElementComleted;
                 if (ev != null)
                 {
@@ -53,16 +65,29 @@ namespace Jabber.Net.Server.Xmpp
             }
             catch (Exception ex)
             {
-                OnError(element, ex);
+                sending = false;
+                OnError(element, ex, onerror);
             }
         }
 
-        private void OnError(Element element, Exception ex)
+        private void OnError(Element element, Exception exception, Action<Element> onerror)
         {
+            try
+            {
+                if (onerror != null)
+                {
+                    onerror(element);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+
             var ev = WriteElementComleted;
             if (ev != null)
             {
-                ev(this, new XmppStreamArgs(XmppStreamState.Error, element, ex));
+                ev(this, new XmppStreamArgs(XmppStreamState.Error, element, exception));
             }
         }
     }

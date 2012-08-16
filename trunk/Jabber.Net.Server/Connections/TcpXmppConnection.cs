@@ -21,6 +21,7 @@ namespace Jabber.Net.Server.Connections
 
         private XmppHandlerManager handlerManager;
         private XmppStreamReader reader;
+        private XmppStreamWriter writer;
 
         public string SessionId
         {
@@ -53,50 +54,40 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public void CloseReader()
+        public void Reset()
         {
             if (reader != null)
             {
-                reader.ReadElementComleted -= OnReaderOnReadElementComleted;
-                reader.Dispose();
-                reader = null;
+                reader.ReadElementCancel();
             }
-        }
-
-        public void Reset()
-        {
-            //Cancell all IO
 
             reader = new XmppStreamReader(stream);
-            reader.ReadElementComleted += OnReaderOnReadElementComleted;
-            reader.ReadElementAsync();
-        }
-
-        private void OnReaderOnReadElementComleted(object s, XmppStreamArgs e)
-        {
-            if (e.State == XmppStreamState.Success)
+            reader.ReadElementComleted += (s, e) =>
             {
-                handlerManager.ProcessElement(this, e.Element);
-            }
-            else if (e.State == XmppStreamState.Error)
-            {
-                if (!IgnoreError(e.Error))
+                if (e.State == XmppStreamState.Success)
                 {
-                    Log.Error(e.Error);
+                    handlerManager.ProcessElement(this, e.Element);
                 }
-                Close();
-            }
-            else if (e.State == XmppStreamState.Closed)
+                else if (e.State == XmppStreamState.Error)
+                {
+                    if (!IgnoreError(e.Error))
+                    {
+                        Log.Error(e.Error);
+                    }
+                    Close();
+                }
+                else if (e.State == XmppStreamState.Closed)
+                {
+                    Close();
+                }
+            };
+            reader.ReadElementAsync();
+
+            if (writer != null)
             {
-                Close();
+                writer.WriteElementCancel();
             }
-        }
-
-        public void Send(Element element, Action<Element> onerror)
-        {
-            Args.NotNull(element, "element");
-
-            var writer = new XmppStreamWriter(stream);
+            writer = new XmppStreamWriter(stream);
             writer.WriteElementComleted += (s, e) =>
             {
                 if (e.State == XmppStreamState.Error)
@@ -105,21 +96,16 @@ namespace Jabber.Net.Server.Connections
                     {
                         Log.Error(e.Error);
                     }
-                    try
-                    {
-                        if (onerror != null)
-                        {
-                            onerror(element);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
                     Close();
                 }
             };
-            writer.WriteElementAsync(element);
+        }
+
+        public void Send(Element element, Action<Element> onerror)
+        {
+            Args.NotNull(element, "element");
+
+            writer.WriteElementAsync(element, onerror);
         }
 
         public void Close()
@@ -159,10 +145,16 @@ namespace Jabber.Net.Server.Connections
         public void TlsStart(X509Certificate certificate)
         {
             Args.NotNull(certificate, "certificate");
-            CloseReader();
+
             stream.Flush();
+            if (reader != null)
+            {
+                reader.ReadElementCancel();
+            }
+
             stream = new SslStream(stream);
-            ((SslStream)stream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3|SslProtocols.Tls|SslProtocols.Ssl2, true);
+            ((SslStream)stream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Ssl2, true);
+
             Reset();
         }
 

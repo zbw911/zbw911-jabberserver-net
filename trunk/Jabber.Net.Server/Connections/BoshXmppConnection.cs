@@ -87,7 +87,7 @@ namespace Jabber.Net.Server.Connections
                     Close();
                 }
             };
-            writer.WriteElementAsync(element);
+            writer.WriteElementAsync(element, onerror);
         }
 
         public void Reset()
