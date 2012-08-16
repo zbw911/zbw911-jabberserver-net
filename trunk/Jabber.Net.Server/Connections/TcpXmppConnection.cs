@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using agsXMPP.Xml.Dom;
@@ -21,7 +22,6 @@ namespace Jabber.Net.Server.Connections
         private XmppHandlerManager handlerManager;
         private XmppStreamReader reader;
 
-
         public string SessionId
         {
             get;
@@ -30,7 +30,7 @@ namespace Jabber.Net.Server.Connections
 
         public bool TlsStarted
         {
-            get { return !(stream is SslStream); }
+            get { return stream is SslStream; }
         }
 
 
@@ -52,29 +52,44 @@ namespace Jabber.Net.Server.Connections
             Reset();
         }
 
+
+        public void CloseReader()
+        {
+            if (reader != null)
+            {
+                reader.ReadElementComleted -= OnReaderOnReadElementComleted;
+                reader.Dispose();
+                reader = null;
+            }
+        }
+
         public void Reset()
         {
+            //Cancell all IO
+
             reader = new XmppStreamReader(stream);
-            reader.ReadElementComleted += (s, e) =>
-            {
-                if (e.State == XmppStreamState.Success)
-                {
-                    handlerManager.ProcessElement(this, e.Element);
-                }
-                else if (e.State == XmppStreamState.Error)
-                {
-                    if (!IgnoreError(e.Error))
-                    {
-                        Log.Error(e.Error);
-                    }
-                    Close();
-                }
-                else if (e.State == XmppStreamState.Closed)
-                {
-                    Close();
-                }
-            };
+            reader.ReadElementComleted += OnReaderOnReadElementComleted;
             reader.ReadElementAsync();
+        }
+
+        private void OnReaderOnReadElementComleted(object s, XmppStreamArgs e)
+        {
+            if (e.State == XmppStreamState.Success)
+            {
+                handlerManager.ProcessElement(this, e.Element);
+            }
+            else if (e.State == XmppStreamState.Error)
+            {
+                if (!IgnoreError(e.Error))
+                {
+                    Log.Error(e.Error);
+                }
+                Close();
+            }
+            else if (e.State == XmppStreamState.Closed)
+            {
+                Close();
+            }
         }
 
         public void Send(Element element, Action<Element> onerror)
@@ -144,10 +159,11 @@ namespace Jabber.Net.Server.Connections
         public void TlsStart(X509Certificate certificate)
         {
             Args.NotNull(certificate, "certificate");
-
+            CloseReader();
             stream.Flush();
             stream = new SslStream(stream);
-            ((SslStream)stream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3, true);
+            ((SslStream)stream).AuthenticateAsServer(certificate, false, SslProtocols.Ssl3|SslProtocols.Tls|SslProtocols.Ssl2, true);
+            Reset();
         }
 
 
