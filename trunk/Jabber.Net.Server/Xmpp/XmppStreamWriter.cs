@@ -53,9 +53,15 @@ namespace Jabber.Net.Server.Xmpp
             var onerror = data.Item2;
             try
             {
-                stream.EndWrite(ar);
-                stream.Flush();
-                sending = false;
+                try
+                {
+                    stream.EndWrite(ar);
+                    stream.Flush();
+                }
+                finally
+                {
+                    sending = false;
+                }
 
                 var ev = WriteElementComleted;
                 if (ev != null)
@@ -65,7 +71,6 @@ namespace Jabber.Net.Server.Xmpp
             }
             catch (Exception ex)
             {
-                sending = false;
                 OnError(element, ex, onerror);
             }
         }
