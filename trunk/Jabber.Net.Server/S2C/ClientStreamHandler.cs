@@ -34,7 +34,7 @@ namespace Jabber.Net.Server.S2C
 
             var stream = new Stream
             {
-                Id = CreateId(),
+                Id = session.Id,
                 Prefix = Uri.PREFIX,
                 Version = element.Version,
                 From = element.To,

@@ -37,7 +37,7 @@ namespace agsXMPP.protocol.Base
         public string DefaultNamespace
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>

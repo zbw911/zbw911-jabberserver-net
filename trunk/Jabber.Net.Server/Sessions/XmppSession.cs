@@ -9,7 +9,7 @@ namespace Jabber.Net.Server.Sessions
     {
         public static readonly XmppSession Empty = new XmppSession(string.Empty);
 
-        private static readonly IUniqueId id = new IncrementalUniqueId();
+        private static readonly IUniqueId id = new RandomUniqueId();
         private IXmppConnection connection;
 
 
@@ -28,7 +28,7 @@ namespace Jabber.Net.Server.Sessions
         public IXmppConnection Connection
         {
             get { return connection; }
-            set
+            private set
             {
                 Args.NotNull(value, "Connection");
                 connection = value;

@@ -4,6 +4,8 @@ using System.Net;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Xmpp;
+using System.Collections.Generic;
+using agsXMPP.protocol.extensions.bosh;
 
 namespace Jabber.Net.Server.Connections
 {
@@ -14,6 +16,8 @@ namespace Jabber.Net.Server.Connections
         private readonly HttpListenerContext context;
         private XmppHandlerManager handlerManager;
         private XmppStreamReader reader;
+        private readonly List<Element> buffer = new List<Element>();
+        private bool wait;
 
 
         public string SessionId
@@ -64,6 +68,37 @@ namespace Jabber.Net.Server.Connections
         {
             Args.NotNull(element, "element");
 
+            if (element is Body || wait)
+            {
+                buffer.Add(element);
+                wait = true;
+            }
+            else
+            {
+                var writer = new XmppStreamWriter(context.Response.OutputStream);
+                writer.WriteElementComleted += (s, e) =>
+                {
+                    if (e.State == XmppStreamState.Error)
+                    {
+                        if (!IgnoreError(e.Error))
+                        {
+                            Log.Error(e.Error);
+                        }
+                        Close();
+                    }
+                };
+                writer.WriteElementAsync(element, onerror);
+            }
+        }
+
+        public void Reset()
+        {
+        }
+
+        public void Close()
+        {
+
+
             var writer = new XmppStreamWriter(context.Response.OutputStream);
             writer.WriteElementComleted += (s, e) =>
             {
@@ -73,29 +108,11 @@ namespace Jabber.Net.Server.Connections
                     {
                         Log.Error(e.Error);
                     }
-                    try
-                    {
-                        if (onerror != null)
-                        {
-                            onerror(element);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
                     Close();
                 }
             };
-            writer.WriteElementAsync(element, onerror);
-        }
+            writer.WriteElementAsync(element, null);
 
-        public void Reset()
-        {
-        }
-
-        public void Close()
-        {
             lock (locker)
             {
                 if (closed) return;
@@ -103,20 +120,12 @@ namespace Jabber.Net.Server.Connections
 
                 try
                 {
-                    //clientStream.Close();
+                    context.Request.InputStream.Close();
                 }
                 catch (Exception) { }
                 try
                 {
-                    //client.Close();
-                }
-                catch (Exception) { }
-                try
-                {
-                    if (handlerManager != null)
-                    {
-                        handlerManager.ProcessClose(this);
-                    }
+                    context.Response.Close();
                 }
                 catch (Exception) { }
             }
