@@ -1,0 +1,8 @@
+syntax: glob
+*/bin/*
+*/obj/*
+*.suo
+*.user
+code.google
+trunk/_ReSharper.Jabber.Net/*
+trunk/Data/*.db3-journal
