@@ -113,6 +113,7 @@
     <Compile Include="Components\ComponentHandler.cs" />
     <Compile Include="Connections\BoshXmppConnection.cs" />
     <Compile Include="Connections\BoshXmppListener.cs" />
+    <Compile Include="Connections\BoshXmppAggregator.cs" />
     <Compile Include="Connections\IXmppTlsConnection.cs" />
     <Compile Include="Connections\IXmppConnection.cs" />
     <Compile Include="Connections\TcpXmppConnection.cs" />

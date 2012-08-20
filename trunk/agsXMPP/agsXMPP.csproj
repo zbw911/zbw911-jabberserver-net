@@ -160,6 +160,7 @@
     <Compile Include="protocol\extensions\bookmarks\StorageIq.cs" />
     <Compile Include="protocol\extensions\bookmarks\Url.cs" />
     <Compile Include="protocol\extensions\bosh\BoshType.cs" />
+    <Compile Include="protocol\extensions\bosh\BodyEnd.cs" />
     <Compile Include="protocol\extensions\bytestreams\Activate.cs" />
     <Compile Include="protocol\extensions\bytestreams\ByteStream.cs" />
     <Compile Include="protocol\extensions\bytestreams\ByteStreamIq.cs" />
