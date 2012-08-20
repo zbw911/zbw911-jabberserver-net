@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
+using Jabber.Net.Config;
+using Microsoft.Practices.Unity.Configuration;
 
 namespace Jabber.Net.Server
 {
@@ -10,6 +12,8 @@ namespace Jabber.Net.Server
 
         static void Main(string[] args)
         {
+
+
             var service = new Program();
             if (Environment.UserInteractive)
             {

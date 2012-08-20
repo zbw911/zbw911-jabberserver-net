@@ -122,6 +122,10 @@
       <Project>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</Project>
       <Name>agsXMPP</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jabber.Net.Config\Jabber.Net.Config.csproj">
+      <Project>{19A6C8C7-CDEB-420E-ADEE-B1F376C6F258}</Project>
+      <Name>Jabber.Net.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jabber.Net.Server\Jabber.Net.Server.csproj">
       <Project>{53296DF8-F360-475B-A1F0-30F570EAEF9F}</Project>
       <Name>Jabber.Net.Server</Name>

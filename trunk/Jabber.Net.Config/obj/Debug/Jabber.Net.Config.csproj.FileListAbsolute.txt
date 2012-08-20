@@ -1,0 +1,9 @@
+C:\jbr\trunk\Jabber.Net.Config\bin\Debug\Jabber.Net.Config.dll
+C:\jbr\trunk\Jabber.Net.Config\bin\Debug\Jabber.Net.Config.pdb
+C:\jbr\trunk\Jabber.Net.Config\bin\Debug\RazorEngine.dll
+C:\jbr\trunk\Jabber.Net.Config\bin\Debug\System.Web.Razor.dll
+C:\jbr\trunk\Jabber.Net.Config\obj\Debug\Jabber.Net.Config.csprojResolveAssemblyReference.cache
+C:\jbr\trunk\Jabber.Net.Config\obj\Debug\Jabber.Net.Config.Resources.ConfigurationResource.resources
+C:\jbr\trunk\Jabber.Net.Config\obj\Debug\Jabber.Net.Config.csproj.GenerateResource.Cache
+C:\jbr\trunk\Jabber.Net.Config\obj\Debug\Jabber.Net.Config.dll
+C:\jbr\trunk\Jabber.Net.Config\obj\Debug\Jabber.Net.Config.pdb
