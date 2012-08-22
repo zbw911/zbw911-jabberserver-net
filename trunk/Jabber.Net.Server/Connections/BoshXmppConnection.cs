@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Xmpp;
@@ -52,10 +53,6 @@ namespace Jabber.Net.Server.Connections
                     }
                     Close();
                 }
-                else if (e.State == XmppStreamState.Closed)
-                {
-                    Close();
-                }
             };
             reader.ReadElementAsync();
         }
@@ -64,19 +61,29 @@ namespace Jabber.Net.Server.Connections
         {
             Args.NotNull(element, "element");
 
-            var writer = new XmppStreamWriter(context.Response.OutputStream);
-            writer.WriteElementComleted += (s, e) =>
+            try
             {
-                if (e.State == XmppStreamState.Error)
+                var buffer = Encoding.UTF8.GetBytes(element.ToString());
+
+                context.Response.ContentType = "text/xml; charset=utf-8";
+                context.Response.ContentLength64 = buffer.LongLength;
+                context.Response.Close(buffer, true);
+            }
+            catch (Exception ex)
+            {
+                if (!IgnoreError(ex))
                 {
-                    if (!IgnoreError(e.Error))
-                    {
-                        Log.Error(e.Error);
-                    }
-                    Close();
+                    Log.Error(ex);
                 }
-            };
-            writer.WriteElementAsync(element, onerror);
+                if (onerror != null)
+                {
+                    onerror(element);
+                }
+            }
+            finally
+            {
+                Close();
+            }
         }
 
         public void Reset()

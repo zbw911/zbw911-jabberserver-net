@@ -13,6 +13,7 @@ namespace Jabber.Net.Server.Connections
         private readonly object locker = new object();
         private readonly Dictionary<long, IXmppConnection> connections = new Dictionary<long, IXmppConnection>();
         private IXmppConnection current;
+        private XmppHandlerManager handlerManager;
 
         private readonly TimeSpan waitTimeout;
         private readonly TimeSpan inactivityTimeout;
@@ -45,20 +46,24 @@ namespace Jabber.Net.Server.Connections
 
             lock (locker)
             {
+                TaskQueue.RemoveTask(SessionId);
+
                 connections.Add(rid, connection);
-                var minrid = connections.Min(p => p.Key);
-                current = connections[minrid];
+                SetCurrent();
             }
             return this;
         }
 
         public void BeginReceive(XmppHandlerManager handlerManager)
         {
-            throw new NotSupportedException();
+            Args.NotNull(handlerManager, "handlerManager");
+
+            this.handlerManager = handlerManager;
         }
 
         public void Send(Element element, Action<Element> onerror)
         {
+            // Send a single item or to accumulate a buffer until a bodyend.
             lock (locker)
             {
                 if (!(element is BodyEnd))
@@ -68,58 +73,96 @@ namespace Jabber.Net.Server.Connections
                         element = ((agsXMPP.protocol.client.Stream)element).Features;
                     }
                     buffer.Add(Tuple.Create(element, onerror));
-                }
-                if (!buffer.Any(t => t.Item1 is Body) || element is BodyEnd)
-                {
-                    var bodyTuple = buffer.FirstOrDefault(t => t.Item1 is Body);
-                    var body = bodyTuple != null ? (Body)bodyTuple.Item1 : new Body();
-                    foreach (var tuple in buffer)
-                    {
-                        if (!(tuple.Item1 is Body))
-                        {
-                            body.AddChild(tuple.Item1);
-                        }
-                    }
-                    var onerrors = buffer
-                        .Where(t => t.Item2 != null)
-                        .Select<Tuple<Element, Action<Element>>, Action>(t => () => t.Item2(t.Item1))
-                        .ToList();
-                    Action<Element> commonOnError = _ => onerrors.ForEach(e => e());
 
-                    buffer.Clear();
-                    if (current != null)
+                    if (buffer.Any(t => t.Item1 is Body))
                     {
-                        current.Send(body, commonOnError);
+                        return;
                     }
-                    else
+                }
+
+                var elements = buffer.Select(t => t.Item1);
+                var body = elements.FirstOrDefault(e => e is Body) as Body ?? new Body();
+                foreach (var e in elements.Where(e => !(e is Body)))
+                {
+                    body.AddChild(e);
+                }
+
+                var onerrors = buffer
+                    .Where(t => t.Item2 != null)
+                    .Select(t => new Action(() => t.Item2(t.Item1)))
+                    .ToList();
+                Action<Element> commonOnError = _ => onerrors.ForEach(e => e());
+
+                buffer.Clear();
+                if (current != null)
+                {
+                    current.Send(body, commonOnError);
+                    CloseCurrent();
+                }
+                else
+                {
+                    Action task = () =>
                     {
-                        Action task = () =>
+                        lock (locker)
                         {
-                            lock (locker)
+                            if (current != null)
                             {
-                                if (current != null)
-                                {
-                                    current.Send(body, commonOnError);
-                                }
-                                else
-                                {
-                                    commonOnError(body);
-                                }
+                                current.Send(body, commonOnError);
+                                CloseCurrent();
                             }
-                        };
-                        TaskQueue.AddTask(Guid.NewGuid().ToString(), task, TimeSpan.FromSeconds(5));
-                    }
+                            else
+                            {
+                                commonOnError(body);
+                            }
+                        }
+                    };
+                    TaskQueue.AddTask(Guid.NewGuid().ToString(), task, sendTimeout);
                 }
             }
         }
 
         public void Reset()
         {
+            throw new NotImplementedException();
         }
 
         public void Close()
         {
+            handlerManager.ProcessClose(this);
+        }
 
+
+        private void CloseCurrent()
+        {
+            lock (locker)
+            {
+                if (0 < connections.Count)
+                {
+                    SetCurrent();
+                }
+                else
+                {
+                    TaskQueue.AddTask(SessionId, () => Close(), inactivityTimeout);
+                }
+            }
+        }
+
+        private void SetCurrent()
+        {
+            if (current != null)
+            {
+                var minrid = connections.Min(p => p.Key);
+                TaskQueue.RemoveTask(minrid.ToString());
+                connections.Remove(minrid);
+                current.Close();
+                current = null;
+            }
+            if (0 < connections.Count)
+            {
+                var minrid = connections.Min(p => p.Key);
+                current = connections[minrid];
+                TaskQueue.AddTask(minrid.ToString(), () => CloseCurrent(), waitTimeout);
+            }
         }
     }
 }
