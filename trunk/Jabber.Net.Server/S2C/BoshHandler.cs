@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.extensions.bosh;
+using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Connections;
 using Jabber.Net.Server.Handlers;
 using Jabber.Net.Server.Sessions;
@@ -15,14 +17,22 @@ namespace Jabber.Net.Server.S2C
             {
                 return StartBoshSession(element, session, context);
             }
-            else
+
+            var connection = session.Connection;
+            session = context.Sessions.GetSession(element.Sid);
+            var aggregator = ((BoshXmppAggregator)session.Connection);
+            aggregator.AddConnection(element.Rid, connection);
+
+            if (element.HasChildElements)
             {
-                session = context.Sessions.GetSession(element.Sid);
-                ((BoshXmppAggregator)session.Connection).AddConnection(element.Rid, session.Connection);
-
-                var body = new Body { };
+                var result = Component(Send(session, new Body()));
+                foreach (var e in element.ChildNodes.OfType<Element>())
+                {
+                    result.Add(Process(session, e));
+                }
+                result.Add(Send(session, new BodyEnd()));
+                return result;
             }
-
             return Void();
         }
 
@@ -42,13 +52,16 @@ namespace Jabber.Net.Server.S2C
             element.Sid = session.Id;
             element.From = element.To;
             element.To = null;
+            element.SetAttribute("xmlns:xmpp", "urn:xmpp:xbosh");
+            element.SetAttribute("xmlns:stream", "http://etherx.jabber.org/streams");
 
             var aggregator = new BoshXmppAggregator(
                 session.Id,
                 TimeSpan.FromSeconds(element.Wait),
                 TimeSpan.FromSeconds(element.Inactivity),
-                TimeSpan.FromMilliseconds(100))
+                TimeSpan.FromSeconds(5))
                 .AddConnection(element.Rid, session.Connection);
+            aggregator.BeginReceive(context.Handlers);
             session = new XmppSession(aggregator);
 
             return Component(Send(session, element), Process(session, stream), Send(session, new BodyEnd()));

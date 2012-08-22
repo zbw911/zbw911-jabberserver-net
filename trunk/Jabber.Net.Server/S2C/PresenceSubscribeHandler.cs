@@ -26,10 +26,9 @@ namespace Jabber.Net.Server.S2C
             {
                 ri.Ask = AskType.subscribe;
                 context.Storages.Users.SaveRosterItem(session.Jid, ri);
-
-                var result = Component(Send(context.Sessions.GetSessions(element.To.BareJid), element));
-                result.Add(new RosterPush(session.Jid, ri, context));
-                return result;
+                return Component(
+                    Send(context.Sessions.GetSessions(element.To.BareJid), element),
+                    new RosterPush(session.Jid, ri, context));
             }
 
             return Void();
