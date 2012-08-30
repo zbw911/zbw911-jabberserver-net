@@ -28,34 +28,11 @@ using agsXMPP.Xml.Dom;
 using agsXMPP.Xml.xpnet;
 using Encoding = System.Text.Encoding;
 using UTF8Encoding = agsXMPP.Xml.xpnet.UTF8Encoding;
-using agsXMPP.protocol.Base;
 
 #endregion
 
 namespace agsXMPP.Xml
 {
-    #region usings
-
-
-
-    #endregion
-
-    /// <summary>
-    /// </summary>
-    /// <param name="sender">
-    /// </param>
-    /// <param name="ex">
-    /// </param>
-    public delegate void StreamError(object sender, Exception ex);
-
-    /// <summary>
-    /// </summary>
-    /// <param name="sender">
-    /// </param>
-    /// <param name="e">
-    /// </param>
-    public delegate void StreamHandler(object sender, Node e);
-
     /// <summary>
     /// Stream Parser is a lighweight Streaming XML Parser.
     /// </summary>
@@ -66,24 +43,24 @@ namespace agsXMPP.Xml
         /// <summary>
         /// Event for general errors
         /// </summary>
-        public event StreamError OnError;
+        public event Action<object, Exception> OnError;
 
         /// <summary>
         /// </summary>
-        public event StreamHandler OnStreamStart;
+        public event Action<object, Node> OnStreamStart;
 
         /// <summary>
         /// </summary>
-        public event StreamHandler OnStreamElement;
+        public event Action<object, Node> OnStreamElement;
 
         /// <summary>
         /// </summary>
-        public event StreamHandler OnStreamEnd;
+        public event Action<object, Node> OnStreamEnd;
 
         /// <summary>
         /// Event for XML-Stream errors
         /// </summary>
-        public event StreamError OnStreamError;
+        public event Action<object, Exception> OnStreamError;
 
         #endregion
 

@@ -48,6 +48,7 @@ namespace Jabber.Net.Server.Connections
             {
                 TaskQueue.RemoveTask(SessionId);
 
+                connection.SessionId = SessionId;
                 connections.Add(rid, connection);
                 SetCurrent();
             }
@@ -123,7 +124,7 @@ namespace Jabber.Net.Server.Connections
 
         public void Reset()
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Close()
