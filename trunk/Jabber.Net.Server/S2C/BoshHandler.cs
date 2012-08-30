@@ -23,16 +23,11 @@ namespace Jabber.Net.Server.S2C
             var aggregator = ((BoshXmppAggregator)session.Connection);
             aggregator.AddConnection(element.Rid, connection);
 
-            if (element.HasChildElements)
+            if (element.XmppRestart)
             {
-                var result = Component(Send(session, new Body()));
-                foreach (var e in element.ChildNodes.OfType<Element>())
-                {
-                    result.Add(Process(session, e));
-                }
-                result.Add(Send(session, new BodyEnd()));
-                return result;
+                return RestartBoshSession(element, session, context);
             }
+
             return Void();
         }
 
@@ -53,7 +48,7 @@ namespace Jabber.Net.Server.S2C
             element.From = element.To;
             element.To = null;
             element.SetAttribute("xmlns:xmpp", "urn:xmpp:xbosh");
-            element.SetAttribute("xmlns:stream", "http://etherx.jabber.org/streams");
+            element.SetAttribute("xmlns:stream", agsXMPP.Uri.STREAM);
 
             var aggregator = new BoshXmppAggregator(
                 session.Id,
@@ -63,6 +58,22 @@ namespace Jabber.Net.Server.S2C
                 .AddConnection(element.Rid, session.Connection);
             aggregator.BeginReceive(context.Handlers);
             session = new XmppSession(aggregator);
+
+            return Component(Send(session, element), Process(session, stream), Send(session, new BodyEnd()));
+        }
+
+        private XmppHandlerResult RestartBoshSession(Body element, XmppSession session, XmppHandlerContext context)
+        {
+            var stream = new Stream
+            {
+                Prefix = agsXMPP.Uri.PREFIX,
+                DefaultNamespace = agsXMPP.Uri.CLIENT,
+                To = element.To,
+                From = element.From,
+            };
+
+            element = new Body();
+            element.SetAttribute("xmlns:stream", agsXMPP.Uri.STREAM);
 
             return Component(Send(session, element), Process(session, stream), Send(session, new BodyEnd()));
         }
