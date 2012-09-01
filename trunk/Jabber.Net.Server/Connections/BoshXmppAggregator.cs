@@ -10,9 +10,7 @@ namespace Jabber.Net.Server.Connections
 {
     class BoshXmppAggregator : IXmppConnection
     {
-        private readonly object locker = new object();
         private readonly Dictionary<long, IXmppConnection> connections = new Dictionary<long, IXmppConnection>();
-        private IXmppConnection current;
         private XmppHandlerManager handlerManager;
 
         private readonly TimeSpan waitTimeout;
@@ -44,13 +42,15 @@ namespace Jabber.Net.Server.Connections
         {
             Args.NotNull(connection, "connection");
 
-            lock (locker)
+            lock (connections)
             {
+                // cancel inactivity
                 TaskQueue.RemoveTask(SessionId);
 
                 connection.SessionId = SessionId;
                 connections.Add(rid, connection);
-                SetCurrent();
+                // add wait timeout
+                TaskQueue.AddTask(rid.ToString(), () => SendAndClose(rid, new Body(), null), waitTimeout);
             }
             return this;
         }
@@ -65,14 +65,14 @@ namespace Jabber.Net.Server.Connections
         public void Send(Element element, Action<Element> onerror)
         {
             // Send a single item or to accumulate a buffer until a bodyend.
-            lock (locker)
+            Body body = null;
+            Action<Element> commonOnError = null;
+
+            lock (buffer)
             {
                 if (!(element is BodyEnd))
                 {
-                    if (element is agsXMPP.protocol.client.Stream)
-                    {
-                        element = ((agsXMPP.protocol.client.Stream)element).Features;
-                    }
+                    element = PrepareElement(element);
                     buffer.Add(Tuple.Create(element, onerror));
 
                     if (buffer.Any(t => t.Item1 is Body))
@@ -82,88 +82,124 @@ namespace Jabber.Net.Server.Connections
                 }
 
                 var elements = buffer.Select(t => t.Item1);
-                var body = elements.FirstOrDefault(e => e is Body) as Body ?? new Body();
+                body = elements.FirstOrDefault(e => e is Body) as Body ?? new Body();
                 foreach (var e in elements.Where(e => !(e is Body)))
                 {
                     body.AddChild(e);
+                    if (e is agsXMPP.protocol.Error || e is agsXMPP.protocol.sasl.Failure || e is agsXMPP.protocol.tls.Failure)
+                    {
+                        body.Type = BoshType.terminate;
+                    }
                 }
 
-                var onerrors = buffer
-                    .Where(t => t.Item2 != null)
-                    .Select(t => new Action(() => t.Item2(t.Item1)))
-                    .ToList();
-                Action<Element> commonOnError = _ => onerrors.ForEach(e => e());
+                var onerrors = (from t in buffer where t.Item2 != null select new Action(() => t.Item2(t.Item1))).ToList();
+                commonOnError = _ => onerrors.ForEach(e => e());
 
                 buffer.Clear();
-                if (current != null)
-                {
-                    current.Send(body, commonOnError);
-                    CloseCurrent();
-                }
-                else
-                {
-                    Action task = () =>
-                    {
-                        lock (locker)
-                        {
-                            if (current != null)
-                            {
-                                current.Send(body, commonOnError);
-                                CloseCurrent();
-                            }
-                            else
-                            {
-                                commonOnError(body);
-                            }
-                        }
-                    };
-                    TaskQueue.AddTask(Guid.NewGuid().ToString(), task, sendTimeout);
-                }
             }
+            SendBody(body, commonOnError);
         }
 
         public void Reset()
         {
-            
+
         }
 
         public void Close()
         {
             handlerManager.ProcessClose(this);
+
+            IEnumerable<long> copy = null;
+            lock (connections)
+            {
+                copy = connections.Keys.ToArray();
+            }
+
+            Action closeall = () =>
+            {
+                foreach (var rid in copy)
+                {
+                    SendAndClose(rid, new Body { Type = BoshType.terminate }, null);
+                    // cancel inactivity
+                    TaskQueue.RemoveTask(SessionId);
+                }
+            };
+            closeall.BeginInvoke(null, null);
         }
 
 
-        private void CloseCurrent()
+        private void SendBody(Body body, Action<Element> onerror)
         {
-            lock (locker)
+            var timeout = TimeSpan.Zero;
+            lock (connections)
             {
-                if (0 < connections.Count)
+                if (connections.Count == 0)
                 {
-                    SetCurrent();
-                }
-                else
-                {
-                    TaskQueue.AddTask(SessionId, () => Close(), inactivityTimeout);
+                    timeout = sendTimeout;
                 }
             }
-        }
 
-        private void SetCurrent()
-        {
-            if (current != null)
+            Action send = () =>
             {
-                var minrid = connections.Min(p => p.Key);
+                var minrid = 0L;
+                lock (connections)
+                {
+                    minrid = connections.Any() ? connections.Min(p => p.Key) : 0;
+                }
+                // cancel wait timeout
                 TaskQueue.RemoveTask(minrid.ToString());
-                connections.Remove(minrid);
-                current.Close();
-                current = null;
-            }
-            if (0 < connections.Count)
+
+                SendAndClose(minrid, body, onerror);
+            };
+            TaskQueue.AddTask(Guid.NewGuid().ToString(), send, timeout);
+        }
+
+        private void SendAndClose(long rid, Body body, Action<Element> onerror)
+        {
+            try
             {
-                var minrid = connections.Min(p => p.Key);
-                current = connections[minrid];
-                TaskQueue.AddTask(minrid.ToString(), () => CloseCurrent(), waitTimeout);
+                IXmppConnection c;
+                lock (connections)
+                {
+                    if (connections.TryGetValue(rid, out c))
+                    {
+                        connections.Remove(rid);
+                    }
+                    if (connections.Count == 0)
+                    {
+                        // set inactivity callback
+                        TaskQueue.RemoveTask(SessionId);
+                        TaskQueue.AddTask(SessionId, () => Close(), inactivityTimeout);
+                    }
+                }
+                if (c != null)
+                {
+                    c.Send(body, onerror);
+                }
+                else if (onerror != null)
+                {
+                    onerror(body);
+                }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                if (onerror != null)
+                {
+                    onerror(body);
+                }
+            }
+        }
+
+        private Element PrepareElement(Element e)
+        {
+            var stream = e as agsXMPP.protocol.client.Stream;
+            if (stream != null)
+            {
+                return stream.Features;
+            }
+
+            return e;
         }
     }
 }

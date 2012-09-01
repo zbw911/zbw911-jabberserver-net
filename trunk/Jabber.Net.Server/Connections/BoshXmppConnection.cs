@@ -64,7 +64,7 @@ namespace Jabber.Net.Server.Connections
             try
             {
                 var buffer = Encoding.UTF8.GetBytes(element.ToString());
-
+                context.Response.ContentEncoding = Encoding.UTF8;
                 context.Response.ContentType = "text/xml; charset=utf-8";
                 context.Response.ContentLength64 = buffer.LongLength;
                 context.Response.Close(buffer, true);
