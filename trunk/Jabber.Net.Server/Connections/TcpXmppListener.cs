@@ -6,7 +6,7 @@ namespace Jabber.Net.Server.Connections
 {
     class TcpXmppListener : IXmppListener
     {
-        private readonly IPEndPoint endpoint;
+        private readonly Uri listenUri;
         private TcpListener listener;
         private Action<IXmppConnection> newConnection;
 
@@ -15,15 +15,17 @@ namespace Jabber.Net.Server.Connections
         {
             Args.NotNull(listenUri, "listenUri");
 
-            endpoint = new IPEndPoint(IPAddress.Parse(listenUri.Host), listenUri.Port);
+            this.listenUri = listenUri;
         }
 
 
         public void StartListen(Action<IXmppConnection> newConnection)
         {
             Args.NotNull(newConnection, "newConnection");
+            Log.Information("Start listen {0}", listenUri);
 
             this.newConnection = newConnection;
+            var endpoint = new IPEndPoint(IPAddress.Parse(listenUri.Host), listenUri.Port);
             listener = new TcpListener(endpoint)
             {
                 ExclusiveAddressUse = true,
@@ -35,6 +37,8 @@ namespace Jabber.Net.Server.Connections
 
         public void StopListen()
         {
+            Log.Information("Stop listen {0}", listenUri);
+
             if (listener != null)
             {
                 listener.Stop();

@@ -5,35 +5,49 @@ namespace Jabber.Net.Server
 {
     static class Log
     {
+        [Conditional("DEBUG")]
         public static void Information(string message)
         {
-            Trace.TraceInformation(message);
+            Information(message, null);
         }
 
+        [Conditional("DEBUG")]
         public static void Information(string format, params object[] args)
         {
-            Trace.TraceInformation(format, args);
+            Trace.TraceInformation(AddInfo(format), args);
         }
 
+        [Conditional("DEBUG")]
         public static void Warning(string message)
         {
-            Trace.TraceWarning(message);
+            Warning(message, null);
         }
 
+        [Conditional("DEBUG")]
         public static void Warning(string format, params object[] args)
         {
-            Trace.TraceWarning(format, args);
+            Trace.TraceWarning(AddInfo(format), args);
         }
 
         public static void Error(Exception error)
         {
-            Trace.TraceError(error.ToString());
+            Error(error.ToString(), null);
         }
 
         public static void Error(string format, params object[] args)
         {
-            Trace.TraceError(format, args);
+            Trace.TraceError(AddInfo(format), args);
         }
 
+        private static string AddInfo(string format)
+        {
+            if (string.IsNullOrWhiteSpace(format))
+            {
+                return format;
+            }
+
+            format = DateTime.Now.ToString("[HH:mm:ss.ffffff]") + " " + format;
+            return format;
+        }
     }
 }

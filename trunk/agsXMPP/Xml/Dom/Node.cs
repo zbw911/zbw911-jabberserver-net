@@ -33,7 +33,7 @@ namespace agsXMPP.Xml.Dom
 {
     #region usings
 
-    
+
 
     #endregion
 
@@ -63,7 +63,7 @@ namespace agsXMPP.Xml.Dom
 
     /// <summary>
     /// </summary>
-    public abstract class Node : ICloneable
+    public abstract class Node : ICloneable, IFormattable
     {
         #region Members
 
@@ -136,9 +136,9 @@ namespace agsXMPP.Xml.Dom
 
         public virtual object Clone()
         {
-            var clone = (Node) MemberwiseClone();
+            var clone = (Node)MemberwiseClone();
             clone.m_ChildNodes = new NodeList();
-            foreach (Node a in m_ChildNodes) clone.m_ChildNodes.Add((Node) a.Clone());
+            foreach (Node a in m_ChildNodes) clone.m_ChildNodes.Add((Node)a.Clone());
             return clone;
         }
 
@@ -210,32 +210,23 @@ namespace agsXMPP.Xml.Dom
             }
         }
 
-        /// <summary>
-        /// returns the Xml, difference to the Xml property is that you can set formatting porperties
-        /// </summary>
-        /// <param name="format">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        public string ToString(Formatting format)
+        public string ToString(string format, IFormatProvider formatProvider)
         {
-            return BuildXml(this, format, 3, ' ');
+            if (format == null)
+            {
+                return ToString();
+            }
+            if (format.StartsWith("I", StringComparison.InvariantCultureIgnoreCase))
+            {
+                int indent;
+                if (!int.TryParse(format.Substring(1), out indent))
+                {
+                    indent = 2;
+                }
+                return BuildXml(this, Formatting.Indented, indent, ' ');
+            }
+            throw new FormatException(string.Format("Invalid format string: '{0}'.", format));
         }
-
-        /// <summary>
-        /// returns the Xml, difference to the Xml property is that you can set formatting properties
-        /// </summary>
-        /// <param name="format">
-        /// </param>
-        /// <param name="indent">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        public string ToString(Formatting format, int indent)
-        {
-            return BuildXml(this, format, indent, ' ');
-        }
-
         #endregion
 
         #region Utility methods
