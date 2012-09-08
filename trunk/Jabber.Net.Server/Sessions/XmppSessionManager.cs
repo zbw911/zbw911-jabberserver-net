@@ -38,6 +38,7 @@ namespace Jabber.Net.Server.Sessions
         public void OpenSession(XmppSession session)
         {
             Args.NotNull(session, "session");
+            Log.Information("Open session {0}", session.Id);
 
             sessions[session.Id] = session;
         }
@@ -50,6 +51,7 @@ namespace Jabber.Net.Server.Sessions
                 sessions.Remove(id, out s);
                 if (s != null)
                 {
+                    Log.Information("Close session {0}", id);
                     s.Connection.Close();
                 }
             }

@@ -23,6 +23,7 @@ namespace Jabber.Net.Server.Connections
         {
             Args.Requires<NotSupportedException>(HttpListener.IsSupported, "HttpListener not supported.");
             Args.NotNull(newConnection, "newConnection");
+            Log.Information("Start listen {0}", listenUri);
 
             this.newConnection = newConnection;
             listener = new HttpListener
@@ -36,6 +37,8 @@ namespace Jabber.Net.Server.Connections
 
         public void StopListen()
         {
+            Log.Information("Stop listen {0}", listenUri);
+
             if (listener != null)
             {
                 if (listener.IsListening)

@@ -48,6 +48,7 @@ namespace Jabber.Net.Server.Connections
         {
             RequiresNotClosed();
             Args.NotNull(handlerManager, "handlerManager");
+            Log.Information(GetType().Name + " begin receive");
 
             this.handlerManager = handlerManager;
             Reset();
@@ -56,6 +57,8 @@ namespace Jabber.Net.Server.Connections
 
         public void Reset()
         {
+            Log.Information(GetType().Name + " {0} reset", SessionId);
+
             if (reader != null)
             {
                 reader.ReadElementCancel();
@@ -66,6 +69,7 @@ namespace Jabber.Net.Server.Connections
             {
                 if (e.State == XmppStreamState.Success)
                 {
+                    Log.Information(GetType().Name + " {0} recv <<:\r\n{1:I}\r\n", SessionId, e.Element);
                     handlerManager.ProcessElement(this, e.Element);
                 }
                 else if (e.State == XmppStreamState.Error)
@@ -104,6 +108,7 @@ namespace Jabber.Net.Server.Connections
         public void Send(Element element, Action<Element> onerror)
         {
             Args.NotNull(element, "element");
+            Log.Information(GetType().Name + " {0} send >>:\r\n{1:I}\r\n", SessionId, element);
 
             writer.WriteElementAsync(element, onerror);
         }
@@ -114,6 +119,8 @@ namespace Jabber.Net.Server.Connections
             {
                 if (closed) return;
                 closed = true;
+
+                Log.Information(GetType().Name + " {0} close", SessionId);
 
                 try
                 {
@@ -145,6 +152,7 @@ namespace Jabber.Net.Server.Connections
         public void TlsStart(X509Certificate certificate)
         {
             Args.NotNull(certificate, "certificate");
+            Log.Information(GetType().Name + " {0} start tls", SessionId);
 
             stream.Flush();
             if (reader != null)

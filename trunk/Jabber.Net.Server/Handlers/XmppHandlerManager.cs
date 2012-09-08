@@ -66,22 +66,26 @@ namespace Jabber.Net.Server.Handlers
         }
 
 
+        public string RegisterHandler(object handler)
+        {
+            return RegisterHandler(Jid.Empty, handler);
+        }
+
         public string RegisterHandler(Jid jid, object handler)
         {
             if (handler is IXmppRegisterHandler)
             {
                 ((IXmppRegisterHandler)handler).OnRegister(context);
             }
-            return router.RegisterHandler(jid, handler);
-        }
+            var id = router.RegisterHandler(jid, handler);
 
-        public string RegisterHandler(object handler)
-        {
-            return RegisterHandler(Jid.Empty, handler);
+            Log.Information("Register handler {0} on {1}, id = {2}", handler.GetType().Name, jid, id);
+            return id;
         }
 
         public void UnregisterHandler(string id)
         {
+            Log.Information("Unregister handler {0}", id);
             router.UnregisterHandler(id);
         }
 
@@ -106,13 +110,22 @@ namespace Jabber.Net.Server.Handlers
                         processed = true;
                         if (ProcessValidation(handler, element, session, context))
                         {
+                            Log.Information("ProcessElement handler {0} on {1}, session {2}", handler.HandlerId, jid, session.Id);
                             ProcessResult(handler.ProcessElement(element, session, context));
+                        }
+                        else
+                        {
+                            Log.Information("ProcessElement skip, handler {0} on {1}, session {2}", handler.HandlerId, jid, session.Id);
                         }
                     }
                     if (!processed)
                     {
                         ProcessResult(defaultInvoker.ProcessElement(element, session, context));
                     }
+                }
+                else
+                {
+                    Log.Information("ProcessElement skip, session {0}", session.Id);
                 }
             }
             catch (Exception error)
@@ -151,6 +164,8 @@ namespace Jabber.Net.Server.Handlers
                 Args.NotNull(error, "error");
 
                 var session = GetSession(connection);
+
+                Log.Error("ProcessError session {0}\r\n{1}", session.Id, error);
                 try
                 {
                     foreach (var handler in router.GetErrorHandlers())
