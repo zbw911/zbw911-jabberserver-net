@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using agsXMPP.protocol;
 using agsXMPP.protocol.extensions.bosh;
 using agsXMPP.Xml.Dom;
 using Jabber.Net.Server.Handlers;
@@ -16,6 +17,8 @@ namespace Jabber.Net.Server.Connections
         private readonly TimeSpan waitTimeout;
         private readonly TimeSpan inactivityTimeout;
         private readonly TimeSpan sendTimeout;
+        private readonly int hold;
+        private readonly int window;
 
         private readonly List<Tuple<Element, Action<Element>>> buffer = new List<Tuple<Element, Action<Element>>>();
 
@@ -27,7 +30,7 @@ namespace Jabber.Net.Server.Connections
         }
 
 
-        public BoshXmppAggregator(string sessionId, TimeSpan waitTimeout, TimeSpan inactivityTimeout, TimeSpan sendTimeout)
+        public BoshXmppAggregator(string sessionId, TimeSpan waitTimeout, TimeSpan inactivityTimeout, TimeSpan sendTimeout, int hold, int window)
         {
             Args.Requires<ArgumentException>(!string.IsNullOrEmpty(sessionId), "Argument sessionId can not by empty.");
 
@@ -35,6 +38,8 @@ namespace Jabber.Net.Server.Connections
             this.waitTimeout = waitTimeout;
             this.inactivityTimeout = inactivityTimeout;
             this.sendTimeout = sendTimeout;
+            this.hold = hold;
+            this.window = window;
         }
 
 
@@ -44,6 +49,18 @@ namespace Jabber.Net.Server.Connections
 
             lock (connections)
             {
+                if (hold == connections.Count)
+                {
+                    throw new JabberStreamException(StreamErrorCondition.PolicyViolation);
+                }
+                foreach (var pair in connections)
+                {
+                    if (window < Math.Abs(rid - pair.Key))
+                    {
+                        throw new JabberStreamException(StreamErrorCondition.PolicyViolation);
+                    }
+                }
+
                 // cancel inactivity
                 TaskQueue.RemoveTask(SessionId);
 
@@ -89,6 +106,7 @@ namespace Jabber.Net.Server.Connections
                     if (e is agsXMPP.protocol.Error || e is agsXMPP.protocol.sasl.Failure || e is agsXMPP.protocol.tls.Failure)
                     {
                         body.Type = BoshType.terminate;
+                        body.SetAttribute("condition", "remote-stream-error");
                     }
                 }
 
