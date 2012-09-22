@@ -27,12 +27,26 @@ namespace Jabber.Net.Server.S2C
             set;
         }
 
+        public int Hold
+        {
+            get;
+            set;
+        }
+
+        public int Window
+        {
+            get;
+            set;
+        }
+
 
         public BoshHandler()
         {
             WaitTimeout = TimeSpan.FromMinutes(1);
             InactivityTimeout = TimeSpan.FromMinutes(2);
             SendTimeout = TimeSpan.FromSeconds(5);
+            Hold = 1;
+            Window = 5;
         }
 
 
@@ -41,14 +55,35 @@ namespace Jabber.Net.Server.S2C
             XmppSession realSession;
             if (string.IsNullOrEmpty(element.Sid))
             {
-                element.Wait = element.Wait == 0 || WaitTimeout.TotalSeconds < element.Wait ? (int)WaitTimeout.TotalSeconds : element.Wait;
-                element.Inactivity = element.Inactivity == 0 || InactivityTimeout.TotalSeconds < element.Inactivity ? (int)InactivityTimeout.TotalSeconds : element.Inactivity;
+                if (element.Hold == 0 || element.Wait == 0)
+                {
+                    element.Hold = 1;
+                }
+                else if (Hold < element.Hold)
+                {
+                    element.Hold = Hold;
+                }
+                element.Requests = element.Hold + 1;
+                if (element.Window == 0 || Window < element.Window)
+                {
+                    element.Window = Window;
+                }
+                if (element.Wait == 0 || WaitTimeout.TotalSeconds < element.Wait)
+                {
+                    element.Wait = (int)WaitTimeout.TotalSeconds;
+                }
+                if (element.Inactivity == 0 || InactivityTimeout.TotalSeconds < element.Inactivity)
+                {
+                    element.Inactivity = (int)InactivityTimeout.TotalSeconds;
+                }
 
                 var aggregator = new BoshXmppAggregator(
                         session.Id,
                         TimeSpan.FromSeconds(element.Wait),
                         TimeSpan.FromSeconds(element.Inactivity),
-                        SendTimeout);
+                        SendTimeout,
+                        element.Hold,
+                        element.Window);
                 aggregator.BeginReceive(context.Handlers);
                 realSession = new XmppSession(aggregator);
             }
@@ -64,7 +99,11 @@ namespace Jabber.Net.Server.S2C
 
             ((BoshXmppAggregator)realSession.Connection).AddConnection(element.Rid, session.Connection);
 
-            if (string.IsNullOrEmpty(element.Sid))
+            if (element.Type == BoshType.terminate)
+            {
+                return Close(realSession);
+            }
+            else if (string.IsNullOrEmpty(element.Sid))
             {
                 return StartBoshSession(element, realSession, context);
             }
@@ -87,6 +126,9 @@ namespace Jabber.Net.Server.S2C
                 Secure = false,
                 Inactivity = element.Inactivity,
                 Wait = element.Wait,
+                Hold = element.Hold,
+                Window = element.Window,
+                Requests = element.Requests,
             };
             body.SetAttribute("xmlns:xmpp", "urn:xmpp:xbosh");
             body.SetAttribute("xmpp:restartlogic", true);
