@@ -52,7 +52,9 @@ namespace Jabber.Net.Server.S2C
 
         public XmppHandlerResult ProcessElement(Body element, XmppSession session, XmppHandlerContext context)
         {
-            XmppSession realSession;
+            XmppSession boshSession;
+            BoshXmppAggregator aggregator;
+
             if (string.IsNullOrEmpty(element.Sid))
             {
                 if (element.Hold == 0 || element.Wait == 0)
@@ -77,7 +79,7 @@ namespace Jabber.Net.Server.S2C
                     element.Inactivity = (int)InactivityTimeout.TotalSeconds;
                 }
 
-                var aggregator = new BoshXmppAggregator(
+                aggregator = new BoshXmppAggregator(
                         session.Id,
                         TimeSpan.FromSeconds(element.Wait),
                         TimeSpan.FromSeconds(element.Inactivity),
@@ -85,31 +87,33 @@ namespace Jabber.Net.Server.S2C
                         element.Hold,
                         element.Window);
                 aggregator.BeginReceive(context.Handlers);
-                realSession = new XmppSession(aggregator);
+                boshSession = new XmppSession(aggregator);
             }
             else
             {
-                realSession = context.Sessions.GetSession(element.Sid);
+                boshSession = context.Sessions.GetSession(element.Sid);
+                if (boshSession != null)
+                {
+                    aggregator = (BoshXmppAggregator)boshSession.Connection;
+                }
+                else
+                {
+                    return Error(session, agsXMPP.protocol.StreamErrorCondition.ImproperAddressing);
+                }
             }
-
-            if (realSession == null)
-            {
-                return Error(session, agsXMPP.protocol.StreamErrorCondition.ImproperAddressing);
-            }
-
-            ((BoshXmppAggregator)realSession.Connection).AddConnection(element.Rid, session.Connection);
+            aggregator.AddConnection(element.Rid, session.Connection);
 
             if (element.Type == BoshType.terminate)
             {
-                return Close(realSession);
+                return Close(boshSession);
             }
             else if (string.IsNullOrEmpty(element.Sid))
             {
-                return StartBoshSession(element, realSession, context);
+                return StartBoshSession(element, boshSession, context);
             }
             else if (element.XmppRestart)
             {
-                return RestartBoshSession(element, realSession, context);
+                return RestartBoshSession(element, boshSession, context);
             }
 
             return Void();
